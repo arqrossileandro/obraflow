@@ -7,7 +7,7 @@ import {
   LayoutDashboard, GanttChartSquare, ListTodo, CalendarDays,
   FileCheck2, Wallet, MessageSquare, KanbanSquare,
   Users, Settings, HardHat, Plus, Building2, Bell,
-  Pencil, Trash2, Copy, FolderOpen
+  Pencil, Trash2, Copy, FolderOpen, Layers
 } from 'lucide-react';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -22,6 +22,7 @@ import {
 import { useState } from 'react';
 import { AddObraDialog } from './add-obra-dialog';
 import { AddTaskDialog } from './add-task-dialog';
+import { TemplateDialog } from './template-dialog';
 import { ThemeToggle } from '@/components/theme-toggle';
 
 const NAV_ITEMS: { key: ViewKey; label: string; icon: any; group: string }[] = [
@@ -50,6 +51,7 @@ export function Sidebar() {
   } = useAppStore();
   const [addOpen, setAddOpen] = useState(false);
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
   const selectedObra = obras.find(o => o.id === selectedObraId);
   const taskCount = selectedObraId === 'all'
     ? tasks.length
@@ -211,13 +213,21 @@ export function Sidebar() {
 
       {/* Botón crear tarea (visible cuando hay obra seleccionada) */}
       {selectedObra && (
-        <div className="px-3 py-2 border-b border-border">
+        <div className="px-3 py-2 border-b border-border space-y-1.5">
           <Button
             size="sm"
             className="w-full h-8 text-xs"
             onClick={() => setAddTaskOpen(true)}
           >
             <Plus className="w-3.5 h-3.5 mr-1" /> Crear tarea
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full h-8 text-xs"
+            onClick={() => setTemplateOpen(true)}
+          >
+            <Layers className="w-3.5 h-3.5 mr-1" /> Usar plantilla
           </Button>
         </div>
       )}
@@ -286,6 +296,7 @@ export function Sidebar() {
 
       <AddObraDialog open={addOpen} onOpenChange={setAddOpen} />
       <AddTaskDialog open={addTaskOpen} onOpenChange={setAddTaskOpen} />
+      <TemplateDialog open={templateOpen} onOpenChange={setTemplateOpen} />
     </aside>
   );
 }

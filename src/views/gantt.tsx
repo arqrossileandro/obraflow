@@ -12,12 +12,13 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X
+  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers
 } from 'lucide-react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AddTaskDialog } from '@/components/app/add-task-dialog';
+import { TemplateDialog } from '@/components/app/template-dialog';
 
 const ROW_HEIGHT = 36;
 const HEADER_HEIGHT = 56;
@@ -54,6 +55,7 @@ export function GanttView() {
   const [refDate, setRefDate] = useState(new Date());
   const [zoom, setZoom] = useState(1);
   const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
   const [hoveredDepId, setHoveredDepId] = useState<string | null>(null);
   const [scrollState, setScrollState] = useState({ left: 0, top: 0 });
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
@@ -352,9 +354,14 @@ export function GanttView() {
           </Button>
         </div>
 
-        <Button size="sm" className="h-8 ml-auto" onClick={() => setAddTaskOpen(true)}>
-          <Plus className="w-3.5 h-3.5 mr-1" /> Crear tarea
-        </Button>
+        <div className="ml-auto flex items-center gap-2">
+          <Button size="sm" variant="outline" className="h-8" onClick={() => setTemplateOpen(true)}>
+            <Layers className="w-3.5 h-3.5 mr-1" /> Plantilla
+          </Button>
+          <Button size="sm" className="h-8" onClick={() => setAddTaskOpen(true)}>
+            <Plus className="w-3.5 h-3.5 mr-1" /> Crear tarea
+          </Button>
+        </div>
       </div>
 
       {/* Gantt - contenedor scrolleable */}
@@ -785,6 +792,7 @@ export function GanttView() {
       </div>
 
       <AddTaskDialog open={addTaskOpen} onOpenChange={setAddTaskOpen} />
+      <TemplateDialog open={templateOpen} onOpenChange={setTemplateOpen} />
     </div>
   );
 }

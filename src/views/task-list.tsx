@@ -9,7 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Plus, ChevronDown, ChevronRight, Filter, Search, Calendar, User,
-  Pencil, Trash2, ArrowUpDown
+  Pencil, Trash2, ArrowUpDown, Layers
 } from 'lucide-react';
 import { format, parseISO, differenceInCalendarDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -29,6 +29,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle
 } from '@/components/ui/alert-dialog';
 import { AddTaskDialog } from '@/components/app/add-task-dialog';
+import { TemplateDialog } from '@/components/app/template-dialog';
 
 const STATUS_LABELS: Record<string, { label: string; cls: string }> = {
   no_iniciada: { label: 'No iniciada', cls: 'bg-muted text-foreground' },
@@ -54,6 +55,7 @@ export function TaskListView() {
   const [assigneeFilter, setAssigneeFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'name' | 'progress' | 'priority'>('date');
   const [addOpen, setAddOpen] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   if (!obra) return null;
@@ -103,9 +105,14 @@ export function TaskListView() {
           <h2 className="text-xl font-bold text-foreground">Listado de Tareas</h2>
           <p className="text-xs text-muted-foreground mt-0.5">{rootTasks.length} tareas · {obra.name}</p>
         </div>
-        <Button size="sm" onClick={() => setAddOpen(true)}>
-          <Plus className="w-4 h-4 mr-1" /> Nueva tarea
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => setTemplateOpen(true)}>
+            <Layers className="w-4 h-4 mr-1" /> Usar plantilla
+          </Button>
+          <Button size="sm" onClick={() => setAddOpen(true)}>
+            <Plus className="w-4 h-4 mr-1" /> Nueva tarea
+          </Button>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -369,6 +376,7 @@ export function TaskListView() {
       </Card>
 
       <AddTaskDialog open={addOpen} onOpenChange={setAddOpen} />
+      <TemplateDialog open={templateOpen} onOpenChange={setTemplateOpen} />
 
       <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
         <AlertDialogContent>

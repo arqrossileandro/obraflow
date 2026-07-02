@@ -585,6 +585,7 @@ interface AppState {
 
   // Acciones de datos - Tareas
   addTask: (task: Partial<Task>) => void;
+  addTaskFromTemplate: (templateId: string, obraId: string, startDate?: string) => void;
   updateTask: (id: ID, patch: Partial<Task>) => void;
   deleteTask: (id: ID) => void;
   moveTask: (id: ID, newStartDate: string, durationDays?: number) => void;
@@ -731,6 +732,64 @@ export const useAppStore = create<AppState>()(
             createdAt: iso(today),
           };
           return { tasks: recomputeProgress([...s.tasks, newTask]) };
+        }),
+      addTaskFromTemplate: (templateId, obraId, startDate) =>
+        set(s => {
+          const tpl = TASK_TEMPLATES.find(t => t.id === templateId);
+          if (!tpl) return s;
+          const baseDate = startDate || iso(today);
+          const parentStart = parseISO(baseDate);
+          const parentEnd = addD(parentStart, tpl.defaultDurationDays);
+          const parentColor = tpl.color;
+          const parentId = `t${Date.now()}`;
+
+          const parentTask: Task = {
+            id: parentId,
+            obraId,
+            parentId: null,
+            name: tpl.name,
+            description: tpl.description,
+            startDate: iso(parentStart),
+            endDate: iso(parentEnd),
+            progress: 0,
+            progressMode: 'time',
+            assigneeIds: [],
+            guild: tpl.guild,
+            laborCost: tpl.subtasks.reduce((s, st) => s + (st.laborCost || 0), 0),
+            materialsCost: tpl.subtasks.reduce((s, st) => s + (st.materialsCost || 0), 0),
+            documents: [],
+            color: parentColor,
+            priority: 'media',
+            status: 'no_iniciada',
+            createdAt: iso(today),
+          };
+
+          const subtasks: Task[] = tpl.subtasks.map((st, i) => {
+            const stStart = addD(parentStart, st.offsetDays);
+            const stEnd = addD(stStart, st.durationDays);
+            return {
+              id: `${parentId}_st${i}`,
+              obraId,
+              parentId,
+              name: st.name,
+              startDate: iso(stStart),
+              endDate: iso(stEnd),
+              progress: 0,
+              progressMode: 'time',
+              assigneeIds: [],
+              guild: st.guild,
+              repercussionPercent: st.repercussionPercent,
+              laborCost: st.laborCost || 0,
+              materialsCost: st.materialsCost || 0,
+              documents: [],
+              color: lightenColor(parentColor, 0.35),
+              priority: 'media',
+              status: 'no_iniciada',
+              createdAt: iso(today),
+            };
+          });
+
+          return { tasks: recomputeProgress([...s.tasks, parentTask, ...subtasks]) };
         }),
       updateTask: (id, patch) =>
         set(s => ({
@@ -988,3 +1047,148 @@ export const getTaskBarColor = (task: Task, tasks: Task[], obraColor: string): s
   }
   return obraColor;
 };
+
+// ============================================================================
+// Catálogo de plantillas de tareas
+// ============================================================================
+
+export interface TemplateSubtask {
+  name: string;
+  durationDays: number;
+  offsetDays: number; // offset desde el inicio de la tarea padre
+  guild?: string;
+  repercussionPercent?: number;
+  laborCost?: number;
+  materialsCost?: number;
+}
+
+export interface TaskTemplate {
+  id: string;
+  name: string;
+  category: string;
+  icon: string; // emoji o nombre de icono
+  color: string;
+  description: string;
+  defaultDurationDays: number;
+  guild?: string;
+  subtasks: TemplateSubtask[];
+}
+
+export const TASK_TEMPLATES: TaskTemplate[] = [
+  {
+    id: 'tpl-plomeria',
+    name: 'Instalación de Plomería',
+    category: 'Instalaciones',
+    icon: '🔧',
+    color: '#0ea5e9',
+    description: 'Instalación completa de plomería: cloacales, pluviales, agua fría y caliente, calefacción y sala de máquinas.',
+    defaultDurationDays: 100,
+    guild: 'Plomeros',
+    subtasks: [
+      { name: 'Cloacales', durationDays: 35, offsetDays: 0, guild: 'Plomeros', repercussionPercent: 30, laborCost: 28000, materialsCost: 21000 },
+      { name: 'Pluviales', durationDays: 35, offsetDays: 10, guild: 'Plomeros', repercussionPercent: 15, laborCost: 14000, materialsCost: 11000 },
+      { name: 'Agua fría', durationDays: 40, offsetDays: 30, guild: 'Plomeros', repercussionPercent: 30, laborCost: 28000, materialsCost: 19000 },
+      { name: 'Agua caliente', durationDays: 40, offsetDays: 50, guild: 'Plomeros', repercussionPercent: 25, laborCost: 25000, materialsCost: 19000 },
+      { name: 'Calefacción', durationDays: 45, offsetDays: 55, guild: 'Plomeros', repercussionPercent: 20, laborCost: 35000, materialsCost: 28000 },
+      { name: 'Sala de máquinas', durationDays: 30, offsetDays: 70, guild: 'Plomeros', repercussionPercent: 10, laborCost: 22000, materialsCost: 18000 },
+    ],
+  },
+  {
+    id: 'tpl-hormigon',
+    name: 'Estructura de Hormigón',
+    category: 'Estructura',
+    icon: '🏗️',
+    color: '#22c55e',
+    description: 'Estructura completa de hormigón armado: bases, tabiques de elevación, platea, tabiques y losas.',
+    defaultDurationDays: 140,
+    guild: 'Estructura',
+    subtasks: [
+      { name: 'Bases de hormigón', durationDays: 20, offsetDays: 0, guild: 'Estructura', repercussionPercent: 20, laborCost: 60000, materialsCost: 55000 },
+      { name: 'Tabiques de elevación', durationDays: 25, offsetDays: 15, guild: 'Estructura', repercussionPercent: 15, laborCost: 45000, materialsCost: 35000 },
+      { name: 'Platea', durationDays: 15, offsetDays: 35, guild: 'Estructura', repercussionPercent: 20, laborCost: 40000, materialsCost: 30000 },
+      { name: 'Tabiques', durationDays: 30, offsetDays: 45, guild: 'Estructura', repercussionPercent: 20, laborCost: 55000, materialsCost: 42000 },
+      { name: 'Losas', durationDays: 50, offsetDays: 60, guild: 'Estructura', repercussionPercent: 25, laborCost: 80000, materialsCost: 65000 },
+    ],
+  },
+  {
+    id: 'tpl-albanileria',
+    name: 'Albañilería',
+    category: 'Terminaciones',
+    icon: '🧱',
+    color: '#f97316',
+    description: 'Trabajos de albañilería: mampostería, revoques, colocación de pisos y terminaciones de baños.',
+    defaultDurationDays: 90,
+    guild: 'Albañilería',
+    subtasks: [
+      { name: 'Mampostería', durationDays: 40, offsetDays: 0, guild: 'Albañilería', repercussionPercent: 35, laborCost: 45000, materialsCost: 35000 },
+      { name: 'Revoques', durationDays: 30, offsetDays: 25, guild: 'Albañilería', repercussionPercent: 25, laborCost: 30000, materialsCost: 12000 },
+      { name: 'Colocación de pisos', durationDays: 25, offsetDays: 45, guild: 'Albañilería', repercussionPercent: 25, laborCost: 35000, materialsCost: 45000 },
+      { name: 'Terminación de baños', durationDays: 20, offsetDays: 55, guild: 'Albañilería', repercussionPercent: 15, laborCost: 25000, materialsCost: 20000 },
+    ],
+  },
+  {
+    id: 'tpl-electricidad',
+    name: 'Instalación Eléctrica',
+    category: 'Instalaciones',
+    icon: '⚡',
+    color: '#eab308',
+    description: 'Instalación eléctrica completa: tableros, cableado, iluminación y puesta a tierra.',
+    defaultDurationDays: 80,
+    guild: 'Electricistas',
+    subtasks: [
+      { name: 'Tableros principales', durationDays: 25, offsetDays: 0, guild: 'Electricistas', repercussionPercent: 30, laborCost: 44000, materialsCost: 34000 },
+      { name: 'Cableado de unidades', durationDays: 40, offsetDays: 20, guild: 'Electricistas', repercussionPercent: 40, laborCost: 55000, materialsCost: 40000 },
+      { name: 'Iluminación', durationDays: 25, offsetDays: 45, guild: 'Electricistas', repercussionPercent: 20, laborCost: 25000, materialsCost: 30000 },
+      { name: 'Puesta a tierra', durationDays: 15, offsetDays: 60, guild: 'Electricistas', repercussionPercent: 10, laborCost: 15000, materialsCost: 12000 },
+    ],
+  },
+  {
+    id: 'tpl-terminaciones',
+    name: 'Terminaciones',
+    category: 'Terminaciones',
+    icon: '🎨',
+    color: '#a855f7',
+    description: 'Terminaciones finales: pintura, carpintería, herrería y limpieza final.',
+    defaultDurationDays: 70,
+    guild: 'Terminaciones',
+    subtasks: [
+      { name: 'Pintura interior', durationDays: 25, offsetDays: 0, guild: 'Pintura', repercussionPercent: 30, laborCost: 30000, materialsCost: 15000 },
+      { name: 'Pintura exterior', durationDays: 20, offsetDays: 10, guild: 'Pintura', repercussionPercent: 20, laborCost: 25000, materialsCost: 12000 },
+      { name: 'Carpintería', durationDays: 30, offsetDays: 15, guild: 'Carpintería', repercussionPercent: 30, laborCost: 45000, materialsCost: 55000 },
+      { name: 'Herrería', durationDays: 20, offsetDays: 25, guild: 'Herrería', repercussionPercent: 15, laborCost: 30000, materialsCost: 35000 },
+      { name: 'Limpieza final', durationDays: 10, offsetDays: 55, guild: 'Terminaciones', repercussionPercent: 5, laborCost: 8000, materialsCost: 3000 },
+    ],
+  },
+  {
+    id: 'tpl-movimiento-suelos',
+    name: 'Movimiento de Suelos',
+    category: 'Preparación',
+    icon: '🚜',
+    color: '#f97316',
+    description: 'Preparación del terreno: limpieza, excavación, compactación y replanteo.',
+    defaultDurationDays: 25,
+    guild: 'Topadores',
+    subtasks: [
+      { name: 'Limpieza del terreno', durationDays: 5, offsetDays: 0, guild: 'Topadores', repercussionPercent: 25, laborCost: 12000, materialsCost: 3000 },
+      { name: 'Replanteo', durationDays: 3, offsetDays: 3, guild: 'Topadores', repercussionPercent: 10, laborCost: 6000, materialsCost: 2000 },
+      { name: 'Excavación', durationDays: 10, offsetDays: 5, guild: 'Topadores', repercussionPercent: 40, laborCost: 25000, materialsCost: 10000 },
+      { name: 'Compactación', durationDays: 7, offsetDays: 15, guild: 'Topadores', repercussionPercent: 25, laborCost: 8000, materialsCost: 5000 },
+    ],
+  },
+  {
+    id: 'tpl-climatizacion',
+    name: 'Climatización',
+    category: 'Instalaciones',
+    icon: '❄️',
+    color: '#06b6d4',
+    description: 'Instalación de HVAC: conductos, equipos, salidas y tableros de control.',
+    defaultDurationDays: 50,
+    guild: 'Climatización',
+    subtasks: [
+      { name: 'Ductos principales', durationDays: 20, offsetDays: 0, guild: 'Climatización', repercussionPercent: 35, laborCost: 35000, materialsCost: 28000 },
+      { name: 'Equipos', durationDays: 15, offsetDays: 15, guild: 'Climatización', repercussionPercent: 30, laborCost: 25000, materialsCost: 45000 },
+      { name: 'Salidas y difusores', durationDays: 15, offsetDays: 25, guild: 'Climatización', repercussionPercent: 20, laborCost: 18000, materialsCost: 12000 },
+      { name: 'Tableros de control', durationDays: 10, offsetDays: 35, guild: 'Climatización', repercussionPercent: 15, laborCost: 15000, materialsCost: 18000 },
+    ],
+  },
+];
