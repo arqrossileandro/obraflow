@@ -174,11 +174,14 @@ export function GanttView() {
     if (!dragState) return;
     const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
 
-    // Calcular posición del mouse en coords del timeline (para create-dep preview)
+    // Calcular posición del mouse en coords del timeline (sin LEFT_PANEL_WIDTH ni HEADER_HEIGHT)
+    // Estas coords se usan para el depPreview y se les suman los offsets ahí
     let mouseX = 0, mouseY = 0;
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
+      // mouseX = posición X relativa al inicio del timeline (después del panel izquierdo)
       mouseX = e.clientX - rect.left - LEFT_PANEL_WIDTH + containerRef.current.scrollLeft;
+      // mouseY = posición Y relativa al inicio de las filas (después del header)
       mouseY = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
     }
 
@@ -296,15 +299,17 @@ export function GanttView() {
   };
 
   // Posición de la flecha temporal durante create-dep
+  // currentMouseX/Y están en coords internas del contenido scrolleable (incluye LEFT_PANEL_WIDTH)
   const depPreview = (() => {
     if (!dragState || dragState.type !== 'create-dep' || !dragState.depFromTaskId) return null;
     const fromRow = rows.find(r => r.task.id === dragState.depFromTaskId);
     if (!fromRow) return null;
-    const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
-    const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-    // Usar la posición real del mouse en coords del timeline
-    const toX = dragState.currentMouseX;
-    const toY = dragState.currentMouseY;
+    // fromX/Y en coords internas del contenido scrolleable
+    const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth + LEFT_PANEL_WIDTH;
+    const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2 + HEADER_HEIGHT;
+    // toX/Y ya están en coords internas (calculadas en handleMouseMove)
+    const toX = dragState.currentMouseX + LEFT_PANEL_WIDTH;
+    const toY = dragState.currentMouseY + HEADER_HEIGHT;
     return { fromX, fromY, toX, toY };
   })();
 
@@ -557,10 +562,8 @@ export function GanttView() {
                             />
                             {/* Punto derecho: crear dependencia FROM (esta es la predecesora) */}
                             <div
-                              className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-30 shadow-sm"
-                              style={{ borderColor: barColor, background: barColor, opacity: 0.8, marginRight: '-6px' }}
-                              onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.3)'; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
+                              className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 group-hover:opacity-100"
+                              style={{ borderColor: barColor, background: barColor, marginRight: '-6px' }}
                               onMouseDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -581,8 +584,8 @@ export function GanttView() {
                             />
                             {/* Punto izquierdo: destino de dependencia (visual) */}
                             <div
-                              className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-30 shadow-sm pointer-events-auto"
-                              style={{ borderColor: barColor, background: 'var(--card)', opacity: 0.7 }}
+                              className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 group-hover:opacity-100"
+                              style={{ borderColor: barColor, background: 'var(--card)' }}
                               title="Inicio de tarea"
                             />
                           </div>
@@ -617,12 +620,9 @@ export function GanttView() {
           )}
         </div>
 
-      {/* === OVERLAY DE DEPENDENCIAS (dentro del contenedor scrolleable, ajustado con scroll) === */}
+      {/* === OVERLAY DE DEPENDENCIAS === */}
+      {/* Capa 1: SVG visual (curvas, flechas, etiquetas) - sin interacción */}
       {(() => {
-        const overlayWidth = Math.max(0, viewportSize.width - LEFT_PANEL_WIDTH);
-        const overlayHeight = Math.max(0, viewportSize.height - HEADER_HEIGHT);
-        if (overlayWidth <= 0 || overlayHeight <= 0) return null;
-
         const curvePath = (x1: number, y1: number, x2: number, y2: number) => {
           const dx = Math.abs(x2 - x1);
           const cp = Math.max(20, Math.min(60, dx / 2));
@@ -631,15 +631,14 @@ export function GanttView() {
 
         return (
           <svg
-            className="absolute"
+            className="absolute pointer-events-none"
             style={{
-              left: scrollState.left + LEFT_PANEL_WIDTH,
-              top: scrollState.top + HEADER_HEIGHT,
-              width: overlayWidth,
-              height: overlayHeight,
-              overflow: 'hidden',
-              zIndex: 15,
-              pointerEvents: 'none',
+              left: 0,
+              top: 0,
+              width: LEFT_PANEL_WIDTH + timelineWidth,
+              height: rows.length * ROW_HEIGHT + HEADER_HEIGHT,
+              overflow: 'visible',
+              zIndex: 5,
             }}
           >
             <defs>
@@ -664,15 +663,10 @@ export function GanttView() {
               const toRow = rows.find(r => r.task.id === dep.toTaskId);
               if (!fromRow || !toRow) return null;
 
-              const fromXInternal = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
-              const fromYInternal = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-              const toXInternal = dateToX(parseISO(toRow.task.startDate));
-              const toYInternal = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-
-              const fromX = fromXInternal - scrollState.left + LEFT_PANEL_WIDTH;
-              const fromY = fromYInternal - scrollState.top + HEADER_HEIGHT;
-              const toX = toXInternal - scrollState.left + LEFT_PANEL_WIDTH;
-              const toY = toYInternal - scrollState.top + HEADER_HEIGHT;
+              const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth + LEFT_PANEL_WIDTH;
+              const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2 + HEADER_HEIGHT;
+              const toX = dateToX(parseISO(toRow.task.startDate)) + LEFT_PANEL_WIDTH;
+              const toY = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2 + HEADER_HEIGHT;
 
               const centerX = (fromX + toX) / 2;
               const centerY = (fromY + toY) / 2;
@@ -681,49 +675,25 @@ export function GanttView() {
               const path = curvePath(fromX, fromY, toX, toY);
 
               return (
-                <g key={dep.id} style={{ pointerEvents: 'stroke' }}>
-                  <path
-                    d={path}
-                    stroke="white"
-                    strokeOpacity="0.001"
-                    strokeWidth="16"
-                    fill="none"
-                    style={{ cursor: 'pointer' }}
-                    onMouseOver={() => setHoveredDepId(dep.id)}
-                    onMouseOut={() => setHoveredDepId(null)}
-                  />
+                <g key={dep.id}>
                   <path
                     d={path}
                     stroke={color}
                     strokeWidth={isHovered ? '3' : '2'}
                     fill="none"
                     markerEnd={`url(#arrow-${dep.type.toLowerCase()})`}
-                    style={{ pointerEvents: 'none' }}
                   />
                   {dep.lagDays !== 0 && (
-                    <text
-                      x={centerX}
-                      y={centerY - 6}
-                      fontSize="10"
-                      fill={color}
-                      textAnchor="middle"
-                      className="font-semibold"
-                      style={{ pointerEvents: 'none' }}
-                    >
+                    <text x={centerX} y={centerY - 6} fontSize="10" fill={color} textAnchor="middle" className="font-semibold">
                       {dep.lagDays > 0 ? `+${dep.lagDays}d` : `${dep.lagDays}d`}
                     </text>
                   )}
                   {isHovered && (
-                    <g
-                      onClick={() => deleteDependency(dep.id)}
-                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-                    >
+                    <g>
                       <circle cx={centerX} cy={centerY} r="10" fill="#ef4444" stroke="white" strokeWidth="2" />
                       <path
                         d={`M ${centerX - 3.5} ${centerY - 3.5} L ${centerX + 3.5} ${centerY + 3.5} M ${centerX + 3.5} ${centerY - 3.5} L ${centerX - 3.5} ${centerY + 3.5}`}
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
+                        stroke="white" strokeWidth="2" strokeLinecap="round"
                       />
                     </g>
                   )}
@@ -732,29 +702,76 @@ export function GanttView() {
             })}
 
             {depPreview && (() => {
-              const fromX = depPreview.fromX - scrollState.left + LEFT_PANEL_WIDTH;
-              const fromY = depPreview.fromY - scrollState.top + HEADER_HEIGHT;
-              const toX = depPreview.toX - scrollState.left + LEFT_PANEL_WIDTH;
-              const toY = depPreview.toY - scrollState.top + HEADER_HEIGHT;
-              const path = curvePath(fromX, fromY, toX, toY);
+              const path = curvePath(depPreview.fromX, depPreview.fromY, depPreview.toX, depPreview.toY);
               return (
-                <g style={{ pointerEvents: 'none' }}>
-                  <path
-                    d={path}
-                    stroke={DEP_COLORS.FS}
-                    strokeWidth="2.5"
-                    fill="none"
-                    strokeDasharray="6 4"
-                    markerEnd="url(#arrow-fs)"
-                    opacity="0.7"
-                  />
-                  <circle cx={toX} cy={toY} r="4" fill={DEP_COLORS.FS} opacity="0.7" />
+                <g>
+                  <path d={path} stroke={DEP_COLORS.FS} strokeWidth="2.5" fill="none" strokeDasharray="6 4" markerEnd="url(#arrow-fs)" opacity="0.7" />
+                  <circle cx={depPreview.toX} cy={depPreview.toY} r="4" fill={DEP_COLORS.FS} opacity="0.7" />
                 </g>
               );
             })()}
           </svg>
         );
       })()}
+
+      {/* Capa 2: Hit-areas como divs HTML (interacción para hover y eliminar) */}
+      <div
+        className="absolute"
+        style={{
+          left: 0,
+          top: 0,
+          width: LEFT_PANEL_WIDTH + timelineWidth,
+          height: rows.length * ROW_HEIGHT + HEADER_HEIGHT,
+          zIndex: 15, // Encima del panel izquierdo (z-10) y SVG visual (z-5), debajo de barras (z-30)
+          pointerEvents: 'none',
+        }}
+      >
+        {dependencies.map(dep => {
+          const fromRow = rows.find(r => r.task.id === dep.fromTaskId);
+          const toRow = rows.find(r => r.task.id === dep.toTaskId);
+          if (!fromRow || !toRow) return null;
+
+          const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth + LEFT_PANEL_WIDTH;
+          const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2 + HEADER_HEIGHT;
+          const toX = dateToX(parseISO(toRow.task.startDate)) + LEFT_PANEL_WIDTH;
+          const toY = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2 + HEADER_HEIGHT;
+
+          const isHovered = hoveredDepId === dep.id;
+          const minX = Math.min(fromX, toX);
+          const maxX = Math.max(fromX, toX);
+          const minY = Math.min(fromY, toY);
+          const maxY = Math.max(fromY, toY);
+
+          return (
+            <div
+              key={dep.id}
+              className="absolute"
+              style={{
+                left: minX - 10,
+                top: minY - 10,
+                width: maxX - minX + 20,
+                height: maxY - minY + 20,
+                pointerEvents: 'auto',
+                cursor: 'pointer',
+              }}
+              onMouseOver={() => setHoveredDepId(dep.id)}
+              onMouseOut={() => setHoveredDepId(null)}
+              onClick={(e) => {
+                // Solo eliminar si se hace click cerca del centro (donde está el botón X)
+                const centerX = (fromX + toX) / 2;
+                const centerY = (fromY + toY) / 2;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                const dist = Math.sqrt((clickX - centerX + minX - 10) ** 2 + (clickY - centerY + minY - 10) ** 2);
+                if (dist < 15) {
+                  deleteDependency(dep.id);
+                }
+              }}
+            />
+          );
+        })}
+      </div>
       {/* === FIN OVERLAY DE DEPENDENCIAS === */}
       </div>
 

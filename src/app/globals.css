@@ -80,37 +80,37 @@
 }
 
 .dark {
-  /* Dark mode - deep slate + amber accents */
-  --background: #0a0f1d;          /* very dark blue-slate */
-  --foreground: #f1f5f9;          /* slate-100 */
-  --card: #131a2c;                /* slightly lighter card */
-  --card-foreground: #f1f5f9;
-  --popover: #131a2c;
-  --popover-foreground: #f1f5f9;
-  --primary: #fb923c;             /* orange-400 - brighter for dark */
-  --primary-foreground: #0a0f1d;
-  --secondary: #1e293b;           /* slate-800 */
-  --secondary-foreground: #f1f5f9;
-  --muted: #1e293b;
+  /* Dark mode - gris oscuro elegante, no negro puro */
+  --background: #1e2433;          /* gris azulado oscuro */
+  --foreground: #e2e8f0;          /* slate-200 */
+  --card: #283044;                /* card un poco más clara */
+  --card-foreground: #e2e8f0;
+  --popover: #283044;
+  --popover-foreground: #e2e8f0;
+  --primary: #fb923c;             /* orange-400 */
+  --primary-foreground: #1e2433;
+  --secondary: #364152;           /* gris medio */
+  --secondary-foreground: #e2e8f0;
+  --muted: #364152;
   --muted-foreground: #94a3b8;    /* slate-400 */
-  --accent: #1c1917;              /* stone-900 tinted */
+  --accent: #3a2f1c;              /* amber tinted */
   --accent-foreground: #fed7aa;   /* orange-200 */
   --destructive: #f87171;
-  --border: #1e293b;              /* slate-800 */
-  --input: #1e293b;
+  --border: #364152;              /* gris medio */
+  --input: #364152;
   --ring: #fb923c;
   --chart-1: #fb923c;
   --chart-2: #38bdf8;
   --chart-3: #4ade80;
   --chart-4: #c084fc;
   --chart-5: #f87171;
-  --sidebar: #0f1626;             /* slightly different from main bg */
-  --sidebar-foreground: #f1f5f9;
+  --sidebar: #232a38;             /* sidebar ligeramente diferente */
+  --sidebar-foreground: #e2e8f0;
   --sidebar-primary: #fb923c;
-  --sidebar-primary-foreground: #0a0f1d;
-  --sidebar-accent: #1c1917;
+  --sidebar-primary-foreground: #1e2433;
+  --sidebar-accent: #3a2f1c;
   --sidebar-accent-foreground: #fed7aa;
-  --sidebar-border: #1e293b;
+  --sidebar-border: #364152;
   --sidebar-ring: #fb923c;
 }
 
@@ -129,14 +129,14 @@
   height: 8px;
 }
 .dark ::-webkit-scrollbar-track {
-  background: #0f1626;
+  background: #232a38;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #4a5568;
   border-radius: 4px;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #5a6578;
 }
 
 /* Smooth theme transition */
