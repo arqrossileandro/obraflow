@@ -55,16 +55,21 @@ export function GanttView() {
   const [zoom, setZoom] = useState(1);
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [hoveredDepId, setHoveredDepId] = useState<string | null>(null);
+  const [scrollState, setScrollState] = useState({ left: 0, top: 0 });
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
 
   // Estado de drag con preview (fantasma)
   const [dragState, setDragState] = useState<{
     type: 'move' | 'resize-left' | 'resize-right' | 'create-dep';
     taskId: string;
     startX: number;
+    startY: number;
     originalStart: string;
     originalEnd: string;
     depFromTaskId?: string;
     currentDeltaDays: number;
+    currentMouseX: number; // posición X real del mouse en coords del timeline (para create-dep)
+    currentMouseY: number; // posición Y real del mouse en coords del timeline
   } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -168,48 +173,59 @@ export function GanttView() {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!dragState) return;
     const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
-    if (deltaDays !== dragState.currentDeltaDays) {
-      setDragState(s => s ? { ...s, currentDeltaDays: deltaDays } : s);
+
+    // Calcular posición del mouse en coords del timeline (para create-dep preview)
+    let mouseX = 0, mouseY = 0;
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      mouseX = e.clientX - rect.left - LEFT_PANEL_WIDTH + containerRef.current.scrollLeft;
+      mouseY = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
+    }
+
+    if (deltaDays !== dragState.currentDeltaDays || dragState.type === 'create-dep') {
+      setDragState(s => s ? {
+        ...s,
+        currentDeltaDays: deltaDays,
+        currentMouseX: mouseX,
+        currentMouseY: mouseY,
+      } : s);
     }
   }, [dragState, dayWidth]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
     if (!dragState) return;
-    const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
 
-    if (dragState.type === 'move') {
-      const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
-      const dur = differenceInCalendarDays(parseISO(dragState.originalEnd), parseISO(dragState.originalStart));
-      moveTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), dur);
-    } else if (dragState.type === 'resize-left') {
-      const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
-      const originalEnd = parseISO(dragState.originalEnd);
-      if (differenceInCalendarDays(originalEnd, newStart) >= 1) {
-        resizeTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), format(originalEnd, 'yyyy-MM-dd'));
+    if (dragState.type === 'create-dep' && dragState.depFromTaskId && containerRef.current) {
+      // Detectar sobre qué tarea se soltó usando la posición real del mouse
+      const rect = containerRef.current.getBoundingClientRect();
+      const y = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
+      const targetIdx = Math.floor(y / ROW_HEIGHT);
+      const targetRow = rows[targetIdx];
+      if (targetRow && targetRow.task.id !== dragState.depFromTaskId) {
+        addDependency({
+          fromTaskId: dragState.depFromTaskId,
+          toTaskId: targetRow.task.id,
+          type: 'FS',
+          lagDays: 0,
+        });
       }
-    } else if (dragState.type === 'resize-right') {
-      const newEnd = addDays(parseISO(dragState.originalEnd), deltaDays);
-      const originalStart = parseISO(dragState.originalStart);
-      if (differenceInCalendarDays(newEnd, originalStart) >= 1) {
-        resizeTask(dragState.taskId, format(originalStart, 'yyyy-MM-dd'), format(newEnd, 'yyyy-MM-dd'));
-      }
-    } else if (dragState.type === 'create-dep' && dragState.depFromTaskId) {
-      // Detectar sobre qué tarea se soltó
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const scrollL = containerRef.current.scrollLeft;
-        const x = e.clientX - rect.left - LEFT_PANEL_WIDTH + scrollL;
-        const y = e.clientY - rect.top - 56 /* header */ + containerRef.current.scrollTop;
-        const targetIdx = Math.floor(y / ROW_HEIGHT);
-        const targetRow = rows[targetIdx];
-        if (targetRow && targetRow.task.id !== dragState.depFromTaskId) {
-          // Crear dependencia FS por defecto
-          addDependency({
-            fromTaskId: dragState.depFromTaskId,
-            toTaskId: targetRow.task.id,
-            type: 'FS',
-            lagDays: 0,
-          });
+    } else {
+      const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
+      if (dragState.type === 'move') {
+        const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
+        const dur = differenceInCalendarDays(parseISO(dragState.originalEnd), parseISO(dragState.originalStart));
+        moveTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), dur);
+      } else if (dragState.type === 'resize-left') {
+        const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
+        const originalEnd = parseISO(dragState.originalEnd);
+        if (differenceInCalendarDays(originalEnd, newStart) >= 1) {
+          resizeTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), format(originalEnd, 'yyyy-MM-dd'));
+        }
+      } else if (dragState.type === 'resize-right') {
+        const newEnd = addDays(parseISO(dragState.originalEnd), deltaDays);
+        const originalStart = parseISO(dragState.originalStart);
+        if (differenceInCalendarDays(newEnd, originalStart) >= 1) {
+          resizeTask(dragState.taskId, format(originalStart, 'yyyy-MM-dd'), format(newEnd, 'yyyy-MM-dd'));
         }
       }
     }
@@ -226,6 +242,23 @@ export function GanttView() {
       };
     }
   }, [dragState, handleMouseMove, handleMouseUp]);
+
+  // Trackear scroll y tamaño del viewport del contenedor
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      setScrollState({ left: el.scrollLeft, top: el.scrollTop });
+      setViewportSize({ width: el.clientWidth, height: el.clientHeight });
+    };
+    update();
+    el.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    return () => {
+      el.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
 
   if (!obra) return null;
 
@@ -269,13 +302,14 @@ export function GanttView() {
     if (!fromRow) return null;
     const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
     const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-    if (!containerRef.current) return null;
-    const rect = containerRef.current.getBoundingClientRect();
-    return { fromX, fromY, mouseX: dragState.currentDeltaDays, rect };
+    // Usar la posición real del mouse en coords del timeline
+    const toX = dragState.currentMouseX;
+    const toY = dragState.currentMouseY;
+    return { fromX, fromY, toX, toY };
   })();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] relative">
       {/* Toolbar */}
       <div className="border-b border-border bg-card px-5 py-2.5 flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-1.5">
@@ -318,8 +352,8 @@ export function GanttView() {
         </Button>
       </div>
 
-      {/* Gantt */}
-      <div className="flex-1 overflow-auto bg-card" ref={containerRef}>
+      {/* Gantt - contenedor scrolleable */}
+      <div className="flex-1 overflow-auto bg-card relative" ref={containerRef}>
         <div style={{ width: LEFT_PANEL_WIDTH + timelineWidth, minWidth: '100%' }}>
           {/* Header nivel 1 */}
           <div className="sticky top-0 z-20 flex bg-card border-b border-border">
@@ -460,9 +494,12 @@ export function GanttView() {
                                 type: 'move',
                                 taskId: task.id,
                                 startX: e.clientX,
+                                startY: e.clientY,
                                 originalStart: task.startDate,
                                 originalEnd: task.endDate,
                                 currentDeltaDays: 0,
+                                currentMouseX: 0,
+                                currentMouseY: 0,
                               });
                             }}
                             onClick={(e) => {
@@ -490,9 +527,12 @@ export function GanttView() {
                                   type: 'resize-left',
                                   taskId: task.id,
                                   startX: e.clientX,
+                                  startY: e.clientY,
                                   originalStart: task.startDate,
                                   originalEnd: task.endDate,
                                   currentDeltaDays: 0,
+                                  currentMouseX: 0,
+                                  currentMouseY: 0,
                                 });
                               }}
                             />
@@ -506,16 +546,21 @@ export function GanttView() {
                                   type: 'resize-right',
                                   taskId: task.id,
                                   startX: e.clientX,
+                                  startY: e.clientY,
                                   originalStart: task.startDate,
                                   originalEnd: task.endDate,
                                   currentDeltaDays: 0,
+                                  currentMouseX: 0,
+                                  currentMouseY: 0,
                                 });
                               }}
                             />
                             {/* Punto derecho: crear dependencia FROM (esta es la predecesora) */}
                             <div
-                              className="absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-card border-2 cursor-crosshair opacity-0 group-hover:opacity-100 transition-opacity z-30"
-                              style={{ borderColor: barColor }}
+                              className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-30 shadow-sm"
+                              style={{ borderColor: barColor, background: barColor, opacity: 0.8, marginRight: '-6px' }}
+                              onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.3)'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.8'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
                               onMouseDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -523,18 +568,21 @@ export function GanttView() {
                                   type: 'create-dep',
                                   taskId: task.id,
                                   startX: e.clientX,
+                                  startY: e.clientY,
                                   originalStart: task.startDate,
                                   originalEnd: task.endDate,
                                   depFromTaskId: task.id,
                                   currentDeltaDays: 0,
+                                  currentMouseX: 0,
+                                  currentMouseY: 0,
                                 });
                               }}
                               title="Arrastrar para crear dependencia"
                             />
-                            {/* Punto izquierdo: crear dependencia TO (esta es la sucesora) - visual */}
+                            {/* Punto izquierdo: destino de dependencia (visual) */}
                             <div
-                              className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-card border-2 cursor-crosshair opacity-0 group-hover:opacity-100 transition-opacity z-30"
-                              style={{ borderColor: barColor }}
+                              className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-30 shadow-sm pointer-events-auto"
+                              style={{ borderColor: barColor, background: 'var(--card)', opacity: 0.7 }}
                               title="Inicio de tarea"
                             />
                           </div>
@@ -555,197 +603,7 @@ export function GanttView() {
               );
             })}
 
-            {/* Hit areas de dependencias - divs absolutos para capturar hover */}
-            <div
-              className="absolute top-0 left-0"
-              style={{
-                width: timelineWidth,
-                height: rows.length * ROW_HEIGHT,
-                marginLeft: 0,
-                position: 'absolute',
-                left: LEFT_PANEL_WIDTH,
-                top: 0,
-                pointerEvents: 'none',
-                zIndex: 50,
-              }}
-            >
-              {dependencies.map(dep => {
-                const fromRow = rows.find(r => r.task.id === dep.fromTaskId);
-                const toRow = rows.find(r => r.task.id === dep.toTaskId);
-                if (!fromRow || !toRow) return null;
-                const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
-                const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const toX = dateToX(parseISO(toRow.task.startDate));
-                const toY = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const midX = Math.max(fromX + 12, toX - 12);
-                const centerX = midX;
-                const centerY = (fromY + toY) / 2;
-                const isHovered = hoveredDepId === dep.id;
-                const color = DEP_COLORS[dep.type];
-                const path = `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX - 4} ${toY}`;
-                return (
-                  <div key={dep.id}>
-                    {/* Hit area invisible - banda a lo largo del path */}
-                    <div
-                      className="absolute"
-                      style={{
-                        left: Math.min(fromX, midX, toX) - 7,
-                        top: Math.min(fromY, toY) - 7,
-                        width: Math.max(fromX, midX, toX) - Math.min(fromX, midX, toX) + 14,
-                        height: Math.max(fromY, toY) - Math.min(fromY, toY) + 14,
-                        pointerEvents: 'auto',
-                        cursor: 'pointer',
-                      }}
-                      onMouseEnter={() => setHoveredDepId(dep.id)}
-                      onMouseLeave={() => setHoveredDepId(null)}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* SVG overlay de dependencias (solo visual, sin interacción) */}
-            <svg
-              className="absolute top-0 left-0"
-              style={{
-                width: timelineWidth,
-                height: rows.length * ROW_HEIGHT,
-                marginLeft: 0,
-                position: 'absolute',
-                left: LEFT_PANEL_WIDTH,
-                top: 0,
-                pointerEvents: 'none',
-                zIndex: 60,
-                overflow: 'visible',
-              }}
-            >
-              <defs>
-                <marker id="arrow-fs" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-                  <path d="M0,0 L6,3 L0,6 Z" fill={DEP_COLORS.FS} />
-                </marker>
-                <marker id="arrow-ss" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-                  <path d="M0,0 L6,3 L0,6 Z" fill={DEP_COLORS.SS} />
-                </marker>
-                <marker id="arrow-ff" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-                  <path d="M0,0 L6,3 L0,6 Z" fill={DEP_COLORS.FF} />
-                </marker>
-                <marker id="arrow-sf" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
-                  <path d="M0,0 L6,3 L0,6 Z" fill={DEP_COLORS.SF} />
-                </marker>
-              </defs>
-              {dependencies.map(dep => {
-                const fromRow = rows.find(r => r.task.id === dep.fromTaskId);
-                const toRow = rows.find(r => r.task.id === dep.toTaskId);
-                if (!fromRow || !toRow) return null;
-                const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
-                const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const toX = dateToX(parseISO(toRow.task.startDate));
-                const toY = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const midX = Math.max(fromX + 12, toX - 12);
-                const path = `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX - 4} ${toY}`;
-                const color = DEP_COLORS[dep.type];
-                const isHovered = hoveredDepId === dep.id;
-                const centerX = midX;
-                const centerY = (fromY + toY) / 2;
-                return (
-                  <g key={dep.id}>
-                    {/* Path visible */}
-                    <path
-                      d={path}
-                      stroke={color}
-                      strokeWidth={isHovered ? '3' : '2'}
-                      fill="none"
-                      markerEnd={`url(#arrow-${dep.type.toLowerCase()})`}
-                      style={{ pointerEvents: 'none' }}
-                    />
-                    {dep.lagDays !== 0 && (
-                      <text
-                        x={midX + 4}
-                        y={centerY - 2}
-                        fontSize="9"
-                        fill={color}
-                        textAnchor="start"
-                        className="font-medium"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        {dep.lagDays > 0 ? `+${dep.lagDays}d` : `${dep.lagDays}d`}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-            </svg>
-
-            {/* Botones de eliminar dependencia (X roja) - divs HTML absolutos */}
-            <div
-              className="absolute top-0 left-0"
-              style={{
-                width: timelineWidth,
-                height: rows.length * ROW_HEIGHT,
-                position: 'absolute',
-                left: LEFT_PANEL_WIDTH,
-                top: 0,
-                pointerEvents: 'none',
-                zIndex: 55,
-              }}
-            >
-              {dependencies.map(dep => {
-                const fromRow = rows.find(r => r.task.id === dep.fromTaskId);
-                const toRow = rows.find(r => r.task.id === dep.toTaskId);
-                if (!fromRow || !toRow) return null;
-                const fromY = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const toY = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
-                const fromX = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
-                const toX = dateToX(parseISO(toRow.task.startDate));
-                const midX = Math.max(fromX + 12, toX - 12);
-                const centerX = midX;
-                const centerY = (fromY + toY) / 2;
-                const isHovered = hoveredDepId === dep.id;
-                if (!isHovered) return null;
-                return (
-                  <button
-                    key={dep.id}
-                    onClick={() => deleteDependency(dep.id)}
-                    className="absolute w-[18px] h-[18px] rounded-full bg-red-500 border-2 border-white shadow-md flex items-center justify-center hover:bg-red-600 transition-colors"
-                    style={{
-                      left: centerX - 9,
-                      top: centerY - 9,
-                      pointerEvents: 'auto',
-                      cursor: 'pointer',
-                    }}
-                    title="Eliminar dependencia"
-                  >
-                    <svg width="8" height="8" viewBox="0 0 8 8">
-                      <path d="M1 1 L7 7 M7 1 L1 7" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-                    </svg>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Línea temporal durante create-dep */}
-            {depPreview && (
-              <svg
-                className="absolute top-0 left-0 pointer-events-none z-40"
-                style={{
-                  width: timelineWidth,
-                  height: rows.length * ROW_HEIGHT,
-                  position: 'absolute',
-                  left: LEFT_PANEL_WIDTH,
-                  top: 0,
-                }}
-              >
-                <line
-                  x1={depPreview.fromX}
-                  y1={depPreview.fromY}
-                  x2={depPreview.fromX + depPreview.mouseX}
-                  y2={depPreview.fromY}
-                  stroke={DEP_COLORS.FS}
-                  strokeWidth="2"
-                  strokeDasharray="4 4"
-                />
-              </svg>
-            )}
+            {/* Las flechas de dependencias se renderizan en un overlay fijo fuera del contenedor scrolleable */}
           </div>
 
           {/* Mensaje de drag overlay */}
@@ -758,6 +616,146 @@ export function GanttView() {
             </div>
           )}
         </div>
+
+      {/* === OVERLAY DE DEPENDENCIAS (dentro del contenedor scrolleable, ajustado con scroll) === */}
+      {(() => {
+        const overlayWidth = Math.max(0, viewportSize.width - LEFT_PANEL_WIDTH);
+        const overlayHeight = Math.max(0, viewportSize.height - HEADER_HEIGHT);
+        if (overlayWidth <= 0 || overlayHeight <= 0) return null;
+
+        const curvePath = (x1: number, y1: number, x2: number, y2: number) => {
+          const dx = Math.abs(x2 - x1);
+          const cp = Math.max(20, Math.min(60, dx / 2));
+          return `M ${x1} ${y1} C ${x1 + cp} ${y1}, ${x2 - cp} ${y2}, ${x2 - 4} ${y2}`;
+        };
+
+        return (
+          <svg
+            className="absolute"
+            style={{
+              left: scrollState.left + LEFT_PANEL_WIDTH,
+              top: scrollState.top + HEADER_HEIGHT,
+              width: overlayWidth,
+              height: overlayHeight,
+              overflow: 'hidden',
+              zIndex: 15,
+              pointerEvents: 'none',
+            }}
+          >
+            <defs>
+              {Object.entries(DEP_COLORS).map(([type, color]) => (
+                <marker
+                  key={type}
+                  id={`arrow-${type.toLowerCase()}`}
+                  markerWidth="10"
+                  markerHeight="10"
+                  refX="7"
+                  refY="3"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L7,3 L0,6 Z" fill={color} />
+                </marker>
+              ))}
+            </defs>
+
+            {dependencies.map(dep => {
+              const fromRow = rows.find(r => r.task.id === dep.fromTaskId);
+              const toRow = rows.find(r => r.task.id === dep.toTaskId);
+              if (!fromRow || !toRow) return null;
+
+              const fromXInternal = dateToX(parseISO(fromRow.task.endDate)) + dayWidth;
+              const fromYInternal = fromRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
+              const toXInternal = dateToX(parseISO(toRow.task.startDate));
+              const toYInternal = toRow.index * ROW_HEIGHT + ROW_HEIGHT / 2;
+
+              const fromX = fromXInternal - scrollState.left + LEFT_PANEL_WIDTH;
+              const fromY = fromYInternal - scrollState.top + HEADER_HEIGHT;
+              const toX = toXInternal - scrollState.left + LEFT_PANEL_WIDTH;
+              const toY = toYInternal - scrollState.top + HEADER_HEIGHT;
+
+              const centerX = (fromX + toX) / 2;
+              const centerY = (fromY + toY) / 2;
+              const isHovered = hoveredDepId === dep.id;
+              const color = DEP_COLORS[dep.type];
+              const path = curvePath(fromX, fromY, toX, toY);
+
+              return (
+                <g key={dep.id} style={{ pointerEvents: 'stroke' }}>
+                  <path
+                    d={path}
+                    stroke="white"
+                    strokeOpacity="0.001"
+                    strokeWidth="16"
+                    fill="none"
+                    style={{ cursor: 'pointer' }}
+                    onMouseOver={() => setHoveredDepId(dep.id)}
+                    onMouseOut={() => setHoveredDepId(null)}
+                  />
+                  <path
+                    d={path}
+                    stroke={color}
+                    strokeWidth={isHovered ? '3' : '2'}
+                    fill="none"
+                    markerEnd={`url(#arrow-${dep.type.toLowerCase()})`}
+                    style={{ pointerEvents: 'none' }}
+                  />
+                  {dep.lagDays !== 0 && (
+                    <text
+                      x={centerX}
+                      y={centerY - 6}
+                      fontSize="10"
+                      fill={color}
+                      textAnchor="middle"
+                      className="font-semibold"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      {dep.lagDays > 0 ? `+${dep.lagDays}d` : `${dep.lagDays}d`}
+                    </text>
+                  )}
+                  {isHovered && (
+                    <g
+                      onClick={() => deleteDependency(dep.id)}
+                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
+                    >
+                      <circle cx={centerX} cy={centerY} r="10" fill="#ef4444" stroke="white" strokeWidth="2" />
+                      <path
+                        d={`M ${centerX - 3.5} ${centerY - 3.5} L ${centerX + 3.5} ${centerY + 3.5} M ${centerX + 3.5} ${centerY - 3.5} L ${centerX - 3.5} ${centerY + 3.5}`}
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </g>
+                  )}
+                </g>
+              );
+            })}
+
+            {depPreview && (() => {
+              const fromX = depPreview.fromX - scrollState.left + LEFT_PANEL_WIDTH;
+              const fromY = depPreview.fromY - scrollState.top + HEADER_HEIGHT;
+              const toX = depPreview.toX - scrollState.left + LEFT_PANEL_WIDTH;
+              const toY = depPreview.toY - scrollState.top + HEADER_HEIGHT;
+              const path = curvePath(fromX, fromY, toX, toY);
+              return (
+                <g style={{ pointerEvents: 'none' }}>
+                  <path
+                    d={path}
+                    stroke={DEP_COLORS.FS}
+                    strokeWidth="2.5"
+                    fill="none"
+                    strokeDasharray="6 4"
+                    markerEnd="url(#arrow-fs)"
+                    opacity="0.7"
+                  />
+                  <circle cx={toX} cy={toY} r="4" fill={DEP_COLORS.FS} opacity="0.7" />
+                </g>
+              );
+            })()}
+          </svg>
+        );
+      })()}
+      {/* === FIN OVERLAY DE DEPENDENCIAS === */}
       </div>
 
       {/* Leyenda inferior */}
