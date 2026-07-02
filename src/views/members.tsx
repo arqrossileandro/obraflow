@@ -66,8 +66,8 @@ export function MembersView() {
     <div className="p-6 max-w-[1200px] mx-auto space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Miembros del equipo</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{members.length} miembros registrados</p>
+          <h2 className="text-xl font-bold text-foreground">Miembros del equipo</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{members.length} miembros registrados</p>
         </div>
         <Button size="sm" onClick={() => setAddOpen(true)}>
           <UserPlus className="w-4 h-4 mr-1" /> Agregar miembro
@@ -76,7 +76,7 @@ export function MembersView() {
 
       <Card className="p-3">
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
           <Input
             placeholder="Buscar por nombre o email..."
             value={search}
@@ -103,8 +103,8 @@ export function MembersView() {
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <div className="font-medium text-slate-900 truncate">{m.name}</div>
-                      {isMe && <Badge className="text-[9px] bg-orange-100 text-orange-700">Tú</Badge>}
+                      <div className="font-medium text-foreground truncate">{m.name}</div>
+                      {isMe && <Badge className="text-[9px] bg-orange-100 text-primary">Tú</Badge>}
                     </div>
                     <Badge variant="outline" className="text-[10px] mt-1 capitalize">
                       {ROLES.find(r => r.value === m.role)?.label}
@@ -113,26 +113,26 @@ export function MembersView() {
                 </div>
 
                 <div className="mt-3 space-y-1.5 text-xs">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Mail className="w-3 h-3 text-slate-400 shrink-0" />
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Mail className="w-3 h-3 text-muted-foreground/70 shrink-0" />
                     <span className="truncate">{m.email}</span>
                   </div>
                   {m.phone && (
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Phone className="w-3 h-3 text-slate-400 shrink-0" />
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Phone className="w-3 h-3 text-muted-foreground/70 shrink-0" />
                       <span>{m.phone}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-center">
+                <div className="mt-3 pt-3 border-t border-border/50 grid grid-cols-2 gap-2 text-center">
                   <div>
-                    <div className="text-base font-semibold text-slate-900">{stats.tasks}</div>
-                    <div className="text-[10px] text-slate-500">tareas asignadas</div>
+                    <div className="text-base font-semibold text-foreground">{stats.tasks}</div>
+                    <div className="text-[10px] text-muted-foreground">tareas asignadas</div>
                   </div>
                   <div>
-                    <div className="text-base font-semibold text-slate-900">{stats.obras}</div>
-                    <div className="text-[10px] text-slate-500">obras activas</div>
+                    <div className="text-base font-semibold text-foreground">{stats.obras}</div>
+                    <div className="text-[10px] text-muted-foreground">obras activas</div>
                   </div>
                 </div>
 
@@ -149,7 +149,7 @@ export function MembersView() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 p-0 text-red-600"
+                      className="h-7 w-7 p-0 text-destructive"
                       onClick={() => confirm('¿Eliminar miembro?') && deleteMember(m.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -158,7 +158,7 @@ export function MembersView() {
                 </div>
 
                 {isEditing && (
-                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                  <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
                     <div>
                       <Label className="text-[10px]">Nombre</Label>
                       <Input value={m.name} onChange={e => updateMember(m.id, { name: e.target.value })} className="h-7 text-xs" />

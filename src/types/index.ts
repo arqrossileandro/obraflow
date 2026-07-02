@@ -63,7 +63,7 @@ export interface Task {
   realLaborCost?: number;
   realMaterialsCost?: number;
   documents: Document[];
-  color?: string;
+  color?: string;       // color personalizado de la barra en el gantt
   priority: 'baja' | 'media' | 'alta' | 'critica';
   status: 'no_iniciada' | 'en_curso' | 'pausada' | 'finalizada';
   createdAt: string;
@@ -144,6 +144,7 @@ export type ViewKey =
   | 'gantt'
   | 'task_list'
   | 'calendar'
+  | 'documentos'
   | 'certificados'
   | 'finanzas'
   | 'chat'

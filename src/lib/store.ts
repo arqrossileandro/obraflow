@@ -89,6 +89,7 @@ const tasks: Task[] = [
     progress: 100, progressMode: 'time',
     assigneeIds: ['m3', 'm5'],
     guild: 'Topadores',
+    color: '#f97316', // orange
     laborCost: 45000, materialsCost: 18000,
     realLaborCost: 47000, realMaterialsCost: 16500,
     documents: [
@@ -142,6 +143,7 @@ const tasks: Task[] = [
     progress: 85, progressMode: 'time',
     assigneeIds: ['m3', 'm4', 'm5'],
     guild: 'Albañilería',
+    color: '#0ea5e9', // sky
     laborCost: 120000, materialsCost: 95000,
     realLaborCost: 108000, realMaterialsCost: 92000,
     documents: [
@@ -200,6 +202,7 @@ const tasks: Task[] = [
     progress: 25, progressMode: 'time',
     assigneeIds: ['m3', 'm4', 'm5', 'm6'],
     guild: 'Estructura',
+    color: '#22c55e', // green
     laborCost: 480000, materialsCost: 360000,
     realLaborCost: 95000, realMaterialsCost: 78000,
     documents: [],
@@ -254,6 +257,7 @@ const tasks: Task[] = [
     progress: 22, progressMode: 'time',
     assigneeIds: ['m5', 'm6'],
     guild: 'Plomeros',
+    color: '#a855f7', // purple
     laborCost: 95000, materialsCost: 70000,
     realLaborCost: 18000, realMaterialsCost: 14000,
     documents: [
@@ -324,6 +328,7 @@ const tasks: Task[] = [
     progress: 15, progressMode: 'time',
     assigneeIds: ['m6'],
     guild: 'Electricistas',
+    color: '#ef4444', // red
     laborCost: 110000, materialsCost: 85000,
     realLaborCost: 12000, realMaterialsCost: 9000,
     documents: [],
@@ -365,6 +370,7 @@ const tasks: Task[] = [
     progress: 0, progressMode: 'time',
     assigneeIds: ['m3', 'm4'],
     guild: 'Terminaciones',
+    color: '#14b8a6', // teal
     laborCost: 220000, materialsCost: 180000,
     documents: [],
     priority: 'media', status: 'no_iniciada',
@@ -380,6 +386,7 @@ const tasks: Task[] = [
     progress: 30, progressMode: 'time',
     assigneeIds: ['m3', 'm4'],
     guild: 'Albañilería',
+    color: '#eab308', // yellow
     laborCost: 85000, materialsCost: 65000,
     realLaborCost: 24000, realMaterialsCost: 18000,
     documents: [],
@@ -686,9 +693,22 @@ export const useAppStore = create<AppState>()(
 
       addTask: (task) =>
         set(s => {
+          const obraId = task.obraId || (s.selectedObraId as string);
+          const isSubtarea = task.parentId !== null && task.parentId !== undefined;
+          // Color automático: subtareas heredan tono más claro del padre; raíces toman color automático
+          let autoColor: string | undefined;
+          if (isSubtarea && task.parentId) {
+            const parent = s.tasks.find(t => t.id === task.parentId);
+            if (parent) {
+              const parentColor = parent.color || s.obras.find(o => o.id === obraId)?.color || '#f97316';
+              autoColor = lightenColor(parentColor, 0.35);
+            }
+          } else {
+            autoColor = pickTaskColor(s.tasks, obraId);
+          }
           const newTask: Task = {
             id: `t${Date.now()}`,
-            obraId: task.obraId || s.selectedObraId as string,
+            obraId,
             parentId: task.parentId ?? null,
             name: task.name || 'Nueva Tarea',
             description: task.description,
@@ -705,6 +725,7 @@ export const useAppStore = create<AppState>()(
             realLaborCost: task.realLaborCost || 0,
             realMaterialsCost: task.realMaterialsCost || 0,
             documents: task.documents || [],
+            color: task.color !== undefined ? task.color : autoColor,
             priority: task.priority || 'media',
             status: task.status || 'no_iniciada',
             createdAt: iso(today),
@@ -894,3 +915,76 @@ export const formatCurrency = (n: number): string =>
 
 export const formatNumber = (n: number): string =>
   new Intl.NumberFormat('es-AR').format(n);
+
+// ============================================================================
+// Paleta de colores para tareas del Gantt
+// ============================================================================
+export const TASK_PALETTE = [
+  '#f97316', // orange
+  '#0ea5e9', // sky
+  '#22c55e', // green
+  '#a855f7', // purple
+  '#ef4444', // red
+  '#14b8a6', // teal
+  '#eab308', // yellow
+  '#ec4899', // pink
+  '#8b5cf6', // violet
+  '#06b6d4', // cyan
+  '#84cc16', // lime
+  '#f59e0b', // amber
+];
+
+/**
+ * Asigna automáticamente un color a una nueva tarea raíz, distinto al de las
+ * tareas raíz inmediatamente anterior y posterior (si existen).
+ */
+export const pickTaskColor = (tasks: Task[], obraId: string): string => {
+  const rootTasks = tasks
+    .filter(t => t.obraId === obraId && t.parentId === null)
+    .sort((a, b) => parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime());
+
+  const usedColors = new Set(rootTasks.map(t => t.color).filter(Boolean));
+  const available = TASK_PALETTE.filter(c => !usedColors.has(c));
+  const pool = available.length > 0 ? available : TASK_PALETTE;
+
+  // Si no hay tareas, usar primer color
+  if (rootTasks.length === 0) return pool[0];
+
+  // Tomar el color de la última tarea raíz y elegir uno diferente
+  const lastColor = rootTasks[rootTasks.length - 1].color || pool[0];
+  const candidates = pool.filter(c => c !== lastColor);
+  return candidates[0] || pool[0];
+};
+
+/**
+ * Genera un tono más suave (más claro) de un color hex.
+ * Usado para que las subtareas hereden el color de la tarea padre pero en tono más claro.
+ */
+export const lightenColor = (hex: string, amount = 0.3): string => {
+  const clean = hex.replace('#', '');
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  const newR = Math.round(r + (255 - r) * amount);
+  const newG = Math.round(g + (255 - g) * amount);
+  const newB = Math.round(b + (255 - b) * amount);
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+};
+
+/**
+ * Devuelve el color efectivo de una tarea para el Gantt.
+ * - Si la tarea tiene color propio, lo usa.
+ * - Si es subtarea, usa una versión más clara del color de la tarea padre.
+ * - Si es raíz sin color, usa el color de la obra.
+ */
+export const getTaskBarColor = (task: Task, tasks: Task[], obraColor: string): string => {
+  if (task.color) return task.color;
+  if (task.parentId) {
+    const parent = tasks.find(t => t.id === task.parentId);
+    if (parent) {
+      const parentColor = parent.color || obraColor;
+      return lightenColor(parentColor, 0.35);
+    }
+  }
+  return obraColor;
+};

@@ -11,10 +11,10 @@ import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 const STATUS_LABELS: Record<string, { label: string; cls: string }> = {
-  planificada: { label: 'Planificada', cls: 'bg-slate-100 text-slate-700 border-slate-300' },
+  planificada: { label: 'Planificada', cls: 'bg-muted text-foreground border-border' },
   en_curso: { label: 'En curso', cls: 'bg-emerald-100 text-emerald-700 border-emerald-300' },
   pausada: { label: 'Pausada', cls: 'bg-amber-100 text-amber-700 border-amber-300' },
-  finalizada: { label: 'Finalizada', cls: 'bg-slate-100 text-slate-500 border-slate-300' },
+  finalizada: { label: 'Finalizada', cls: 'bg-muted text-muted-foreground border-border' },
 };
 
 export function OverviewView() {
@@ -28,8 +28,8 @@ export function OverviewView() {
   return (
     <div className="p-6 max-w-[1600px] mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Vista General</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Resumen consolidado de todas las obras activas</p>
+        <h2 className="text-2xl font-bold text-foreground">Vista General</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">Resumen consolidado de todas las obras activas</p>
       </div>
 
       {/* KPIs globales */}
@@ -37,56 +37,56 @@ export function OverviewView() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">Obras activas</span>
-              <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
-                <Building2 className="w-4 h-4 text-orange-600" />
+              <span className="text-xs text-muted-foreground font-medium">Obras activas</span>
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Building2 className="w-4 h-4 text-primary" />
               </div>
             </div>
             <div className="mt-2 text-2xl font-bold">{obras.length}</div>
-            <div className="text-xs text-slate-500 mt-1">{obras.filter(o => o.status === 'en_curso').length} en curso</div>
+            <div className="text-xs text-muted-foreground mt-1">{obras.filter(o => o.status === 'en_curso').length} en curso</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">Tareas totales</span>
+              <span className="text-xs text-muted-foreground font-medium">Tareas totales</span>
               <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center">
                 <Activity className="w-4 h-4 text-sky-600" />
               </div>
             </div>
             <div className="mt-2 text-2xl font-bold">{totalTasks}</div>
-            <div className="text-xs text-slate-500 mt-1">{completedTasks} finalizadas</div>
+            <div className="text-xs text-muted-foreground mt-1">{completedTasks} finalizadas</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">Presupuesto total</span>
+              <span className="text-xs text-muted-foreground font-medium">Presupuesto total</span>
               <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
                 <Wallet className="w-4 h-4 text-emerald-600" />
               </div>
             </div>
             <div className="mt-2 text-2xl font-bold">{formatCurrency(totalBudget)}</div>
-            <div className="text-xs text-slate-500 mt-1">ejecutado: {formatCurrency(totalSpent)}</div>
+            <div className="text-xs text-muted-foreground mt-1">ejecutado: {formatCurrency(totalSpent)}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">Equipo total</span>
+              <span className="text-xs text-muted-foreground font-medium">Equipo total</span>
               <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
                 <Users className="w-4 h-4 text-purple-600" />
               </div>
             </div>
             <div className="mt-2 text-2xl font-bold">{members.length}</div>
-            <div className="text-xs text-slate-500 mt-1">miembros activos</div>
+            <div className="text-xs text-muted-foreground mt-1">miembros activos</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Lista de obras */}
       <div>
-        <h3 className="text-sm font-semibold text-slate-900 mb-3">Obras</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Obras</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {obras.map(obra => {
             const obraTasks = tasks.filter(t => t.obraId === obra.id);
@@ -106,21 +106,21 @@ export function OverviewView() {
                       <Building2 className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-sm text-slate-900 truncate" title={obra.name}>{obra.name}</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5 truncate">{obra.client}</div>
+                      <div className="font-semibold text-sm text-foreground truncate" title={obra.name}>{obra.name}</div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5 truncate">{obra.client}</div>
                     </div>
                     <Badge variant="outline" className={cn('text-[10px] shrink-0', STATUS_LABELS[obra.status].cls)}>
                       {STATUS_LABELS[obra.status].label}
                     </Badge>
                   </div>
 
-                  <div className="mt-3 space-y-2 text-[11px] text-slate-600">
+                  <div className="mt-3 space-y-2 text-[11px] text-muted-foreground">
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3 h-3 text-slate-400" />
+                      <MapPin className="w-3 h-3 text-muted-foreground/70" />
                       <span className="truncate">{obra.address}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3 h-3 text-slate-400" />
+                      <Calendar className="w-3 h-3 text-muted-foreground/70" />
                       <span>{format(parseISO(obra.startDate), "dd MMM yyyy", { locale: es })} - {format(parseISO(obra.endDate), "dd MMM yyyy", { locale: es })}</span>
                     </div>
                   </div>
@@ -128,22 +128,22 @@ export function OverviewView() {
                   <div className="mt-3 space-y-2">
                     <div>
                       <div className="flex items-center justify-between text-[10px] mb-1">
-                        <span className="text-slate-500">Avance</span>
-                        <span className="font-medium text-slate-700">{Math.round(completionRate)}%</span>
+                        <span className="text-muted-foreground">Avance</span>
+                        <span className="font-medium text-foreground">{Math.round(completionRate)}%</span>
                       </div>
                       <Progress value={completionRate} className="h-1.5" />
                     </div>
                     <div>
                       <div className="flex items-center justify-between text-[10px] mb-1">
-                        <span className="text-slate-500">Presupuesto</span>
-                        <span className={cn('font-medium', budgetPct > 100 ? 'text-red-600' : 'text-slate-700')}>{Math.round(budgetPct)}%</span>
+                        <span className="text-muted-foreground">Presupuesto</span>
+                        <span className={cn('font-medium', budgetPct > 100 ? 'text-destructive' : 'text-foreground')}>{Math.round(budgetPct)}%</span>
                       </div>
                       <Progress value={Math.min(100, budgetPct)} className="h-1.5" />
                     </div>
                   </div>
 
                   <div className="mt-3 flex items-center justify-between">
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[11px] text-muted-foreground">
                       {obraTasks.length} tareas · {obraCompleted} finalizadas · día {daysElapsed}/{daysTotal}
                     </div>
                     <Button
@@ -168,7 +168,7 @@ export function OverviewView() {
           <CardTitle className="text-sm">Materiales pendientes de pedido</CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-muted-foreground">
             {materials.filter(m => m.kanbanStatus === 'pendiente').length} materiales esperando ser pedidos · {materials.filter(m => m.kanbanStatus === 'pedido').length} pedidos en curso · {materials.filter(m => m.kanbanStatus === 'en_transito').length} en tránsito · {materials.filter(m => m.kanbanStatus === 'entregado').length} entregados
           </div>
         </CardContent>

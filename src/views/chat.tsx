@@ -52,8 +52,8 @@ export function ChatView() {
     <div className="p-6 max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Chat interno del equipo</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{obra.name} · {obra.memberIds.length} miembros</p>
+          <h2 className="text-xl font-bold text-foreground">Chat interno del equipo</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{obra.name} · {obra.memberIds.length} miembros</p>
         </div>
         <Badge variant="outline" className="text-xs">
           <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5" /> {obra.memberIds.length} conectados
@@ -62,11 +62,11 @@ export function ChatView() {
 
       <Card className="flex flex-col h-[calc(100vh-12rem)] overflow-hidden">
         {/* Header del chat */}
-        <div className="border-b border-slate-200 p-3 flex items-center gap-2 bg-slate-50">
-          <MessageSquare className="w-4 h-4 text-slate-500" />
-          <span className="text-sm font-medium text-slate-700">Canal general de obra</span>
+        <div className="border-b border-border p-3 flex items-center gap-2 bg-muted/30">
+          <MessageSquare className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm font-medium text-foreground">Canal general de obra</span>
           <div className="ml-auto relative w-64">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/70" />
             <Input
               placeholder="Buscar mensajes..."
               value={search}
@@ -81,7 +81,7 @@ export function ChatView() {
           {Object.entries(grouped).map(([day, msgs]) => (
             <div key={day}>
               <div className="text-center my-3">
-                <span className="text-[10px] text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                <span className="text-[10px] text-muted-foreground bg-muted px-3 py-1 rounded-full">
                   {format(parseISO(day + 'T00:00:00'), "EEEE d 'de' MMMM", { locale: es })}
                 </span>
               </div>
@@ -104,14 +104,14 @@ export function ChatView() {
                       </div>
                       <div className={cn('max-w-[70%]', isMe && 'text-right')}>
                         {showAvatar && (
-                          <div className="text-[10px] text-slate-500 mb-0.5 flex items-center gap-2">
+                          <div className="text-[10px] text-muted-foreground mb-0.5 flex items-center gap-2">
                             <span className="font-medium">{isMe ? 'Tú' : author?.name}</span>
                             <span>{format(parseISO(m.createdAt), "HH:mm")}</span>
                           </div>
                         )}
                         <div className={cn(
                           'inline-block px-3 py-2 rounded-lg text-sm',
-                          isMe ? 'bg-orange-500 text-white rounded-tr-sm' : 'bg-slate-100 text-slate-800 rounded-tl-sm'
+                          isMe ? 'bg-primary text-white rounded-tr-sm' : 'bg-muted text-foreground rounded-tl-sm'
                         )}>
                           {m.text}
                         </div>
@@ -123,7 +123,7 @@ export function ChatView() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="text-center text-sm text-slate-400 py-12">
+            <div className="text-center text-sm text-muted-foreground/70 py-12">
               {search ? 'No se encontraron mensajes.' : 'No hay mensajes aún. Inicia la conversación!'}
             </div>
           )}
@@ -131,9 +131,9 @@ export function ChatView() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-slate-200 p-3 flex items-center gap-2 bg-white">
+        <div className="border-t border-border p-3 flex items-center gap-2 bg-card">
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Paperclip className="w-4 h-4 text-slate-500" />
+            <Paperclip className="w-4 h-4 text-muted-foreground" />
           </Button>
           <Input
             placeholder={`Escribir mensaje a ${obra.name}...`}
@@ -143,7 +143,7 @@ export function ChatView() {
             className="flex-1"
           />
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-            <Smile className="w-4 h-4 text-slate-500" />
+            <Smile className="w-4 h-4 text-muted-foreground" />
           </Button>
           <Button onClick={handleSend} disabled={!message.trim()} size="sm">
             <Send className="w-3.5 h-3.5 mr-1" /> Enviar

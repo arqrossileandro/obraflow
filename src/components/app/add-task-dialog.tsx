@@ -163,7 +163,7 @@ export function AddTaskDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                     type="button"
                     onClick={() => toggleAssignee(mid)}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition ${
-                      selected ? 'bg-orange-50 border-orange-300 text-orange-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                      selected ? 'bg-primary/10 border-orange-300 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-muted/30'
                     }`}
                   >
                     <span className="w-4 h-4 rounded-full text-white text-[8px] font-semibold flex items-center justify-center" style={{ background: m.avatarColor }}>

@@ -31,17 +31,17 @@ import {
 import { AddTaskDialog } from '@/components/app/add-task-dialog';
 
 const STATUS_LABELS: Record<string, { label: string; cls: string }> = {
-  no_iniciada: { label: 'No iniciada', cls: 'bg-slate-100 text-slate-700' },
+  no_iniciada: { label: 'No iniciada', cls: 'bg-muted text-foreground' },
   en_curso: { label: 'En curso', cls: 'bg-emerald-100 text-emerald-700' },
   pausada: { label: 'Pausada', cls: 'bg-amber-100 text-amber-700' },
-  finalizada: { label: 'Finalizada', cls: 'bg-slate-100 text-slate-500' },
+  finalizada: { label: 'Finalizada', cls: 'bg-muted text-muted-foreground' },
 };
 
 const PRIORITY_LABELS: Record<string, { label: string; cls: string }> = {
-  baja: { label: 'Baja', cls: 'bg-slate-100 text-slate-600' },
+  baja: { label: 'Baja', cls: 'bg-muted text-muted-foreground' },
   media: { label: 'Media', cls: 'bg-sky-100 text-sky-700' },
-  alta: { label: 'Alta', cls: 'bg-orange-100 text-orange-700' },
-  critica: { label: 'Crítica', cls: 'bg-red-100 text-red-700' },
+  alta: { label: 'Alta', cls: 'bg-orange-100 text-primary' },
+  critica: { label: 'Crítica', cls: 'bg-red-100 text-destructive' },
 };
 
 export function TaskListView() {
@@ -100,8 +100,8 @@ export function TaskListView() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Listado de Tareas</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{rootTasks.length} tareas · {obra.name}</p>
+          <h2 className="text-xl font-bold text-foreground">Listado de Tareas</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{rootTasks.length} tareas · {obra.name}</p>
         </div>
         <Button size="sm" onClick={() => setAddOpen(true)}>
           <Plus className="w-4 h-4 mr-1" /> Nueva tarea
@@ -112,7 +112,7 @@ export function TaskListView() {
       <Card className="p-3">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
             <Input
               placeholder="Buscar tarea..."
               value={search}
@@ -172,7 +172,7 @@ export function TaskListView() {
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50 border-b border-slate-200 text-[11px] uppercase text-slate-500 font-semibold">
+            <thead className="bg-muted/30 border-b border-border text-[11px] uppercase text-muted-foreground font-semibold">
               <tr>
                 <th className="text-left py-2.5 px-3 w-[40px]"></th>
                 <th className="text-left py-2.5 px-3">Tarea</th>
@@ -194,14 +194,14 @@ export function TaskListView() {
                 return (
                   <Fragment key={task.id}>
                     <tr
-                      className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer"
+                      className="border-b border-border/50 hover:bg-muted/30 cursor-pointer"
                       onClick={() => openTaskModal(task.id)}
                     >
                       <td className="py-2 px-3">
                         {subtasks.length > 0 && (
                           <button
                             onClick={(e) => { e.stopPropagation(); toggle(task.id); }}
-                            className="text-slate-400 hover:text-slate-700"
+                            className="text-muted-foreground/70 hover:text-foreground"
                           >
                             {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                           </button>
@@ -211,33 +211,33 @@ export function TaskListView() {
                         <div className="flex items-center gap-2">
                           <span className="w-1 h-5 rounded-full" style={{ background: obra.color }} />
                           <div>
-                            <div className="font-medium text-slate-900">{task.name}</div>
+                            <div className="font-medium text-foreground">{task.name}</div>
                             {task.description && (
-                              <div className="text-[11px] text-slate-500 truncate max-w-md">{task.description}</div>
+                              <div className="text-[11px] text-muted-foreground truncate max-w-md">{task.description}</div>
                             )}
                           </div>
                           {getDepCount(task.id) > 0 && (
-                            <Badge variant="outline" className="text-[10px] text-slate-500">{getDepCount(task.id)} deps</Badge>
+                            <Badge variant="outline" className="text-[10px] text-muted-foreground">{getDepCount(task.id)} deps</Badge>
                           )}
                           {getMatCount(task.id) > 0 && (
-                            <Badge variant="outline" className="text-[10px] text-slate-500">{getMatCount(task.id)} mat</Badge>
+                            <Badge variant="outline" className="text-[10px] text-muted-foreground">{getMatCount(task.id)} mat</Badge>
                           )}
                         </div>
                       </td>
-                      <td className="py-2 px-3 text-xs text-slate-600">
+                      <td className="py-2 px-3 text-xs text-muted-foreground">
                         {format(parseISO(task.startDate), "dd MMM", { locale: es })} - {format(parseISO(task.endDate), "dd MMM", { locale: es })}
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-[10px] text-muted-foreground/70">
                           {differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate)) + 1} días
                         </div>
                       </td>
                       <td className="py-2 px-3">
                         <div className="flex items-center gap-2">
                           <Progress value={task.progress} className="h-1.5 flex-1" />
-                          <span className="text-[11px] font-medium text-slate-700 w-8 text-right">{task.progress}%</span>
+                          <span className="text-[11px] font-medium text-foreground w-8 text-right">{task.progress}%</span>
                         </div>
                       </td>
                       <td className="py-2 px-3">
-                        {task.guild ? <Badge variant="outline" className="text-[10px]">{task.guild}</Badge> : <span className="text-[11px] text-slate-400">-</span>}
+                        {task.guild ? <Badge variant="outline" className="text-[10px]">{task.guild}</Badge> : <span className="text-[11px] text-muted-foreground/70">-</span>}
                       </td>
                       <td className="py-2 px-3">
                         <div className="flex -space-x-1.5">
@@ -253,15 +253,15 @@ export function TaskListView() {
                             );
                           })}
                           {task.assigneeIds.length > 3 && (
-                            <div className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white text-[9px] font-semibold text-slate-600 flex items-center justify-center">
+                            <div className="w-6 h-6 rounded-full bg-slate-200 border-2 border-white text-[9px] font-semibold text-muted-foreground flex items-center justify-center">
                               +{task.assigneeIds.length - 3}
                             </div>
                           )}
                         </div>
                       </td>
-                      <td className="py-2 px-3 text-xs font-medium text-slate-700">
+                      <td className="py-2 px-3 text-xs font-medium text-foreground">
                         {formatCurrency(totalCost)}
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-[10px] text-muted-foreground/70">
                           MO: {formatCurrency(task.laborCost)} · Mat: {formatCurrency(task.materialsCost)}
                         </div>
                       </td>
@@ -284,7 +284,7 @@ export function TaskListView() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                             <DropdownMenuItem onClick={() => openTaskModal(task.id)}>Editar</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setDeleteId(task.id)} className="text-red-600">Eliminar</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setDeleteId(task.id)} className="text-destructive">Eliminar</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>
@@ -294,30 +294,30 @@ export function TaskListView() {
                       return (
                         <tr
                           key={st.id}
-                          className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer bg-slate-50/30"
+                          className="border-b border-border/50 hover:bg-muted/30 cursor-pointer bg-muted/30/30"
                           onClick={() => openTaskModal(st.id)}
                         >
                           <td className="py-2 px-3"></td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-2 pl-6">
-                              <span className="text-slate-300 text-xs">└</span>
-                              <span className="text-slate-700">{st.name}</span>
+                              <span className="text-muted-foreground/50 text-xs">└</span>
+                              <span className="text-foreground">{st.name}</span>
                               {st.repercussionPercent !== undefined && (
-                                <Badge variant="outline" className="text-[10px] text-slate-500">{st.repercussionPercent}% cert.</Badge>
+                                <Badge variant="outline" className="text-[10px] text-muted-foreground">{st.repercussionPercent}% cert.</Badge>
                               )}
                             </div>
                           </td>
-                          <td className="py-2 px-3 text-xs text-slate-500">
+                          <td className="py-2 px-3 text-xs text-muted-foreground">
                             {format(parseISO(st.startDate), "dd MMM", { locale: es })} - {format(parseISO(st.endDate), "dd MMM", { locale: es })}
                           </td>
                           <td className="py-2 px-3">
                             <div className="flex items-center gap-2">
                               <Progress value={st.progress} className="h-1.5 flex-1" />
-                              <span className="text-[11px] font-medium text-slate-600 w-8 text-right">{st.progress}%</span>
+                              <span className="text-[11px] font-medium text-muted-foreground w-8 text-right">{st.progress}%</span>
                             </div>
                           </td>
                           <td className="py-2 px-3">
-                            {st.guild ? <Badge variant="outline" className="text-[10px]">{st.guild}</Badge> : <span className="text-[11px] text-slate-400">-</span>}
+                            {st.guild ? <Badge variant="outline" className="text-[10px]">{st.guild}</Badge> : <span className="text-[11px] text-muted-foreground/70">-</span>}
                           </td>
                           <td className="py-2 px-3">
                             <div className="flex -space-x-1.5">
@@ -334,7 +334,7 @@ export function TaskListView() {
                               })}
                             </div>
                           </td>
-                          <td className="py-2 px-3 text-xs text-slate-600">{formatCurrency(stCost)}</td>
+                          <td className="py-2 px-3 text-xs text-muted-foreground">{formatCurrency(stCost)}</td>
                           <td className="py-2 px-3">
                             <Badge className={cn('text-[10px]', STATUS_LABELS[st.status].cls)}>
                               {STATUS_LABELS[st.status].label}
@@ -358,7 +358,7 @@ export function TaskListView() {
               })}
               {rootTasks.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-sm text-slate-400">
+                  <td colSpan={10} className="py-12 text-center text-sm text-muted-foreground/70">
                     No se encontraron tareas con los filtros aplicados
                   </td>
                 </tr>
@@ -381,7 +381,7 @@ export function TaskListView() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive hover:bg-red-700"
               onClick={() => { if (deleteId) deleteTask(deleteId); setDeleteId(null); }}
             >
               Eliminar

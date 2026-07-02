@@ -53,15 +53,15 @@ export function CalendarView() {
     <div className="p-6 max-w-[1600px] mx-auto space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Calendario</h2>
-          <p className="text-xs text-slate-500 mt-0.5">{obra.name}</p>
+          <h2 className="text-xl font-bold text-foreground">Calendario</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{obra.name}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date())}>Hoy</Button>
           <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setCurrentMonth(d => subMonths(d, 1))}>
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <span className="text-sm font-medium text-slate-900 min-w-[140px] text-center">
+          <span className="text-sm font-medium text-foreground min-w-[140px] text-center">
             {format(currentMonth, "MMMM yyyy", { locale: es })}
           </span>
           <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setCurrentMonth(d => addMonths(d, 1))}>
@@ -71,26 +71,26 @@ export function CalendarView() {
       </div>
 
       {/* Leyenda */}
-      <div className="flex items-center gap-4 text-[11px] text-slate-600">
+      <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full bg-emerald-500" /> Inicio de tarea
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-orange-500" /> Fin de tarea
+          <span className="w-3 h-3 rounded-full bg-primary" /> Fin de tarea
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full bg-slate-300" /> En curso
         </span>
-        <span className="text-slate-400 ml-auto">
+        <span className="text-muted-foreground/70 ml-auto">
           {obraTasks.length} tareas en el calendario
         </span>
       </div>
 
       <Card className="overflow-hidden">
         {/* Header días de la semana */}
-        <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
+        <div className="grid grid-cols-7 border-b border-border bg-muted/30">
           {weekdays.map(d => (
-            <div key={d} className="py-2 text-center text-xs font-semibold text-slate-600 uppercase">
+            <div key={d} className="py-2 text-center text-xs font-semibold text-muted-foreground uppercase">
               {d}
             </div>
           ))}
@@ -110,15 +110,15 @@ export function CalendarView() {
               <div
                 key={i}
                 className={cn(
-                  'min-h-[120px] border-r border-b border-slate-100 p-1.5 relative',
-                  !inMonth && 'bg-slate-50/50',
-                  isWeekend && inMonth && 'bg-slate-50/30',
+                  'min-h-[120px] border-r border-b border-border/50 p-1.5 relative',
+                  !inMonth && 'bg-muted/30/50',
+                  isWeekend && inMonth && 'bg-muted/30/30',
                   (i + 1) % 7 === 0 && 'border-r-0'
                 )}
               >
                 <div className={cn(
                   'text-xs font-medium mb-1 w-6 h-6 flex items-center justify-center rounded-full',
-                  isTodayDay ? 'bg-orange-500 text-white' : inMonth ? 'text-slate-700' : 'text-slate-400'
+                  isTodayDay ? 'bg-primary text-white' : inMonth ? 'text-foreground' : 'text-muted-foreground/70'
                 )}>
                   {format(day, 'd')}
                 </div>
@@ -153,7 +153,7 @@ export function CalendarView() {
                     <button
                       key={`m-${t.id}`}
                       onClick={() => openTaskModal(t.id)}
-                      className="w-full text-left text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 hover:bg-slate-200 transition truncate flex items-center gap-1"
+                      className="w-full text-left text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground hover:bg-slate-200 transition truncate flex items-center gap-1"
                       title={`En curso: ${t.name}`}
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
@@ -161,7 +161,7 @@ export function CalendarView() {
                     </button>
                   ))}
                   {dayTasks.filter(t => !starts.includes(t) && !ends.includes(t)).length > 2 && (
-                    <div className="text-[10px] text-slate-500 px-1.5">
+                    <div className="text-[10px] text-muted-foreground px-1.5">
                       +{dayTasks.filter(t => !starts.includes(t) && !ends.includes(t)).length - 2} más
                     </div>
                   )}

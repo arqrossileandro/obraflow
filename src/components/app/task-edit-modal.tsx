@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppStore, formatCurrency } from '@/lib/store';
+import { useAppStore, formatCurrency, getTaskBarColor, TASK_PALETTE } from '@/lib/store';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription
 } from '@/components/ui/dialog';
@@ -82,12 +82,13 @@ export function TaskEditModal() {
 
   return (
     <Dialog open={isTaskModalOpen} onOpenChange={(o) => !o && closeTaskModal()}>
-      <DialogContent className="max-w-5xl p-0 gap-0 max-h-[92vh] overflow-hidden">
+      <DialogContent className="max-w-6xl p-0 gap-0 max-h-[92vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <DialogHeader className="px-6 pt-5 pb-3 border-b border-slate-200">
+        <DialogHeader className="px-6 pt-5 pb-3 border-b border-border shrink-0">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
+                <span className="w-3 h-3 rounded-full shrink-0" style={{ background: getTaskBarColor(task, tasks, obra.color) }} />
                 <Badge variant="outline" className="text-[10px]">
                   {isSubtarea ? 'Subtarea' : 'Tarea'}
                 </Badge>
@@ -102,8 +103,8 @@ export function TaskEditModal() {
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2 ml-3">
-              <Badge className="bg-orange-50 text-orange-700 text-[10px]">{task.progress}%</Badge>
-              <Button variant="ghost" size="sm" className="text-red-600 h-8" onClick={() => {
+              <Badge className="bg-primary/15 text-primary text-[10px]">{task.progress}%</Badge>
+              <Button variant="ghost" size="sm" className="text-destructive h-8" onClick={() => {
                 if (confirm('¿Eliminar tarea?')) { deleteTask(task.id); closeTaskModal(); }
               }}>
                 <Trash2 className="w-3.5 h-3.5" />
@@ -112,29 +113,86 @@ export function TaskEditModal() {
           </div>
         </DialogHeader>
 
+        {/* Cuerpo: chat lateral izquierdo + contenido principal */}
+        <div className="flex flex-1 min-h-0">
+          {/* Chat lateral izquierdo - siempre visible */}
+          <aside className="w-72 border-r border-border bg-muted/30 flex flex-col shrink-0">
+            <div className="px-3 py-2 border-b border-border flex items-center gap-1.5">
+              <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
+              <span className="text-xs font-semibold text-foreground">Comentarios</span>
+              {taskComments.length > 0 && (
+                <Badge className="bg-muted text-muted-foreground text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center ml-auto">{taskComments.length}</Badge>
+              )}
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+              {taskComments.length === 0 ? (
+                <div className="text-center text-[11px] text-muted-foreground py-6 px-2">
+                  <MessageSquare className="w-6 h-6 mx-auto mb-2 text-muted-foreground/40" />
+                  No hay comentarios. Iniciá la conversación.
+                </div>
+              ) : (
+                taskComments.map(c => {
+                  const author = members.find(m => m.id === c.authorId);
+                  const isMe = c.authorId === currentUser.id;
+                  return (
+                    <div key={c.id} className={cn('flex gap-2', isMe && 'flex-row-reverse')}>
+                      <Avatar className="w-6 h-6 shrink-0 mt-0.5">
+                        <AvatarFallback style={{ background: author?.avatarColor }} className="text-white text-[9px] font-semibold">
+                          {author?.initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={cn('max-w-[80%] min-w-0', isMe && 'text-right')}>
+                        <div className="text-[9px] text-muted-foreground mb-0.5 flex items-center gap-1.5">
+                          {!isMe && <span className="font-medium">{author?.name.split(' ')[0]}</span>}
+                          <span>{format(parseISO(c.createdAt), "dd MMM HH:mm", { locale: es })}</span>
+                        </div>
+                        <div className={cn(
+                          'inline-block px-2.5 py-1.5 rounded-lg text-[11px] break-words',
+                          isMe ? 'bg-primary text-primary-foreground' : 'bg-card border border-border text-foreground'
+                        )}>
+                          {c.text}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <div className="p-2 border-t border-border bg-card flex gap-1.5">
+              <Input
+                placeholder="Escribir..."
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAddComment()}
+                className="h-7 text-[11px] flex-1"
+              />
+              <Button size="sm" className="h-7 w-7 p-0" onClick={handleAddComment} disabled={!newComment.trim()}>
+                <Send className="w-3 h-3" />
+              </Button>
+            </div>
+          </aside>
+
+          {/* Contenido principal con tabs */}
+          <div className="flex-1 flex flex-col min-w-0">
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="justify-start bg-transparent border-b border-slate-200 rounded-none px-4 h-auto p-0">
-            <TabsTrigger value="fechas" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+          <TabsList className="justify-start bg-transparent border-b border-border rounded-none px-4 h-auto p-0 shrink-0">
+            <TabsTrigger value="fechas" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
               <Calendar className="w-3.5 h-3.5" /> Fechas y Deps
             </TabsTrigger>
-            <TabsTrigger value="avance" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="avance" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
               <TrendingUp className="w-3.5 h-3.5" /> Avance
             </TabsTrigger>
-            <TabsTrigger value="comentarios" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
-              <MessageSquare className="w-3.5 h-3.5" /> Comentarios
-              {taskComments.length > 0 && <Badge className="bg-slate-200 text-slate-600 text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{taskComments.length}</Badge>}
-            </TabsTrigger>
-            <TabsTrigger value="financiera" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="financiera" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
               <Wallet className="w-3.5 h-3.5" /> Financiera
             </TabsTrigger>
-            <TabsTrigger value="documentacion" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="documentacion" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
               <FileText className="w-3.5 h-3.5" /> Documentación
-              {task.documents.length > 0 && <Badge className="bg-slate-200 text-slate-600 text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{task.documents.length}</Badge>}
+              {task.documents.length > 0 && <Badge className="bg-muted text-muted-foreground text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{task.documents.length}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="materiales" className="rounded-none border-b-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="materiales" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
               <Package className="w-3.5 h-3.5" /> Materiales
-              {taskMaterials.length > 0 && <Badge className="bg-slate-200 text-slate-600 text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{taskMaterials.length}</Badge>}
+              {taskMaterials.length > 0 && <Badge className="bg-muted text-muted-foreground text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{taskMaterials.length}</Badge>}
             </TabsTrigger>
           </TabsList>
 
@@ -170,23 +228,23 @@ export function TaskEditModal() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 text-center bg-slate-50 rounded-lg p-3">
+              <div className="grid grid-cols-3 gap-3 text-center bg-muted/30 rounded-lg p-3">
                 <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Duración</div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-[10px] text-muted-foreground uppercase">Duración</div>
+                  <div className="text-base font-semibold text-foreground">
                     {differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate)) + 1} días
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Días transcurridos</div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-[10px] text-muted-foreground uppercase">Días transcurridos</div>
+                  <div className="text-base font-semibold text-foreground">
                     {Math.max(0, Math.min(differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate)) + 1,
                       differenceInCalendarDays(new Date(), parseISO(task.startDate)) + 1))}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Días restantes</div>
-                  <div className="text-base font-semibold text-slate-900">
+                  <div className="text-[10px] text-muted-foreground uppercase">Días restantes</div>
+                  <div className="text-base font-semibold text-foreground">
                     {Math.max(0, differenceInCalendarDays(parseISO(task.endDate), new Date()))}
                   </div>
                 </div>
@@ -237,11 +295,46 @@ export function TaskEditModal() {
                     />
                     <span className="text-sm font-semibold w-12 text-right">{task.repercussionPercent || 0}%</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1">
+                  <p className="text-[10px] text-muted-foreground mt-1">
                     Este porcentaje indica qué parte del total del gremio representa esta subtarea en los certificados de avance.
                   </p>
                 </div>
               )}
+
+              {/* Color de la barra en el Gantt */}
+              <div>
+                <Label className="text-xs">Color de la barra en el Gantt</Label>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => updateTask(task.id, { color: undefined })}
+                    className={cn(
+                      'flex items-center gap-1.5 px-2 py-1 rounded-md text-xs border transition',
+                      task.color === undefined ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:bg-muted'
+                    )}
+                    title="Usar color automático"
+                  >
+                    <span className="w-3 h-3 rounded-full" style={{ background: getTaskBarColor(task, tasks, obra.color) }} />
+                    Auto
+                  </button>
+                  {TASK_PALETTE.map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => updateTask(task.id, { color: c })}
+                      className={cn(
+                        'w-7 h-7 rounded-full border-2 transition',
+                        task.color === c ? 'border-foreground scale-110' : 'border-card hover:scale-110'
+                      )}
+                      style={{ background: c }}
+                      title={c}
+                    />
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1.5">
+                  Las subtareas usan por defecto un tono más suave del color de la tarea padre. Elegí "Auto" para volver a ese comportamiento.
+                </p>
+              </div>
 
               {/* Responsables */}
               <div>
@@ -262,7 +355,7 @@ export function TaskEditModal() {
                         })}
                         className={cn(
                           'flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition',
-                          selected ? 'bg-orange-50 border-orange-300 text-orange-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                          selected ? 'bg-primary/10 border-orange-300 text-primary' : 'bg-card border-border text-muted-foreground hover:bg-muted/30'
                         )}
                       >
                         <span className="w-4 h-4 rounded-full text-white text-[8px] font-semibold flex items-center justify-center" style={{ background: m.avatarColor }}>
@@ -276,10 +369,10 @@ export function TaskEditModal() {
               </div>
 
               {/* Dependencias */}
-              <div className="border-t border-slate-200 pt-3">
+              <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between mb-2">
                   <Label className="text-xs font-semibold">Dependencias</Label>
-                  <span className="text-[10px] text-slate-500">{taskDeps.length} dependencias</span>
+                  <span className="text-[10px] text-muted-foreground">{taskDeps.length} dependencias</span>
                 </div>
                 <AddDependencyForm taskId={task.id} otherTasks={otherTasks} onAdd={addDependency} />
 
@@ -290,9 +383,9 @@ export function TaskEditModal() {
                       const otherTask = otherTasks.find(t => t.id === (isFrom ? dep.toTaskId : dep.fromTaskId));
                       if (!otherTask) return null;
                       return (
-                        <div key={dep.id} className="flex items-center gap-2 p-2 rounded-md bg-slate-50 text-xs">
-                          <Link2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                          <span className="text-slate-600">
+                        <div key={dep.id} className="flex items-center gap-2 p-2 rounded-md bg-muted/30 text-xs">
+                          <Link2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                          <span className="text-muted-foreground">
                             {isFrom ? 'Esta tarea' : otherTask.name}
                           </span>
                           <Badge variant="outline" className="text-[10px]">{DEP_TYPE_LABELS[dep.type]}</Badge>
@@ -301,12 +394,12 @@ export function TaskEditModal() {
                               {dep.lagDays > 0 ? `+${dep.lagDays}d` : `${dep.lagDays}d`}
                             </Badge>
                           )}
-                          <span className="text-slate-600">
+                          <span className="text-muted-foreground">
                             {isFrom ? otherTask.name : 'esta tarea'}
                           </span>
                           <button
                             onClick={() => deleteDependency(dep.id)}
-                            className="ml-auto text-red-500 hover:text-red-700"
+                            className="ml-auto text-red-500 hover:text-destructive"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
@@ -330,14 +423,14 @@ export function TaskEditModal() {
                     onClick={() => updateTask(task.id, { progressMode: 'time' })}
                     className={cn(
                       'p-3 rounded-lg border-2 text-left transition',
-                      task.progressMode === 'time' ? 'border-orange-400 bg-orange-50' : 'border-slate-200 hover:border-slate-300'
+                      task.progressMode === 'time' ? 'border-orange-400 bg-primary/10' : 'border-border hover:border-border'
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-slate-700" />
-                      <span className="text-sm font-medium text-slate-900">Según avance del tiempo</span>
+                      <TrendingUp className="w-4 h-4 text-foreground" />
+                      <span className="text-sm font-medium text-foreground">Según avance del tiempo</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-muted-foreground mt-1">
                       Calcula automáticamente el % en base a los días transcurridos sobre el total.
                     </p>
                   </button>
@@ -346,28 +439,28 @@ export function TaskEditModal() {
                     onClick={() => updateTask(task.id, { progressMode: 'manual', manualProgress: task.manualProgress ?? task.progress })}
                     className={cn(
                       'p-3 rounded-lg border-2 text-left transition',
-                      task.progressMode === 'manual' ? 'border-orange-400 bg-orange-50' : 'border-slate-200 hover:border-slate-300'
+                      task.progressMode === 'manual' ? 'border-orange-400 bg-primary/10' : 'border-border hover:border-border'
                     )}
                   >
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-slate-700" />
-                      <span className="text-sm font-medium text-slate-900">Manual</span>
+                      <TrendingUp className="w-4 h-4 text-foreground" />
+                      <span className="text-sm font-medium text-foreground">Manual</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-muted-foreground mt-1">
                       Permite ingresar manualmente el % cuando no es proporcional al tiempo.
                     </p>
                   </button>
                 </div>
               </div>
 
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-muted/30 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-slate-700">Avance actual</span>
-                  <span className="text-2xl font-bold text-slate-900">{task.progress}%</span>
+                  <span className="text-xs font-medium text-foreground">Avance actual</span>
+                  <span className="text-2xl font-bold text-foreground">{task.progress}%</span>
                 </div>
                 <Progress value={task.progress} className="h-3" />
                 {task.progressMode === 'time' && (
-                  <p className="text-[11px] text-slate-500 mt-2">
+                  <p className="text-[11px] text-muted-foreground mt-2">
                     Calculado automáticamente: {differenceInCalendarDays(new Date(), parseISO(task.startDate))} de {differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate)) + 1} días transcurridos.
                   </p>
                 )}
@@ -406,65 +499,13 @@ export function TaskEditModal() {
             </TabsContent>
 
             {/* ================================================================ */}
-            {/* TAB: COMENTARIOS */}
-            {/* ================================================================ */}
-            <TabsContent value="comentarios" className="mt-0">
-              <div className="flex flex-col h-[400px]">
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-                  {taskComments.length === 0 ? (
-                    <div className="text-center text-xs text-slate-400 py-8">
-                      No hay comentarios. Inicia la conversación.
-                    </div>
-                  ) : (
-                    taskComments.map(c => {
-                      const author = members.find(m => m.id === c.authorId);
-                      const isMe = c.authorId === currentUser.id;
-                      return (
-                        <div key={c.id} className={cn('flex gap-2', isMe && 'flex-row-reverse')}>
-                          <Avatar className="w-7 h-7 shrink-0">
-                            <AvatarFallback style={{ background: author?.avatarColor }} className="text-white text-[10px] font-semibold">
-                              {author?.initials}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className={cn('max-w-[75%]', isMe && 'text-right')}>
-                            <div className="text-[10px] text-slate-500 mb-0.5">
-                              {author?.name} · {format(parseISO(c.createdAt), "dd MMM HH:mm", { locale: es })}
-                            </div>
-                            <div className={cn(
-                              'inline-block px-3 py-2 rounded-lg text-xs',
-                              isMe ? 'bg-orange-500 text-white' : 'bg-slate-100 text-slate-800'
-                            )}>
-                              {c.text}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-                <div className="mt-3 pt-3 border-t border-slate-200 flex gap-2">
-                  <Input
-                    placeholder="Escribe un comentario..."
-                    value={newComment}
-                    onChange={e => setNewComment(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleAddComment()}
-                    className="flex-1"
-                  />
-                  <Button size="sm" onClick={handleAddComment} disabled={!newComment.trim()}>
-                    <Send className="w-3.5 h-3.5 mr-1" /> Enviar
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* ================================================================ */}
             {/* TAB: FINANCIERA */}
             {/* ================================================================ */}
             <TabsContent value="financiera" className="mt-0 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 {/* Presupuestado */}
                 <Card className="p-4">
-                  <div className="text-xs font-semibold text-slate-500 uppercase mb-3">Presupuestado</div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3">Presupuestado</div>
                   <div className="space-y-2">
                     <div>
                       <Label className="text-xs">Mano de obra</Label>
@@ -484,7 +525,7 @@ export function TaskEditModal() {
                         className="mt-1"
                       />
                     </div>
-                    <div className="pt-2 border-t border-slate-200 flex justify-between text-sm font-semibold">
+                    <div className="pt-2 border-t border-border flex justify-between text-sm font-semibold">
                       <span>Total</span>
                       <span>{formatCurrency(task.laborCost + task.materialsCost)}</span>
                     </div>
@@ -493,7 +534,7 @@ export function TaskEditModal() {
 
                 {/* Real */}
                 <Card className="p-4">
-                  <div className="text-xs font-semibold text-slate-500 uppercase mb-3">Costo real</div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3">Costo real</div>
                   <div className="space-y-2">
                     <div>
                       <Label className="text-xs">Mano de obra</Label>
@@ -513,7 +554,7 @@ export function TaskEditModal() {
                         className="mt-1"
                       />
                     </div>
-                    <div className="pt-2 border-t border-slate-200 flex justify-between text-sm font-semibold">
+                    <div className="pt-2 border-t border-border flex justify-between text-sm font-semibold">
                       <span>Total</span>
                       <span>{formatCurrency((task.realLaborCost || 0) + (task.realMaterialsCost || 0))}</span>
                     </div>
@@ -523,37 +564,37 @@ export function TaskEditModal() {
 
               {/* Desviación */}
               <Card className="p-4">
-                <div className="text-xs font-semibold text-slate-500 uppercase mb-3">Análisis de desviación</div>
+                <div className="text-xs font-semibold text-muted-foreground uppercase mb-3">Análisis de desviación</div>
                 <div className="grid grid-cols-4 gap-3 text-center">
                   <div>
-                    <div className="text-[10px] text-slate-500">Presupuestado</div>
-                    <div className="text-sm font-semibold text-slate-900 mt-1">{formatCurrency(task.laborCost + task.materialsCost)}</div>
+                    <div className="text-[10px] text-muted-foreground">Presupuestado</div>
+                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency(task.laborCost + task.materialsCost)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-500">Real</div>
-                    <div className="text-sm font-semibold text-slate-900 mt-1">{formatCurrency((task.realLaborCost || 0) + (task.realMaterialsCost || 0))}</div>
+                    <div className="text-[10px] text-muted-foreground">Real</div>
+                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency((task.realLaborCost || 0) + (task.realMaterialsCost || 0))}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-500">Desviación $</div>
+                    <div className="text-[10px] text-muted-foreground">Desviación $</div>
                     {(() => {
                       const planned = task.laborCost + task.materialsCost;
                       const real = (task.realLaborCost || 0) + (task.realMaterialsCost || 0);
                       const dev = real - planned;
                       return (
-                        <div className={cn('text-sm font-semibold mt-1', dev > 0 ? 'text-red-600' : dev < 0 ? 'text-emerald-600' : 'text-slate-900')}>
+                        <div className={cn('text-sm font-semibold mt-1', dev > 0 ? 'text-destructive' : dev < 0 ? 'text-emerald-600' : 'text-foreground')}>
                           {dev > 0 ? '+' : ''}{formatCurrency(dev)}
                         </div>
                       );
                     })()}
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-500">Desviación %</div>
+                    <div className="text-[10px] text-muted-foreground">Desviación %</div>
                     {(() => {
                       const planned = task.laborCost + task.materialsCost;
                       const real = (task.realLaborCost || 0) + (task.realMaterialsCost || 0);
                       const pct = planned > 0 ? ((real - planned) / planned) * 100 : 0;
                       return (
-                        <div className={cn('text-sm font-semibold mt-1', pct > 0 ? 'text-red-600' : pct < 0 ? 'text-emerald-600' : 'text-slate-900')}>
+                        <div className={cn('text-sm font-semibold mt-1', pct > 0 ? 'text-destructive' : pct < 0 ? 'text-emerald-600' : 'text-foreground')}>
                           {pct > 0 ? '+' : ''}{Math.round(pct)}%
                         </div>
                       );
@@ -567,7 +608,7 @@ export function TaskEditModal() {
                   if (Math.abs(dev) < 1) return null;
                   return (
                     <div className={cn('mt-3 p-2 rounded-md text-xs flex items-center gap-2',
-                      dev > 0 ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700')}>
+                      dev > 0 ? 'bg-destructive/10 text-destructive' : 'bg-emerald-50 text-emerald-700')}>
                       <AlertCircle className="w-4 h-4" />
                       <span>
                         {dev > 0
@@ -595,9 +636,11 @@ export function TaskEditModal() {
             </TabsContent>
           </div>
         </Tabs>
+          </div>
+        </div>
 
         {/* Footer */}
-        <DialogFooter className="px-6 py-3 border-t border-slate-200 bg-slate-50">
+        <DialogFooter className="px-6 py-3 border-t border-border bg-muted/30 shrink-0">
           <Button variant="outline" onClick={closeTaskModal}>Cerrar</Button>
         </DialogFooter>
       </DialogContent>
@@ -618,8 +661,8 @@ function AddDependencyForm({ taskId, otherTasks, onAdd }: {
   const [lagDays, setLagDays] = useState(0);
 
   return (
-    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-md">
-      <Link2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+    <div className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
+      <Link2 className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
       <Select value={depTaskId} onValueChange={setDepTaskId}>
         <SelectTrigger className="h-8 flex-1 text-xs"><SelectValue placeholder="Seleccionar tarea..." /></SelectTrigger>
         <SelectContent>
@@ -688,7 +731,7 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-md">
+      <div className="flex items-center gap-2 p-2 bg-muted/30 rounded-md">
         <Select value={newDocType} onValueChange={(v) => setNewDocType(v as any)}>
           <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue /></SelectTrigger>
           <SelectContent>
@@ -714,7 +757,7 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
       <input ref={fileInputRef} type="file" className="hidden" />
 
       {documents.length === 0 ? (
-        <div className="text-center text-xs text-slate-400 py-8">
+        <div className="text-center text-xs text-muted-foreground/70 py-8">
           No hay documentación cargada para esta tarea.
         </div>
       ) : (
@@ -723,19 +766,19 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
             const Icon = ICONS[doc.type];
             const uploader = useAppStore.getState().members.find(m => m.id === doc.uploadedById);
             return (
-              <div key={doc.id} className="flex items-center gap-3 p-2.5 rounded-md border border-slate-200 hover:border-slate-300 transition">
-                <div className="w-9 h-9 rounded-md bg-slate-100 flex items-center justify-center shrink-0">
-                  <Icon className="w-4 h-4 text-slate-600" />
+              <div key={doc.id} className="flex items-center gap-3 p-2.5 rounded-md border border-border hover:border-border transition">
+                <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-slate-900 truncate">{doc.name}</div>
-                  <div className="text-[10px] text-slate-500 mt-0.5">
+                  <div className="text-xs font-medium text-foreground truncate">{doc.name}</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">
                     {doc.type} · {(doc.size / 1024 / 1024).toFixed(1)} MB · {format(parseISO(doc.uploadedAt), "dd MMM yyyy", { locale: es })}
                   </div>
                 </div>
                 <button
                   onClick={() => updateTask(taskId, { documents: task.documents.filter(d => d.id !== doc.id) })}
-                  className="text-red-500 hover:text-red-700 p-1"
+                  className="text-red-500 hover:text-destructive p-1"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -801,7 +844,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground">
           {taskMaterials.length} materiales · Total: {formatCurrency(taskMaterials.reduce((s, m) => s + m.totalCost, 0))}
         </p>
         <Button size="sm" variant={showForm ? 'outline' : 'default'} onClick={() => setShowForm(!showForm)}>
@@ -810,7 +853,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
       </div>
 
       {showForm && (
-        <Card className="p-4 border-orange-200 bg-orange-50/30 space-y-3">
+        <Card className="p-4 border-orange-200 bg-primary/10/30 space-y-3">
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <Label className="text-xs">Nombre del material *</Label>
@@ -843,26 +886,26 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
           </div>
 
           {/* Scheduling */}
-          <div className="border-t border-slate-200 pt-3">
+          <div className="border-t border-border pt-3">
             <Label className="text-xs font-semibold">Programación del pedido</Label>
             <div className="grid grid-cols-2 gap-3 mt-1.5">
               <button
                 type="button"
                 onClick={() => setForm({ ...form, scheduleMode: 'relative' })}
                 className={cn('p-2.5 rounded-md border-2 text-left transition',
-                  form.scheduleMode === 'relative' ? 'border-orange-400 bg-white' : 'border-slate-200 hover:border-slate-300')}
+                  form.scheduleMode === 'relative' ? 'border-orange-400 bg-card' : 'border-border hover:border-border')}
               >
                 <div className="text-xs font-medium">Relativo a la tarea</div>
-                <p className="text-[10px] text-slate-500 mt-0.5">Ej: 1 mes antes del inicio. Se ajusta si se mueve la tarea.</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Ej: 1 mes antes del inicio. Se ajusta si se mueve la tarea.</p>
               </button>
               <button
                 type="button"
                 onClick={() => setForm({ ...form, scheduleMode: 'specific' })}
                 className={cn('p-2.5 rounded-md border-2 text-left transition',
-                  form.scheduleMode === 'specific' ? 'border-orange-400 bg-white' : 'border-slate-200 hover:border-slate-300')}
+                  form.scheduleMode === 'specific' ? 'border-orange-400 bg-card' : 'border-border hover:border-border')}
               >
                 <div className="text-xs font-medium">Fecha específica</div>
-                <p className="text-[10px] text-slate-500 mt-0.5">Una fecha fija en el calendario.</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Una fecha fija en el calendario.</p>
               </button>
             </div>
             {form.scheduleMode === 'specific' ? (
@@ -874,7 +917,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
               <div className="mt-2 flex items-center gap-3">
                 <Label className="text-xs whitespace-nowrap">Offset (días)</Label>
                 <Input type="number" value={form.relativeOffsetDays} onChange={e => setForm({ ...form, relativeOffsetDays: Number(e.target.value) })} className="h-8 w-24 text-xs" />
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-muted-foreground">
                   {form.relativeOffsetDays < 0
                     ? `${Math.abs(form.relativeOffsetDays)} días antes del inicio de la tarea (${format(parseISO(task.startDate), "dd MMM yyyy", { locale: es })})`
                     : form.relativeOffsetDays === 0
@@ -886,7 +929,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
           </div>
 
           {/* Notificaciones */}
-          <div className="border-t border-slate-200 pt-3">
+          <div className="border-t border-border pt-3">
             <Label className="text-xs font-semibold">Notificaciones</Label>
             <div className="flex items-center gap-2 mt-1.5">
               {[
@@ -902,7 +945,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
                     type="button"
                     onClick={() => toggleChannel(ch.id)}
                     className={cn('flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border transition',
-                      sel ? 'bg-orange-50 border-orange-300 text-orange-700' : 'bg-white border-slate-200 text-slate-600')}
+                      sel ? 'bg-primary/10 border-orange-300 text-primary' : 'bg-card border-border text-muted-foreground')}
                   >
                     <Icon className="w-3 h-3" /> {ch.label}
                   </button>
@@ -921,7 +964,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
                     type="button"
                     onClick={() => toggleMember(mid)}
                     className={cn('flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition',
-                      sel ? 'bg-orange-50 border-orange-300 text-orange-700' : 'bg-white border-slate-200 text-slate-600')}
+                      sel ? 'bg-primary/10 border-orange-300 text-primary' : 'bg-card border-border text-muted-foreground')}
                   >
                     <span className="w-4 h-4 rounded-full text-white text-[8px] font-semibold flex items-center justify-center" style={{ background: m.avatarColor }}>
                       {m.initials}
@@ -943,7 +986,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
 
       {/* Lista de materiales existentes */}
       {taskMaterials.length === 0 ? (
-        <div className="text-center text-xs text-slate-400 py-8">
+        <div className="text-center text-xs text-muted-foreground/70 py-8">
           No hay materiales cargados para esta tarea.
         </div>
       ) : (
@@ -955,23 +998,23 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-slate-500 shrink-0" />
-                      <span className="text-sm font-medium text-slate-900">{m.name}</span>
+                      <Package className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <span className="text-sm font-medium text-foreground">{m.name}</span>
                       <Badge variant="outline" className="text-[10px] capitalize">{m.kanbanStatus}</Badge>
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-1">
-                      {m.quantity} {m.unit} × {formatCurrency(m.unitCost)} = <span className="font-semibold text-slate-700">{formatCurrency(m.totalCost)}</span>
+                    <div className="text-[11px] text-muted-foreground mt-1">
+                      {m.quantity} {m.unit} × {formatCurrency(m.unitCost)} = <span className="font-semibold text-foreground">{formatCurrency(m.totalCost)}</span>
                       {m.supplier && <span> · {m.supplier}</span>}
                     </div>
                     <div className="flex items-center gap-2 mt-1.5 text-[11px]">
                       <Bell className="w-3 h-3 text-orange-500" />
-                      <span className="text-slate-600">
+                      <span className="text-muted-foreground">
                         {m.scheduleMode === 'specific'
                           ? `Pedido programado: ${schedDate ? format(parseISO(schedDate), "dd MMM yyyy", { locale: es }) : 'sin fecha'}`
                           : `${Math.abs(m.relativeOffsetDays || 0)} días antes del inicio de la tarea · ${schedDate ? format(parseISO(schedDate), "dd MMM yyyy", { locale: es }) : ''}`}
                       </span>
-                      <span className="text-slate-400">·</span>
-                      <span className="text-slate-600">
+                      <span className="text-muted-foreground/70">·</span>
+                      <span className="text-muted-foreground">
                         Notificar: {m.channels.join(', ')} → {m.notifyMemberIds.length} personas
                       </span>
                     </div>
@@ -990,7 +1033,7 @@ function MaterialsTab({ taskId, obraId }: { taskId: string; obraId: string }) {
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-7 text-red-600"
+                      className="h-7 text-destructive"
                       onClick={() => deleteMaterial(m.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
