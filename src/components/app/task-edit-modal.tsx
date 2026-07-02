@@ -82,7 +82,7 @@ export function TaskEditModal() {
 
   return (
     <Dialog open={isTaskModalOpen} onOpenChange={(o) => !o && closeTaskModal()}>
-      <DialogContent className="max-w-6xl p-0 gap-0 max-h-[92vh] overflow-hidden flex flex-col">
+      <DialogContent className="!max-w-[95vw] !w-[95vw] p-0 gap-0 max-h-[95vh] overflow-hidden flex flex-col sm:!max-w-[95vw]">
         {/* Header */}
         <DialogHeader className="px-6 pt-5 pb-3 border-b border-border shrink-0">
           <div className="flex items-start justify-between">
@@ -102,7 +102,7 @@ export function TaskEditModal() {
                 {obra.name} · {format(parseISO(task.startDate), "dd MMM yyyy", { locale: es })} - {format(parseISO(task.endDate), "dd MMM yyyy", { locale: es })}
               </DialogDescription>
             </div>
-            <div className="flex items-center gap-2 ml-3">
+            <div className="flex items-center gap-2 ml-3 shrink-0">
               <Badge className="bg-primary/15 text-primary text-[10px]">{task.progress}%</Badge>
               <Button variant="ghost" size="sm" className="text-destructive h-8" onClick={() => {
                 if (confirm('¿Eliminar tarea?')) { deleteTask(task.id); closeTaskModal(); }
@@ -114,9 +114,9 @@ export function TaskEditModal() {
         </DialogHeader>
 
         {/* Cuerpo: chat lateral izquierdo + contenido principal */}
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Chat lateral izquierdo - siempre visible */}
-          <aside className="w-72 border-r border-border bg-muted/30 flex flex-col shrink-0">
+          <aside className="w-64 border-r border-border bg-muted/30 flex flex-col shrink-0 min-h-0">
             <div className="px-3 py-2 border-b border-border flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-xs font-semibold text-foreground">Comentarios</span>
@@ -173,30 +173,30 @@ export function TaskEditModal() {
           </aside>
 
           {/* Contenido principal con tabs */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="justify-start bg-transparent border-b border-border rounded-none px-4 h-auto p-0 shrink-0">
-            <TabsTrigger value="fechas" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden min-w-0">
+          <TabsList className="justify-start bg-transparent border-b border-border rounded-none px-4 h-auto p-0 shrink-0 overflow-x-auto">
+            <TabsTrigger value="fechas" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3 shrink-0">
               <Calendar className="w-3.5 h-3.5" /> Fechas y Deps
             </TabsTrigger>
-            <TabsTrigger value="avance" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="avance" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3 shrink-0">
               <TrendingUp className="w-3.5 h-3.5" /> Avance
             </TabsTrigger>
-            <TabsTrigger value="financiera" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="financiera" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3 shrink-0">
               <Wallet className="w-3.5 h-3.5" /> Financiera
             </TabsTrigger>
-            <TabsTrigger value="documentacion" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="documentacion" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3 shrink-0">
               <FileText className="w-3.5 h-3.5" /> Documentación
               {task.documents.length > 0 && <Badge className="bg-muted text-muted-foreground text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{task.documents.length}</Badge>}
             </TabsTrigger>
-            <TabsTrigger value="materiales" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3">
+            <TabsTrigger value="materiales" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs gap-1.5 py-2.5 px-3 shrink-0">
               <Package className="w-3.5 h-3.5" /> Materiales
               {taskMaterials.length > 0 && <Badge className="bg-muted text-muted-foreground text-[9px] px-1 py-0 h-3.5 min-w-3.5 flex items-center justify-center">{taskMaterials.length}</Badge>}
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 py-4 min-w-0">
             {/* ================================================================ */}
             {/* TAB: FECHAS Y DEPENDENCIAS */}
             {/* ================================================================ */}
