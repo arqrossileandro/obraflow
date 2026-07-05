@@ -67,6 +67,74 @@ export interface Task {
   priority: 'baja' | 'media' | 'alta' | 'critica';
   status: 'no_iniciada' | 'en_curso' | 'pausada' | 'finalizada';
   createdAt: string;
+  // --- Mobile field work ---
+  photos?: TaskPhoto[];     // fotos de avance tomadas desde el celular
+  voiceNotes?: VoiceNote[]; // notas de voz tomadas desde el celular
+  paymentType?: 'certificado' | 'pactado' | 'jornalizado';
+  jornalRoles?: JurnalRole[];
+  pactadoAmount?: number;
+  equipmentCost?: number;
+  paidAmount?: number;
+  cacEnabled?: boolean;
+  cacBaseMonth?: string;
+  notifications?: TaskNotification[];
+}
+
+export interface TaskPhoto {
+  id: ID;
+  taskId: ID;
+  dataUrl: string;     // base64 — vive en localStorage
+  takenAt: string;     // ISO timestamp
+  takenById: ID;
+  takenByName?: string;
+  geo?: { lat: number; lng: number };
+  caption?: string;
+  progressAtCapture?: number; // % de avance al momento de la foto
+}
+
+export interface VoiceNote {
+  id: ID;
+  taskId: ID;
+  dataUrl: string;     // base64 audio/webm
+  durationSec: number;
+  takenAt: string;
+  takenById: ID;
+  transcript?: string;
+}
+
+export interface JurnalRole {
+  id: ID;
+  name: string;        // Oficial, Medio Oficial, Peón, etc.
+  count: number;
+  dailyCost: number;
+}
+
+export interface TaskNotification {
+  id: ID;
+  taskId: ID;
+  type: 'material' | 'dependency' | 'manual' | 'overdue' | 'unblock';
+  message: string;
+  severity: 'info' | 'warning' | 'critical';
+  triggerDate: string;
+  channels: ('app' | 'email' | 'whatsapp')[];
+  triggered?: boolean;
+}
+
+export interface AppNotification {
+  id: ID;
+  obraId: ID;
+  taskId?: ID;
+  type: 'task_unblocked' | 'task_blocked' | 'task_overdue' | 'material_due' | 'payment_due' | 'mention';
+  title: string;
+  message: string;
+  createdAt: string;
+  read: boolean;
+  severity: 'info' | 'warning' | 'critical';
+}
+
+export interface CACEntry {
+  month: string;   // YYYY-MM
+  value: number;   // índice
 }
 
 export interface Document {
@@ -150,7 +218,10 @@ export type ViewKey =
   | 'chat'
   | 'kanban'
   | 'members'
-  | 'settings';
+  | 'settings'
+  | 'mobile_today'
+  | 'mobile_blockers'
+  | 'mobile_sequence';
 
 export type GanttScale = 'semana' | 'quincena' | 'mes';
 

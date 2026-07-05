@@ -14,6 +14,9 @@ import { format, parseISO, differenceInCalendarDays, isAfter, isBefore, addDays 
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { computeMaterialScheduledDate } from '@/lib/store';
+import { TodayWidget } from '@/components/app/today-widget';
+import { BlockersWidget } from '@/components/app/blockers-widget';
+import { UnblocksWidget } from '@/components/app/unblocks-widget';
 
 const STATUS_COLORS: Record<string, string> = {
   no_iniciada: 'bg-slate-200 text-foreground',
@@ -112,6 +115,13 @@ export function DashboardView() {
             <Plus className="w-3.5 h-3.5 mr-1" /> Nueva tarea
           </Button>
         </div>
+      </div>
+
+      {/* Workday widgets — highlights operativos del día */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <TodayWidget />
+        <BlockersWidget />
+        <UnblocksWidget />
       </div>
 
       {/* KPIs principales */}

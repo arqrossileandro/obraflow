@@ -3,8 +3,10 @@ import { persist } from 'zustand/middleware';
 import { addDays, differenceInCalendarDays, formatISO, parseISO } from 'date-fns';
 import type {
   Obra, Task, Dependency, Material, Comment, ChatMessage,
-  Member, Certificate, ID, ViewKey, GanttScale
+  Member, Certificate, ID, ViewKey, GanttScale,
+  TaskPhoto, VoiceNote, AppNotification, CACEntry
 } from '@/types';
+import { generateUnblockNotifications } from '@/lib/workday';
 
 // ============================================================================
 // Datos mock - Constructora "Edificar SA"
@@ -553,6 +555,51 @@ const chatMessages: ChatMessage[] = [
 // Store Zustand
 // ============================================================================
 
+// ----- CAC (Índice Cámara Argentina de la Construcción) -----
+export const CAC_DATA: CACEntry[] = [
+  { month: '2025-01', value: 92.5 },
+  { month: '2025-02', value: 93.1 },
+  { month: '2025-03', value: 94.0 },
+  { month: '2025-04', value: 95.2 },
+  { month: '2025-05', value: 96.1 },
+  { month: '2025-06', value: 97.0 },
+  { month: '2025-07', value: 97.8 },
+  { month: '2025-08', value: 98.5 },
+  { month: '2025-09', value: 99.2 },
+  { month: '2025-10', value: 99.6 },
+  { month: '2025-11', value: 99.8 },
+  { month: '2025-12', value: 100.0 },
+  { month: '2026-01', value: 101.5 },
+  { month: '2026-02', value: 103.2 },
+  { month: '2026-03', value: 104.8 },
+  { month: '2026-04', value: 106.5 },
+  { month: '2026-05', value: 108.3 },
+  { month: '2026-06', value: 110.1 },
+];
+
+export const getCACValue = (cacData: CACEntry[], month: string): number => {
+  const entry = cacData.find(e => e.month === month);
+  return entry ? entry.value : 0;
+};
+
+export const getLatestCAC = (cacData: CACEntry[]): number => {
+  if (cacData.length === 0) return 100;
+  const sorted = [...cacData].sort((a, b) => b.month.localeCompare(a.month));
+  return sorted[0].value;
+};
+
+export const calcCACFactor = (cacData: CACEntry[], baseMonth: string | undefined): number => {
+  if (!baseMonth) return 1;
+  const baseValue = getCACValue(cacData, baseMonth);
+  const currentValue = getLatestCAC(cacData);
+  if (baseValue === 0) return 1;
+  return currentValue / baseValue;
+};
+
+export const applyCAC = (amount: number, factor: number): number => {
+  return Math.round(amount * factor);
+};
+
 interface AppState {
   // Datos
   obras: Obra[];
@@ -570,6 +617,12 @@ interface AppState {
   editingTaskId: ID | null;
   isTaskModalOpen: boolean;
   currentUser: Member;
+
+  // CAC (Índice Cámara Argentina de la Construcción)
+  cacData: CACEntry[];
+
+  // App notifications
+  notifications: AppNotification[];
 
   // Acciones UI
   setSelectedObra: (id: ID | 'all') => void;
@@ -613,6 +666,26 @@ interface AppState {
   addMember: (m: Partial<Member>) => void;
   updateMember: (id: ID, patch: Partial<Member>) => void;
   deleteMember: (id: ID) => void;
+
+  // CAC
+  addCacEntry: (month: string, value: number) => void;
+  updateCacEntry: (month: string, value: number) => void;
+  deleteCacEntry: (month: string) => void;
+
+  // Mobile field work
+  addTaskPhoto: (taskId: ID, photo: Omit<TaskPhoto, 'id' | 'taskId'>) => void;
+  deleteTaskPhoto: (taskId: ID, photoId: ID) => void;
+  addVoiceNote: (taskId: ID, note: Omit<VoiceNote, 'id' | 'taskId'>) => void;
+  deleteVoiceNote: (taskId: ID, noteId: ID) => void;
+  setTaskProgressMobile: (taskId: ID, progress: number) => void;
+
+  // App notifications
+  markNotificationRead: (id: ID) => void;
+  markAllNotificationsRead: () => void;
+  pushNotification: (n: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => void;
+
+  // Undo
+  undo: () => void;
 }
 
 const calcProgress = (task: Task, allTasks: Task[]): number => {
@@ -924,9 +997,101 @@ export const useAppStore = create<AppState>()(
         set(s => ({ members: s.members.map(m => m.id === id ? { ...m, ...patch } : m) })),
       deleteMember: (id) =>
         set(s => ({ members: s.members.filter(m => m.id !== id) })),
+
+      // ===== CAC =====
+      cacData: CAC_DATA,
+      addCacEntry: (month, value) =>
+        set(s => {
+          const exists = s.cacData.find(e => e.month === month);
+          if (exists) {
+            return { cacData: s.cacData.map(e => e.month === month ? { ...e, value } : e) };
+          }
+          return { cacData: [...s.cacData, { month, value }].sort((a, b) => a.month.localeCompare(b.month)) };
+        }),
+      updateCacEntry: (month, value) =>
+        set(s => ({ cacData: s.cacData.map(e => e.month === month ? { ...e, value } : e) })),
+      deleteCacEntry: (month) =>
+        set(s => ({ cacData: s.cacData.filter(e => e.month !== month) })),
+
+      // ===== Mobile field work =====
+      addTaskPhoto: (taskId, photo) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, photos: [...(t.photos || []), { ...photo, id: `ph${Date.now()}`, taskId }] }
+            : t),
+        })),
+      deleteTaskPhoto: (taskId, photoId) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, photos: (t.photos || []).filter(p => p.id !== photoId) }
+            : t),
+        })),
+      addVoiceNote: (taskId, note) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, voiceNotes: [...(t.voiceNotes || []), { ...note, id: `vn${Date.now()}`, taskId }] }
+            : t),
+        })),
+      deleteVoiceNote: (taskId, noteId) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, voiceNotes: (t.voiceNotes || []).filter(v => v.id !== noteId) }
+            : t),
+        })),
+      setTaskProgressMobile: (taskId, progress) =>
+        set(s => {
+          const clamped = Math.max(0, Math.min(100, Math.round(progress)));
+          const prevTask = s.tasks.find(t => t.id === taskId);
+          const wasComplete = prevTask ? prevTask.progress >= 100 : false;
+          const isNowComplete = clamped >= 100;
+          const newTasks = s.tasks.map(t => t.id === taskId
+            ? {
+                ...t,
+                progress: clamped,
+                manualProgress: clamped,
+                progressMode: 'manual' as const,
+                status: clamped === 0 ? 'no_iniciada' as const
+                  : clamped >= 100 ? 'finalizada' as const
+                  : (t.status === 'no_iniciada' ? 'en_curso' as const : t.status),
+              }
+            : t
+          );
+          // Si la tarea pasó a 100%, generar notificaciones de desbloqueo para las sucesoras
+          let newNotifications = s.notifications;
+          if (!wasComplete && isNowComplete) {
+            const task = newTasks.find(t => t.id === taskId);
+            if (task) {
+              const unblocks = generateUnblockNotifications(newTasks, s.dependencies, task.obraId, taskId);
+              if (unblocks.length > 0) {
+                newNotifications = [...unblocks, ...s.notifications];
+              }
+            }
+          }
+          return { tasks: newTasks, notifications: newNotifications };
+        }),
+
+      // ===== App notifications =====
+      notifications: [],
+      markNotificationRead: (id) =>
+        set(s => ({ notifications: s.notifications.map(n => n.id === id ? { ...n, read: true } : n) })),
+      markAllNotificationsRead: () =>
+        set(s => ({ notifications: s.notifications.map(n => ({ ...n, read: true })) })),
+      pushNotification: (n) =>
+        set(s => ({
+          notifications: [{
+            ...n,
+            id: `n${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            createdAt: new Date().toISOString(),
+            read: false,
+          }, ...s.notifications].slice(0, 100),
+        })),
+
+      // ===== Undo (no-op por ahora) =====
+      undo: () => {},
     }),
     {
-      name: 'obras-store',
+      name: 'obras-store-v6',
+      version: 6,
       partialize: (s) => ({
         obras: s.obras,
         tasks: s.tasks,
@@ -937,6 +1102,8 @@ export const useAppStore = create<AppState>()(
         members: s.members,
         selectedObraId: s.selectedObraId,
         ganttScale: s.ganttScale,
+        cacData: s.cacData,
+        notifications: s.notifications,
       }),
     }
   )

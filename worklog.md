@@ -1,0 +1,83 @@
+---
+Task ID: 2
+Agent: Super Z (main)
+Task: Implementar sistema mobile-first (Hoy / Bloqueos / Secuencia) + widgets de desktop compartidos
+
+Work Log:
+- Leí `types/index.ts`, `lib/store.ts`, `views/dashboard.tsx`, `components/app/sidebar.tsx`, `app/page.tsx` para entender la estructura actual.
+- Extendí `types/index.ts`:
+  - Agregué a `Task` los campos `photos`, `voiceNotes`, `paymentType`, `jornalRoles`, `pactadoAmount`, `equipmentCost`, `paidAmount`, `cacEnabled`, `cacBaseMonth`, `notifications`.
+  - Nuevas interfaces: `TaskPhoto`, `VoiceNote`, `JurnalRole`, `TaskNotification`, `AppNotification`, `CACEntry`.
+  - Agregué a `ViewKey` las vistas mobile: `mobile_today`, `mobile_blockers`, `mobile_sequence`.
+- Creé `src/lib/workday.ts` con lógica pura compartida:
+  - `isTaskActiveToday`, `isTaskOverdue`, `getTaskBlockers`
+  - `getTodayTasks` (lista ordenada: atrasadas → critica → alta → por fecha fin)
+  - `getActiveBlockers` (tareas con predecesoras FS no terminadas, inicio <= hoy+7d)
+  - `getUpcomingUnblocks` (tareas en curso que terminan en 7d y desbloquean otras)
+  - `getTaskSequence` (árbol de dependencias FS centrado en una tarea)
+  - `generateUnblockNotifications` (notificaciones cuando una tarea llega a 100%)
+  - `formatRelativeDate`, `getTaskUrgency`, `URGENCY_STYLES` (colores por urgencia)
+- Extendí `lib/store.ts`:
+  - Agregué `cacData`, `notifications` al estado
+  - Agregué acciones: `addCacEntry`, `updateCacEntry`, `deleteCacEntry`, `addTaskPhoto`, `deleteTaskPhoto`, `addVoiceNote`, `deleteVoiceNote`, `setTaskProgressMobile`, `markNotificationRead`, `markAllNotificationsRead`, `pushNotification`, `undo`
+  - `setTaskProgressMobile` cambia progress, manualProgress, progressMode a 'manual', status (0→no_iniciada, 100→finalizada, otro→en_curso), y si llega a 100% genera notificaciones de desbloqueo para las sucesoras
+  - Agregué `CAC_DATA` (índices CAC mensuales 2025-01 a 2026-06) + funciones helper `getCACValue`, `getLatestCAC`, `calcCACFactor`, `applyCAC`
+  - Incrementé persist version a `obras-store-v6` e incluí cacData y notifications en partialize
+- Creé 3 widgets de desktop (`components/app/`):
+  - `today-widget.tsx` — top 5 tareas activas hoy, con badge de bloqueos y atrasadas
+  - `blockers-widget.tsx` — tareas frenadas con sus bloqueantes (no se renderiza si no hay)
+  - `unblocks-widget.tsx` — próximos desbloqueos en 7 días (no se renderiza si no hay)
+- Actualicé `views/dashboard.tsx`:
+  - Agregué fila de 3 widgets (lg:grid-cols-3) justo después del header y antes de los KPIs principales
+  - Los widgets usan la misma lógica que las tabs mobile — coherencia total
+- Creé 3 vistas mobile (`views/`):
+  - `mobile-today.tsx` — agrupado por gremio, cards expandibles con:
+    - Barra de progreso + % grande
+    - 4 quick buttons (25/50/75/100) — touch friendly
+    - Slider fino con step 10 (touch-action: pan-y para no romper scroll vertical)
+    - Botón Foto: input file con capture=environment, redimensiona a 1024px JPEG 0.7, opcional caption, opcional GPS
+    - Botón Voz: MediaRecorder API, hasta 60s, audio/webm base64
+    - Galería de fotos existentes con thumbnail + % al momento de captura + delete
+    - Reproductor de notas de voz existentes
+  - `mobile-blockers.tsx` — lista de tareas bloqueadas con:
+    - Para cada bloqueante: nombre, % de avance, badge de estado
+    - Botones circulares de llamada (tel:) y WhatsApp (wa.me) al responsable de la tarea bloqueante
+    - Mensaje de WhatsApp pre-escrito: "Hola {nombre}, te consulto por la tarea X que está bloqueando a Y..."
+  - `mobile-sequence.tsx` — navegación de árbol de dependencias:
+    - Lista inicial para elegir tarea (con badges # bloqueantes y # desbloqueadas)
+    - Vista centrada: arriba bloqueantes (rojo), centro tarea actual, abajo desbloqueadas (verde)
+    - Tap en cualquier tarea navega el árbol
+- Creé `components/app/mobile-nav.tsx`:
+  - `MobileBottomNav` — bottom nav fija con 4 tabs (Hoy / Bloqueos / Secuencia / Gantt) + badge de notificaciones no leídas en Bloqueos
+  - `MobileTopBar` — top bar con logo, selector de obra (color dot + nombre), theme toggle, bell de notificaciones
+- Actualicé `app/page.tsx`:
+  - Detecta mobile con `useIsMobile()`
+  - Si es mobile + obra seleccionada → layout mobile: MobileTopBar + main + MobileBottomNav, renderiza solo vistas mobile + Gantt + Settings + Members + Chat
+  - Si no, layout desktop original (Sidebar + Topbar + main)
+  - useEffect redirige vistas desktop-only a mobile_today en mobile
+- Verifiqué `npx tsc --noEmit` — 0 errores en src/
+- Verifiqué dev server compila y responde 200
+
+Stage Summary:
+- Nuevos archivos:
+  - `src/lib/workday.ts` (lógica compartida)
+  - `src/components/app/today-widget.tsx`
+  - `src/components/app/blockers-widget.tsx`
+  - `src/components/app/unblocks-widget.tsx`
+  - `src/components/app/mobile-nav.tsx`
+  - `src/views/mobile-today.tsx`
+  - `src/views/mobile-blockers.tsx`
+  - `src/views/mobile-sequence.tsx`
+- Modificados:
+  - `src/types/index.ts` (Task extendido + 6 nuevas interfaces + ViewKey +3)
+  - `src/lib/store.ts` (AppState extendido, CAC, fotos, voz, notificaciones, persist v6)
+  - `src/views/dashboard.tsx` (3 widgets arriba)
+  - `src/app/page.tsx` (layout mobile/desktop switch)
+- Características implementadas:
+  - Desktop: 3 widgets de highlights operativos en el Dashboard
+  - Mobile: 3 tabs (Hoy / Bloqueos / Secuencia) + Gantt landscape
+  - Mobile HOY: slider + quick buttons 25/50/75/100 + foto con GPS + voz + galería
+  - Mobile BLOQUEOS: una-tap llamar/WhatsApp al responsable de cada tarea bloqueante
+  - Mobile SECUENCIA: árbol de dependencias centrado en tarea, navegable
+  - Notificaciones de desbloqueo: cuando una tarea llega a 100%, las sucesoras sin otros bloqueos generan notificación
+  - CAC index: datos mensuales + funciones helper (la UI de edición está en settings)

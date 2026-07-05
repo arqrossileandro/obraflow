@@ -157,24 +157,25 @@ export function FinanzasView() {
   const totalDeviationPct = totalPlanned > 0 ? (totalDeviation / totalPlanned) * 100 : 0;
 
   // Alertas
-  const alerts = [];
+  type AlertSeverity = 'high' | 'critical' | 'medium';
+  const alerts: { severity: AlertSeverity; title: string; message: string }[] = [];
   if (totalDeviation > 0) {
     alerts.push({
-      severity: 'high' as const,
+      severity: 'high',
       title: 'Obra sobre presupuesto',
       message: `La obra supera el presupuesto planificado en ${formatCurrency(totalDeviation)} (${Math.round(totalDeviationPct)}%).`,
     });
   }
   if (budgetPct > 80) {
     alerts.push({
-      severity: budgetPct > 100 ? 'critical' as const : 'high' as const,
+      severity: budgetPct > 100 ? 'critical' : 'high',
       title: 'Presupuesto de obra',
       message: `Se ha ejecutado el ${Math.round(budgetPct)}% del presupuesto total de la obra.`,
     });
   }
   taskDeviations.filter(t => t.deviationPct > 10).forEach(t => {
     alerts.push({
-      severity: 'medium' as const,
+      severity: 'medium',
       title: `Desviación en: ${t.name}`,
       message: `Supera el planificado en ${formatCurrency(Math.abs(t.deviation))} (${Math.round(t.deviationPct)}%).`,
     });
