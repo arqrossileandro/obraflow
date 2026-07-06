@@ -1,0 +1,5996 @@
+{
+  "plomeria": {
+    "monto_total": 166000000,
+    "modules": {
+      "M12": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 1552500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 1863000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0.1,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.049999999999999996,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.049999999999999996,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.049999999999999996,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.049999999999999996,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 496800.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 434700.00000000006,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.4,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M11": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 1552500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 1863000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0.1,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 496800.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 434700.00000000006,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.4000000000000001,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M10": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 1552500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 1863000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0.1,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.05,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 496800.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 434700.00000000006,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.4000000000000001,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M09": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 1552500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 1863000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 496800.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 434700.00000000006,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M08": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 1552500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 1863000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 496800.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 621000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 434700.00000000006,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M07": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M06": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M05": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M13": {
+        "start_month": "NOVIEMBRE",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M04": {
+        "start_month": "NOVIEMBRE",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M03": {
+        "start_month": "NOVIEMBRE",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M02": {
+        "start_month": "FEBRERO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      },
+      "M01": {
+        "start_month": "FEBRERO",
+        "items": [
+          {
+            "section": "AGUA",
+            "name": "AGUA",
+            "pct": 0.25,
+            "amount": 2264062.5,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 1",
+            "name": "Baño dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baño dormi 2",
+            "name": "Baño dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CLOACALES",
+            "name": "CLOACALES",
+            "pct": 0.3,
+            "amount": 2716875.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.1,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "PLUVIALES",
+            "name": "PLUVIALES",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "GAS",
+            "name": "GAS",
+            "pct": 0.08,
+            "amount": 724500.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "General",
+            "name": "General",
+            "pct": 0.08,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CALEFACCIÓN",
+            "name": "CALEFACCIÓN",
+            "pct": 0.1,
+            "amount": 905625.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "2/4 ambs",
+            "name": "2/4 ambs",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Acceso duplex",
+            "name": "Acceso duplex",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Estar",
+            "name": "Estar",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 1",
+            "name": "Dormi 1",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Dormi 2",
+            "name": "Dormi 2",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "ESPECIALES",
+            "name": "ESPECIALES",
+            "pct": 0.07,
+            "amount": 633937.5000000001,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Bacha parrilla",
+            "name": "Bacha parrilla",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Canilla exterior",
+            "name": "Canilla exterior",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "Gabinetes de gas",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Gabinetes de gas",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 0
+      }
+    }
+  },
+  "albanileria": {
+    "monto_total": 35000000,
+    "pagos_quincenales": [
+      {
+        "period": "MAYO",
+        "amount": 8101600.0
+      }
+    ],
+    "modules": {
+      "M11": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0.12000000000000001,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.03,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0.12000000000000001,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.01,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.03,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.51,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 3840000.0
+      },
+      "M10": {
+        "start_month": "MAYO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0.12000000000000001,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0.02,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.03,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0.12000000000000001,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0.06,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.01,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0.03,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.51,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 3840000.0
+      },
+      "M08": {
+        "start_month": "JUNIO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0.07,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0.07,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      },
+      "M07": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      },
+      "M05": {
+        "start_month": "AGOSTO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      },
+      "M04": {
+        "start_month": "NOVIEMBRE",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      },
+      "M13": {
+        "start_month": "NOVIEMBRE",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      },
+      "M02": {
+        "start_month": "FEBRERO",
+        "items": [
+          {
+            "section": "MAMPOSTERIA",
+            "name": "MAMPOSTERIA",
+            "pct": 0.16999999999999998,
+            "amount": 5949999.999999999,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo Brimax",
+            "name": "Módulo completo Brimax",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "name": "Contenciones de acceso a P.B. (Promedio 5m x 0,7h con viga de fundacion)",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "REVOQUES",
+            "name": "REVOQUES",
+            "pct": 0.15,
+            "amount": 5250000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Módulo completo",
+            "name": "Módulo completo",
+            "pct": 0.15,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "AISLACIONES",
+            "name": "AISLACIONES",
+            "pct": 0.12,
+            "amount": 4200000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Webertec (Exterior + duchas)",
+            "name": "Webertec (Exterior + duchas)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "name": "Exterior (Memb. líquida - incluye cantero dormi)",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CONTRAPISOS",
+            "name": "CONTRAPISOS",
+            "pct": 0.18,
+            "amount": 6300000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Interior duplex",
+            "name": "Interior duplex",
+            "pct": 0.12,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "CARPETAS",
+            "name": "CARPETAS",
+            "pct": 0.06,
+            "amount": 2100000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Exterior",
+            "name": "Exterior",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "HORMIGÓN",
+            "name": "HORMIGÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banco Tromen",
+            "name": "Banco Tromen",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Parrilla",
+            "name": "Parrilla",
+            "pct": 0.05,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Banquinas (Parrilla + bauleras)",
+            "name": "Banquinas (Parrilla + bauleras)",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso vehicular",
+            "name": "Losetones acceso vehicular",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Losetones acceso peatonal",
+            "name": "Losetones acceso peatonal",
+            "pct": 0.02,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "COLOCACIÓN",
+            "name": "COLOCACIÓN",
+            "pct": 0.16,
+            "amount": 5600000.0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Pisos",
+            "name": "Pisos",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Baños",
+            "name": "Baños",
+            "pct": 0.06,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Cocina",
+            "name": "Cocina",
+            "pct": 0.03,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "Refractarios parrilla",
+            "pct": 0.01,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": true
+          },
+          {
+            "section": "Refractarios parrilla",
+            "name": "TOTAL OBRA",
+            "pct": 1.0,
+            "amount": 0,
+            "finalizado": 0,
+            "is_section_header": false
+          }
+        ],
+        "monto_total": 35000000.0,
+        "anticipo": 0
+      }
+    }
+  },
+  "hormigon": {
+    "llenadas": [
+      {
+        "date": "2026-04-07",
+        "description": "Losa s/P.B.",
+        "m3": 110.0,
+        "modules": [
+          "M6",
+          "M7"
+        ],
+        "period": "ABRIL"
+      },
+      {
+        "date": "2026-04-07",
+        "description": "Losa s/dormi 2",
+        "m3": 41.8,
+        "modules": [
+          "M8",
+          "M9"
+        ],
+        "period": "ABRIL"
+      },
+      {
+        "date": "2026-04-27",
+        "description": "Losa s/P.B.",
+        "m3": 110.0,
+        "modules": [
+          "M4",
+          "M5"
+        ],
+        "period": "ABRIL"
+      },
+      {
+        "date": "2026-04-27",
+        "description": "Losa s/garaje",
+        "m3": 66.3,
+        "modules": [
+          "M6",
+          "M7"
+        ],
+        "period": "ABRIL"
+      },
+      {
+        "date": "2026-05-12",
+        "description": "Losa s/estar",
+        "m3": 40.4,
+        "modules": [],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-14",
+        "description": "Losa s/garaje",
+        "m3": 33.15,
+        "modules": [
+          "M5"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-14",
+        "description": "Losa s/acceso duplex",
+        "m3": 26.5,
+        "modules": [
+          "M4"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-14",
+        "description": "Losa s/estar",
+        "m3": 20.2,
+        "modules": [
+          "M7"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-14",
+        "description": "Escaleras/Otros",
+        "m3": 1.5,
+        "modules": [
+          "M8"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-21",
+        "description": "Losa s/garaje",
+        "m3": 33.15,
+        "modules": [
+          "M13"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-21",
+        "description": "Losa s/acceso duplex",
+        "m3": 53.0,
+        "modules": [
+          "M13",
+          "M5"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-21",
+        "description": "Losa s/estar",
+        "m3": 40.4,
+        "modules": [
+          "M4",
+          "M6"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-05-21",
+        "description": "Losa s/dormi 1",
+        "m3": 23.1,
+        "modules": [
+          "M7"
+        ],
+        "period": "MAYO"
+      },
+      {
+        "date": "2026-06-02",
+        "description": "Losa s/estar",
+        "m3": 40.4,
+        "modules": [
+          "M13",
+          "M5"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-02",
+        "description": "Losa s/dormi 1",
+        "m3": 46.2,
+        "modules": [
+          "M4",
+          "M6"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-02",
+        "description": "Losa s/dormi 2",
+        "m3": 20.9,
+        "modules": [
+          "M7"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-02",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [
+          "M9"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-16",
+        "description": "Losa s/dormi 1",
+        "m3": 46.2,
+        "modules": [
+          "M13",
+          "M5"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-16",
+        "description": "Losa s/dormi 2",
+        "m3": 62.699999999999996,
+        "modules": [
+          "M13",
+          "M4",
+          "M6"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-16",
+        "description": "Escaleras/Otros",
+        "m3": 4.5,
+        "modules": [],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-30",
+        "description": "Losa s/dormi 2",
+        "m3": 20.9,
+        "modules": [
+          "M5"
+        ],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-06-30",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [],
+        "period": "JUNIO"
+      },
+      {
+        "date": "2026-07-10",
+        "description": "Platea",
+        "m3": 16.0,
+        "modules": [
+          "M3"
+        ],
+        "period": "JULIO"
+      },
+      {
+        "date": "2026-07-10",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [],
+        "period": "JULIO"
+      },
+      {
+        "date": "2026-07-30",
+        "description": "Losa s/P.B.",
+        "m3": 54.0,
+        "modules": [
+          "M3"
+        ],
+        "period": "JULIO"
+      },
+      {
+        "date": "2026-08-14",
+        "description": "Losa s/garaje",
+        "m3": 33.15,
+        "modules": [
+          "M3"
+        ],
+        "period": "AGOSTO"
+      },
+      {
+        "date": "2026-08-31",
+        "description": "Base 2",
+        "m3": 32.0,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "AGOSTO"
+      },
+      {
+        "date": "2026-08-31",
+        "description": "Losa s/acceso duplex",
+        "m3": 26.5,
+        "modules": [
+          "M3"
+        ],
+        "period": "AGOSTO"
+      },
+      {
+        "date": "2026-08-31",
+        "description": "Escaleras/Otros",
+        "m3": 1.5,
+        "modules": [],
+        "period": "AGOSTO"
+      },
+      {
+        "date": "2026-09-15",
+        "description": "Losa s/P.B.",
+        "m3": 108.0,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-09-15",
+        "description": "Losa s/estar",
+        "m3": 20.2,
+        "modules": [
+          "M3"
+        ],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-09-15",
+        "description": "Escaleras/Otros",
+        "m3": 1.5,
+        "modules": [],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-09-30",
+        "description": "Losa s/garaje",
+        "m3": 66.3,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-09-30",
+        "description": "Losa s/dormi 1",
+        "m3": 23.1,
+        "modules": [
+          "M3"
+        ],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-09-30",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [],
+        "period": "SEPTIEMBRE"
+      },
+      {
+        "date": "2026-10-15",
+        "description": "Losa s/acceso duplex",
+        "m3": 53.0,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "OCTUBRE"
+      },
+      {
+        "date": "2026-10-15",
+        "description": "Losa s/dormi 2",
+        "m3": 20.9,
+        "modules": [
+          "M3"
+        ],
+        "period": "OCTUBRE"
+      },
+      {
+        "date": "2026-10-15",
+        "description": "Escaleras/Otros",
+        "m3": 1.5,
+        "modules": [],
+        "period": "OCTUBRE"
+      },
+      {
+        "date": "2026-10-30",
+        "description": "Losa s/estar",
+        "m3": 40.4,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "OCTUBRE"
+      },
+      {
+        "date": "2026-10-30",
+        "description": "Escaleras/Otros",
+        "m3": 1.5,
+        "modules": [],
+        "period": "OCTUBRE"
+      },
+      {
+        "date": "2026-11-13",
+        "description": "Losa s/dormi 1",
+        "m3": 46.2,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "NOVIEMBRE"
+      },
+      {
+        "date": "2026-11-13",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [],
+        "period": "NOVIEMBRE"
+      },
+      {
+        "date": "2026-11-27",
+        "description": "Losa s/dormi 2",
+        "m3": 41.8,
+        "modules": [
+          "M1",
+          "M2"
+        ],
+        "period": "NOVIEMBRE"
+      },
+      {
+        "date": "2026-11-27",
+        "description": "Escaleras/Otros",
+        "m3": 3.0,
+        "modules": [],
+        "period": "NOVIEMBRE"
+      }
+    ]
+  }
+}
