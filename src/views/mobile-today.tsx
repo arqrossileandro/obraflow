@@ -12,6 +12,7 @@ import {
   Image as ImageIcon, Trash2, Send, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import * as sync from '@/lib/sync';
 
 const QUICK_VALUES = [25, 50, 75, 100];
 
@@ -77,26 +78,54 @@ export function MobileTodayView() {
                 expanded={expandedTaskId === task.id}
                 onToggle={() => setExpandedTaskId(prev => prev === task.id ? null : task.id)}
                 onProgress={(p) => setTaskProgressMobile(task.id, p)}
-                onPhoto={(dataUrl, geo) => {
-                  addTaskPhoto(task.id, {
-                    dataUrl,
-                    takenAt: new Date().toISOString(),
-                    takenById: currentUser.id,
-                    takenByName: currentUser.name,
-                    geo,
-                    progressAtCapture: task.progress,
-                    caption: photoCaption[task.id],
-                  });
+                onPhoto={async (dataUrl, geo) => {
+                  // En modo Supabase, subir a Storage
+                  try {
+                    // Convertir dataUrl a Blob
+                    const resp = await fetch(dataUrl);
+                    const blob = await resp.blob();
+                    const photo = await sync.dbInsertPhoto(task.id, blob, {
+                      takenById: currentUser.id,
+                      caption: photoCaption[task.id],
+                      progressAtCapture: task.progress,
+                      geo,
+                    });
+                    if (photo) {
+                      addTaskPhoto(task.id, photo as any);
+                    }
+                  } catch (e) {
+                    console.error('Error subiendo foto:', e);
+                    // Fallback: guardar localmente como base64
+                    addTaskPhoto(task.id, {
+                      dataUrl,
+                      takenAt: new Date().toISOString(),
+                      takenById: currentUser.id,
+                      takenByName: currentUser.name,
+                      geo,
+                      progressAtCapture: task.progress,
+                      caption: photoCaption[task.id],
+                    });
+                  }
                   setPhotoCaption(prev => ({ ...prev, [task.id]: '' }));
                 }}
                 onDeletePhoto={(pid) => deleteTaskPhoto(task.id, pid)}
-                onVoiceNote={(dataUrl, durationSec) => {
-                  addVoiceNote(task.id, {
-                    dataUrl,
-                    durationSec,
-                    takenAt: new Date().toISOString(),
-                    takenById: currentUser.id,
-                  });
+                onVoiceNote={async (dataUrl, durationSec) => {
+                  try {
+                    const resp = await fetch(dataUrl);
+                    const blob = await resp.blob();
+                    const note = await sync.dbInsertVoiceNote(task.id, blob, durationSec, currentUser.id);
+                    if (note) {
+                      addVoiceNote(task.id, note as any);
+                    }
+                  } catch (e) {
+                    console.error('Error subiendo voz:', e);
+                    addVoiceNote(task.id, {
+                      dataUrl,
+                      durationSec,
+                      takenAt: new Date().toISOString(),
+                      takenById: currentUser.id,
+                    });
+                  }
                 }}
                 members={members}
                 captionValue={photoCaption[task.id] || ''}

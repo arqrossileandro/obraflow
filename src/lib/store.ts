@@ -7,6 +7,8 @@ import type {
   TaskPhoto, VoiceNote, AppNotification, CACEntry
 } from '@/types';
 import { generateUnblockNotifications } from '@/lib/workday';
+import { supabase } from '@/lib/supabase';
+import * as sync from '@/lib/sync';
 
 // ============================================================================
 // Datos mock - Constructora "Edificar SA"
@@ -684,6 +686,31 @@ interface AppState {
   markAllNotificationsRead: () => void;
   pushNotification: (n: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => void;
 
+  // Sync con Supabase
+  synced: boolean; // true cuando los datos están cargados desde Supabase
+  setSynced: (v: boolean) => void;
+  setCurrentUserFromAuth: (m: Member) => void;
+  hydrateFromServer: (data: any) => void;
+  // Helpers locales (sin sync) — usados por el realtime listener
+  upsertObraLocal: (obra: Obra) => void;
+  removeObraLocal: (id: ID) => void;
+  upsertTaskLocal: (task: Task) => void;
+  removeTaskLocal: (id: ID) => void;
+  upsertDependencyLocal: (dep: Dependency) => void;
+  removeDependencyLocal: (id: ID) => void;
+  upsertMaterialLocal: (mat: Material) => void;
+  removeMaterialLocal: (id: ID) => void;
+  upsertPhotoLocal: (photo: TaskPhoto) => void;
+  removePhotoLocal: (taskId: ID, photoId: ID) => void;
+  upsertVoiceNoteLocal: (vn: VoiceNote) => void;
+  removeVoiceNoteLocal: (taskId: ID, noteId: ID) => void;
+  upsertCommentLocal: (c: Comment) => void;
+  upsertChatMessageLocal: (m: ChatMessage) => void;
+  upsertCacLocal: (entry: CACEntry) => void;
+  removeCacLocal: (month: string) => void;
+  upsertNotificationLocal: (n: AppNotification) => void;
+  upsertMemberLocal: (m: Member) => void;
+
   // Undo
   undo: () => void;
 }
@@ -714,22 +741,36 @@ const recomputeProgress = (tasks: Task[]): Task[] => {
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      // Datos iniciales
-      obras: [obra1, obra2, obra3],
-      tasks: recomputeProgress(tasks),
-      dependencies,
-      materials,
-      comments,
-      chatMessages,
-      members,
+      // Datos iniciales (vacíos — se cargan desde Supabase al iniciar sesión)
+      obras: [],
+      tasks: [],
+      dependencies: [],
+      materials: [],
+      comments: [],
+      chatMessages: [],
+      members: [],
 
       // UI
-      selectedObraId: 'o1',
+      selectedObraId: 'all',
       activeView: 'dashboard',
       ganttScale: 'semana',
       editingTaskId: null,
       isTaskModalOpen: false,
-      currentUser: members[0],
+      currentUser: {
+        id: 'guest', name: 'Invitado', email: '', role: 'colaborador',
+        avatarColor: '#64748b', initials: 'I',
+      } as Member,
+
+      // CAC (vacío — se carga desde Supabase)
+      cacData: [],
+
+      // App notifications
+      notifications: [],
+
+      // Sync
+      synced: false,
+      setSynced: (v) => set({ synced: v }),
+      setCurrentUserFromAuth: (m) => set({ currentUser: m }),
 
       setSelectedObra: (id) => set({ selectedObraId: id }),
       setActiveView: (v) => set({ activeView: v }),
@@ -738,9 +779,9 @@ export const useAppStore = create<AppState>()(
       closeTaskModal: () => set({ editingTaskId: null, isTaskModalOpen: false }),
 
       addObra: (obra) =>
-        set(s => ({
-          obras: [...s.obras, {
-            id: `o${Date.now()}`,
+        set(s => {
+          const newObra: Obra = {
+            id: crypto.randomUUID(),
             name: obra.name || 'Nueva Obra',
             client: obra.client || '',
             address: obra.address || '',
@@ -752,18 +793,26 @@ export const useAppStore = create<AppState>()(
             memberIds: obra.memberIds || [s.currentUser.id],
             progress: 0,
             status: obra.status || 'planificada',
-          }],
-        })),
+          };
+          if (s.synced) sync.dbInsertObra(newObra, s.currentUser.id);
+          return { obras: [...s.obras, newObra], selectedObraId: newObra.id };
+        }),
       updateObra: (id, patch) =>
-        set(s => ({ obras: s.obras.map(o => o.id === id ? { ...o, ...patch } : o) })),
+        set(s => {
+          if (s.synced) sync.dbUpdateObra(id, patch);
+          return { obras: s.obras.map(o => o.id === id ? { ...o, ...patch } : o) };
+        }),
       deleteObra: (id) =>
-        set(s => ({
-          obras: s.obras.filter(o => o.id !== id),
-          tasks: s.tasks.filter(t => t.obraId !== id),
-          materials: s.materials.filter(m => m.obraId !== id),
-          chatMessages: s.chatMessages.filter(c => c.obraId !== id),
-          selectedObraId: s.selectedObraId === id ? 'all' : s.selectedObraId,
-        })),
+        set(s => {
+          if (s.synced) sync.dbDeleteObra(id);
+          return {
+            obras: s.obras.filter(o => o.id !== id),
+            tasks: s.tasks.filter(t => t.obraId !== id),
+            materials: s.materials.filter(m => m.obraId !== id),
+            chatMessages: s.chatMessages.filter(c => c.obraId !== id),
+            selectedObraId: s.selectedObraId === id ? 'all' : s.selectedObraId,
+          };
+        }),
 
       addTask: (task) =>
         set(s => {
@@ -781,7 +830,7 @@ export const useAppStore = create<AppState>()(
             autoColor = pickTaskColor(s.tasks, obraId);
           }
           const newTask: Task = {
-            id: `t${Date.now()}`,
+            id: crypto.randomUUID(),
             obraId,
             parentId: task.parentId ?? null,
             name: task.name || 'Nueva Tarea',
@@ -804,6 +853,7 @@ export const useAppStore = create<AppState>()(
             status: task.status || 'no_iniciada',
             createdAt: iso(today),
           };
+          if (s.synced) sync.dbInsertTask(newTask);
           return { tasks: recomputeProgress([...s.tasks, newTask]) };
         }),
       addTaskFromTemplate: (templateId, obraId, startDate) =>
@@ -814,7 +864,7 @@ export const useAppStore = create<AppState>()(
           const parentStart = parseISO(baseDate);
           const parentEnd = addD(parentStart, tpl.defaultDurationDays);
           const parentColor = tpl.color;
-          const parentId = `t${Date.now()}`;
+          const parentId = crypto.randomUUID();
 
           const parentTask: Task = {
             id: parentId,
@@ -862,19 +912,30 @@ export const useAppStore = create<AppState>()(
             };
           });
 
+          subtasks.forEach(st => { st.id = crypto.randomUUID(); });
+          if (s.synced) {
+            sync.dbInsertTask(parentTask);
+            subtasks.forEach(st => sync.dbInsertTask(st));
+          }
           return { tasks: recomputeProgress([...s.tasks, parentTask, ...subtasks]) };
         }),
       updateTask: (id, patch) =>
-        set(s => ({
-          tasks: recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t)),
-        })),
+        set(s => {
+          if (s.synced) sync.dbUpdateTask(id, patch);
+          return {
+            tasks: recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t)),
+          };
+        }),
       deleteTask: (id) =>
-        set(s => ({
-          tasks: s.tasks.filter(t => t.id !== id && t.parentId !== id),
-          dependencies: s.dependencies.filter(d => d.fromTaskId !== id && d.toTaskId !== id),
-          materials: s.materials.filter(m => m.taskId !== id),
-          comments: s.comments.filter(c => c.taskId !== id),
-        })),
+        set(s => {
+          if (s.synced) sync.dbDeleteTask(id);
+          return {
+            tasks: s.tasks.filter(t => t.id !== id && t.parentId !== id),
+            dependencies: s.dependencies.filter(d => d.fromTaskId !== id && d.toTaskId !== id),
+            materials: s.materials.filter(m => m.taskId !== id),
+            comments: s.comments.filter(c => c.taskId !== id),
+          };
+        }),
 
       moveTask: (id, newStartDate, durationDays) =>
         set(s => {
@@ -884,6 +945,7 @@ export const useAppStore = create<AppState>()(
           const dur = durationDays ?? differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate));
           const newEnd = iso(addD(start, Math.max(1, dur)));
           let updatedTasks = s.tasks.map(t => t.id === id ? { ...t, startDate: newStartDate, endDate: newEnd } : t);
+          const updatedTaskIds = [id];
 
           // Propagar dependencias FS: si muevo una tarea predecesora, las sucesoras FS se mueven también
           const propagate = (taskId: ID, newEndISO: string) => {
@@ -900,35 +962,50 @@ export const useAppStore = create<AppState>()(
                   updatedTasks = updatedTasks.map(t =>
                     t.id === successor.id ? { ...t, startDate: iso(newSuccStart), endDate: iso(newSuccEnd) } : t
                   );
+                  updatedTaskIds.push(successor.id);
                   propagate(successor.id, iso(newSuccEnd));
                 }
               }
             }
           };
           propagate(id, newEnd);
+          if (s.synced) {
+            updatedTaskIds.forEach(tid => {
+              const t = updatedTasks.find(x => x.id === tid);
+              if (t) sync.dbUpdateTask(tid, { startDate: t.startDate, endDate: t.endDate });
+            });
+          }
           return { tasks: recomputeProgress(updatedTasks) };
         }),
 
       resizeTask: (id, newStartDate, newEndDate) =>
-        set(s => ({
-          tasks: recomputeProgress(s.tasks.map(t =>
-            t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
-          )),
-        })),
+        set(s => {
+          if (s.synced) sync.dbUpdateTask(id, { startDate: newStartDate, endDate: newEndDate });
+          return {
+            tasks: recomputeProgress(s.tasks.map(t =>
+              t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
+            )),
+          };
+        }),
 
       addDependency: (dep) =>
-        set(s => ({
-          dependencies: [...s.dependencies, { ...dep, id: `dep${Date.now()}` }],
-        })),
+        set(s => {
+          const newDep: Dependency = { ...dep, id: crypto.randomUUID() };
+          if (s.synced) sync.dbInsertDependency(newDep);
+          return { dependencies: [...s.dependencies, newDep] };
+        }),
       updateDependency: (id, patch) =>
         set(s => ({ dependencies: s.dependencies.map(d => d.id === id ? { ...d, ...patch } : d) })),
       deleteDependency: (id) =>
-        set(s => ({ dependencies: s.dependencies.filter(d => d.id !== id) })),
+        set(s => {
+          if (s.synced) sync.dbDeleteDependency(id);
+          return { dependencies: s.dependencies.filter(d => d.id !== id) };
+        }),
 
       addMaterial: (mat) =>
-        set(s => ({
-          materials: [...s.materials, {
-            id: `mat${Date.now()}`,
+        set(s => {
+          const newMat: Material = {
+            id: crypto.randomUUID(),
             taskId: mat.taskId || '',
             obraId: mat.obraId || s.selectedObraId as string,
             name: mat.name || 'Material',
@@ -944,64 +1021,92 @@ export const useAppStore = create<AppState>()(
             channels: mat.channels || ['app'],
             notifyMemberIds: mat.notifyMemberIds || [],
             kanbanStatus: mat.kanbanStatus || 'pendiente',
-          }],
-        })),
+          };
+          if (s.synced) sync.dbInsertMaterial(newMat);
+          return { materials: [...s.materials, newMat] };
+        }),
       updateMaterial: (id, patch) =>
-        set(s => ({ materials: s.materials.map(m => m.id === id ? { ...m, ...patch } : m) })),
+        set(s => {
+          if (s.synced) sync.dbUpdateMaterial(id, patch);
+          return { materials: s.materials.map(m => m.id === id ? { ...m, ...patch } : m) };
+        }),
       deleteMaterial: (id) =>
-        set(s => ({ materials: s.materials.filter(m => m.id !== id) })),
+        set(s => {
+          if (s.synced) sync.dbDeleteMaterial(id);
+          return { materials: s.materials.filter(m => m.id !== id) };
+        }),
       sendMaterialToKanban: (id) =>
-        set(s => ({
-          materials: s.materials.map(m => m.id === id ? {
-            ...m,
-            kanbanStatus: 'pendiente',
-            sentToKanbanAt: iso(today),
-          } : m),
-        })),
+        set(s => {
+          if (s.synced) sync.dbUpdateMaterial(id, { kanbanStatus: 'pendiente', sentToKanbanAt: iso(today) });
+          return {
+            materials: s.materials.map(m => m.id === id ? {
+              ...m,
+              kanbanStatus: 'pendiente',
+              sentToKanbanAt: iso(today),
+            } : m),
+          };
+        }),
       setMaterialKanbanStatus: (id, status) =>
-        set(s => ({ materials: s.materials.map(m => m.id === id ? { ...m, kanbanStatus: status } : m) })),
+        set(s => {
+          if (s.synced) sync.dbUpdateMaterial(id, { kanbanStatus: status });
+          return { materials: s.materials.map(m => m.id === id ? { ...m, kanbanStatus: status } : m) };
+        }),
 
       addComment: (taskId, text) =>
-        set(s => ({
-          comments: [...s.comments, {
-            id: `c${Date.now()}`,
+        set(s => {
+          const c: Comment = {
+            id: crypto.randomUUID(),
             taskId,
             authorId: s.currentUser.id,
             text,
             createdAt: new Date().toISOString(),
-          }],
-        })),
+          };
+          if (s.synced) sync.dbInsertComment(c);
+          return { comments: [...s.comments, c] };
+        }),
 
       sendChatMessage: (obraId, text) =>
-        set(s => ({
-          chatMessages: [...s.chatMessages, {
-            id: `ch${Date.now()}`,
+        set(s => {
+          const m: ChatMessage = {
+            id: crypto.randomUUID(),
             obraId,
             authorId: s.currentUser.id,
             text,
             createdAt: new Date().toISOString(),
-          }],
-        })),
+          };
+          if (s.synced) sync.dbInsertChatMessage(m);
+          return { chatMessages: [...s.chatMessages, m] };
+        }),
 
       addMember: (m) =>
-        set(s => ({ members: [...s.members, {
-          id: `m${Date.now()}`,
-          name: m.name || 'Nuevo Miembro',
-          email: m.email || '',
-          phone: m.phone,
-          role: m.role || 'colaborador',
-          avatarColor: m.avatarColor || '#64748b',
-          initials: (m.name || 'NM').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(),
-        }] })),
+        set(s => {
+          const newM: Member = {
+            id: m.id || crypto.randomUUID(),
+            name: m.name || 'Nuevo Miembro',
+            email: m.email || '',
+            phone: m.phone,
+            role: m.role || 'colaborador',
+            avatarColor: m.avatarColor || '#64748b',
+            initials: (m.name || 'NM').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(),
+          };
+          // Los miembros se crean via auth.signup, no desde acá. Pero podemos actualizar.
+          return { members: [...s.members, newM] };
+        }),
       updateMember: (id, patch) =>
-        set(s => ({ members: s.members.map(m => m.id === id ? { ...m, ...patch } : m) })),
+        set(s => {
+          if (s.synced) sync.dbUpdateMember(id, patch);
+          return { members: s.members.map(m => m.id === id ? { ...m, ...patch } : m) };
+        }),
       deleteMember: (id) =>
-        set(s => ({ members: s.members.filter(m => m.id !== id) })),
+        set(s => {
+          if (s.synced) sync.dbDeleteMember(id);
+          return { members: s.members.filter(m => m.id !== id) };
+        }),
 
       // ===== CAC =====
-      cacData: CAC_DATA,
       addCacEntry: (month, value) =>
         set(s => {
+          if (s.synced) sync.dbInsertCacEntry(month, value);
           const exists = s.cacData.find(e => e.month === month);
           if (exists) {
             return { cacData: s.cacData.map(e => e.month === month ? { ...e, value } : e) };
@@ -1009,35 +1114,72 @@ export const useAppStore = create<AppState>()(
           return { cacData: [...s.cacData, { month, value }].sort((a, b) => a.month.localeCompare(b.month)) };
         }),
       updateCacEntry: (month, value) =>
-        set(s => ({ cacData: s.cacData.map(e => e.month === month ? { ...e, value } : e) })),
+        set(s => {
+          if (s.synced) sync.dbInsertCacEntry(month, value);
+          return { cacData: s.cacData.map(e => e.month === month ? { ...e, value } : e) };
+        }),
       deleteCacEntry: (month) =>
-        set(s => ({ cacData: s.cacData.filter(e => e.month !== month) })),
+        set(s => {
+          if (s.synced) sync.dbDeleteCacEntry(month);
+          return { cacData: s.cacData.filter(e => e.month !== month) };
+        }),
 
       // ===== Mobile field work =====
       addTaskPhoto: (taskId, photo) =>
-        set(s => ({
-          tasks: s.tasks.map(t => t.id === taskId
-            ? { ...t, photos: [...(t.photos || []), { ...photo, id: `ph${Date.now()}`, taskId }] }
-            : t),
-        })),
+        set(s => {
+          // En modo synced, la subida real a Storage la maneja el caller (mobile-today.tsx)
+          // Acá solo actualizamos el estado local; el registro llega via realtime
+          const newPhoto: TaskPhoto = {
+            ...photo,
+            id: (photo as any).id || crypto.randomUUID(),
+            taskId,
+          };
+          return {
+            tasks: s.tasks.map(t => t.id === taskId
+              ? { ...t, photos: [...(t.photos || []), newPhoto] }
+              : t),
+          };
+        }),
       deleteTaskPhoto: (taskId, photoId) =>
-        set(s => ({
-          tasks: s.tasks.map(t => t.id === taskId
-            ? { ...t, photos: (t.photos || []).filter(p => p.id !== photoId) }
-            : t),
-        })),
+        set(s => {
+          const task = s.tasks.find(t => t.id === taskId);
+          const photo = task?.photos?.find(p => p.id === photoId);
+          if (s.synced && photo) {
+            // dataUrl ahora es el storage_path
+            sync.dbDeletePhoto(photoId, photo.dataUrl);
+          }
+          return {
+            tasks: s.tasks.map(t => t.id === taskId
+              ? { ...t, photos: (t.photos || []).filter(p => p.id !== photoId) }
+              : t),
+          };
+        }),
       addVoiceNote: (taskId, note) =>
-        set(s => ({
-          tasks: s.tasks.map(t => t.id === taskId
-            ? { ...t, voiceNotes: [...(t.voiceNotes || []), { ...note, id: `vn${Date.now()}`, taskId }] }
-            : t),
-        })),
+        set(s => {
+          const newNote: VoiceNote = {
+            ...note,
+            id: (note as any).id || crypto.randomUUID(),
+            taskId,
+          };
+          return {
+            tasks: s.tasks.map(t => t.id === taskId
+              ? { ...t, voiceNotes: [...(t.voiceNotes || []), newNote] }
+              : t),
+          };
+        }),
       deleteVoiceNote: (taskId, noteId) =>
-        set(s => ({
-          tasks: s.tasks.map(t => t.id === taskId
-            ? { ...t, voiceNotes: (t.voiceNotes || []).filter(v => v.id !== noteId) }
-            : t),
-        })),
+        set(s => {
+          const task = s.tasks.find(t => t.id === taskId);
+          const vn = task?.voiceNotes?.find(v => v.id === noteId);
+          if (s.synced && vn) {
+            sync.dbDeleteVoiceNote(noteId, vn.dataUrl);
+          }
+          return {
+            tasks: s.tasks.map(t => t.id === taskId
+              ? { ...t, voiceNotes: (t.voiceNotes || []).filter(v => v.id !== noteId) }
+              : t),
+          };
+        }),
       setTaskProgressMobile: (taskId, progress) =>
         set(s => {
           const clamped = Math.max(0, Math.min(100, Math.round(progress)));
@@ -1056,6 +1198,18 @@ export const useAppStore = create<AppState>()(
               }
             : t
           );
+          // Sync a Supabase
+          if (s.synced) {
+            const updated = newTasks.find(t => t.id === taskId);
+            if (updated) {
+              sync.dbUpdateTask(taskId, {
+                progress: clamped,
+                manualProgress: clamped,
+                progressMode: 'manual',
+                status: updated.status,
+              });
+            }
+          }
           // Si la tarea pasó a 100%, generar notificaciones de desbloqueo para las sucesoras
           let newNotifications = s.notifications;
           if (!wasComplete && isNowComplete) {
@@ -1064,6 +1218,29 @@ export const useAppStore = create<AppState>()(
               const unblocks = generateUnblockNotifications(newTasks, s.dependencies, task.obraId, taskId);
               if (unblocks.length > 0) {
                 newNotifications = [...unblocks, ...s.notifications];
+                // Insertar notificaciones en Supabase (para los usuarios asignados a las tareas desbloqueadas)
+                if (s.synced) {
+                  unblocks.forEach(n => {
+                    // Buscar asignados de la tarea desbloqueada
+                    const unlockedTask = newTasks.find(t => t.id === n.taskId);
+                    if (unlockedTask && unlockedTask.assigneeIds.length > 0) {
+                      unlockedTask.assigneeIds.forEach(uid => {
+                        supabase.from('notifications').insert({
+                          user_id: uid,
+                          obra_id: n.obraId,
+                          task_id: n.taskId,
+                          type: n.type,
+                          title: n.title,
+                          message: n.message,
+                          severity: n.severity,
+                          read: false,
+                        }).then(({ error }) => {
+                          if (error) console.error('insert notif:', error);
+                        });
+                      });
+                    }
+                  });
+                }
               }
             }
           }
@@ -1071,11 +1248,16 @@ export const useAppStore = create<AppState>()(
         }),
 
       // ===== App notifications =====
-      notifications: [],
       markNotificationRead: (id) =>
-        set(s => ({ notifications: s.notifications.map(n => n.id === id ? { ...n, read: true } : n) })),
+        set(s => {
+          if (s.synced) sync.dbMarkNotificationRead(id);
+          return { notifications: s.notifications.map(n => n.id === id ? { ...n, read: true } : n) };
+        }),
       markAllNotificationsRead: () =>
-        set(s => ({ notifications: s.notifications.map(n => ({ ...n, read: true })) })),
+        set(s => {
+          if (s.synced) sync.dbMarkAllNotificationsRead(s.currentUser.id);
+          return { notifications: s.notifications.map(n => ({ ...n, read: true })) };
+        }),
       pushNotification: (n) =>
         set(s => ({
           notifications: [{
@@ -1086,24 +1268,148 @@ export const useAppStore = create<AppState>()(
           }, ...s.notifications].slice(0, 100),
         })),
 
+      // ===== Sync: hydrate + helpers locales =====
+      hydrateFromServer: (data) =>
+        set(s => ({
+          obras: data.obras || [],
+          tasks: recomputeProgress(data.tasks || []),
+          dependencies: data.dependencies || [],
+          materials: data.materials || [],
+          comments: data.comments || [],
+          chatMessages: data.chatMessages || [],
+          members: data.members || s.members,
+          notifications: data.notifications || [],
+          cacData: data.cacData || CAC_DATA,
+          synced: true,
+          selectedObraId: data.obras && data.obras.length > 0 ? data.obras[0].id : 'all',
+        })),
+
+      upsertObraLocal: (obra) =>
+        set(s => ({
+          obras: s.obras.some(o => o.id === obra.id)
+            ? s.obras.map(o => o.id === obra.id ? obra : o)
+            : [...s.obras, obra],
+        })),
+      removeObraLocal: (id) =>
+        set(s => ({
+          obras: s.obras.filter(o => o.id !== id),
+          tasks: s.tasks.filter(t => t.obraId !== id),
+        })),
+
+      upsertTaskLocal: (task) =>
+        set(s => ({
+          tasks: s.tasks.some(t => t.id === task.id)
+            ? recomputeProgress(s.tasks.map(t => t.id === task.id ? task : t))
+            : recomputeProgress([...s.tasks, task]),
+        })),
+      removeTaskLocal: (id) =>
+        set(s => ({
+          tasks: s.tasks.filter(t => t.id !== id && t.parentId !== id),
+          dependencies: s.dependencies.filter(d => d.fromTaskId !== id && d.toTaskId !== id),
+        })),
+
+      upsertDependencyLocal: (dep) =>
+        set(s => ({
+          dependencies: s.dependencies.some(d => d.id === dep.id)
+            ? s.dependencies.map(d => d.id === dep.id ? dep : d)
+            : [...s.dependencies, dep],
+        })),
+      removeDependencyLocal: (id) =>
+        set(s => ({ dependencies: s.dependencies.filter(d => d.id !== id) })),
+
+      upsertMaterialLocal: (mat) =>
+        set(s => ({
+          materials: s.materials.some(m => m.id === mat.id)
+            ? s.materials.map(m => m.id === mat.id ? mat : m)
+            : [...s.materials, mat],
+        })),
+      removeMaterialLocal: (id) =>
+        set(s => ({ materials: s.materials.filter(m => m.id !== id) })),
+
+      upsertPhotoLocal: (photo) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === photo.taskId
+            ? {
+                ...t,
+                photos: (t.photos || []).some(p => p.id === photo.id)
+                  ? (t.photos || []).map(p => p.id === photo.id ? photo : p)
+                  : [...(t.photos || []), photo],
+              }
+            : t),
+        })),
+      removePhotoLocal: (taskId, photoId) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, photos: (t.photos || []).filter(p => p.id !== photoId) }
+            : t),
+        })),
+
+      upsertVoiceNoteLocal: (vn) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === vn.taskId
+            ? {
+                ...t,
+                voiceNotes: (t.voiceNotes || []).some(v => v.id === vn.id)
+                  ? (t.voiceNotes || []).map(v => v.id === vn.id ? vn : v)
+                  : [...(t.voiceNotes || []), vn],
+              }
+            : t),
+        })),
+      removeVoiceNoteLocal: (taskId, noteId) =>
+        set(s => ({
+          tasks: s.tasks.map(t => t.id === taskId
+            ? { ...t, voiceNotes: (t.voiceNotes || []).filter(v => v.id !== noteId) }
+            : t),
+        })),
+
+      upsertCommentLocal: (c) =>
+        set(s => ({
+          comments: s.comments.some(x => x.id === c.id)
+            ? s.comments.map(x => x.id === c.id ? c : x)
+            : [...s.comments, c],
+        })),
+
+      upsertChatMessageLocal: (m) =>
+        set(s => ({
+          chatMessages: s.chatMessages.some(x => x.id === m.id)
+            ? s.chatMessages.map(x => x.id === m.id ? m : x)
+            : [...s.chatMessages, m],
+        })),
+
+      upsertCacLocal: (entry) =>
+        set(s => ({
+          cacData: s.cacData.some(e => e.month === entry.month)
+            ? s.cacData.map(e => e.month === entry.month ? entry : e)
+            : [...s.cacData, entry].sort((a, b) => a.month.localeCompare(b.month)),
+        })),
+      removeCacLocal: (month) =>
+        set(s => ({ cacData: s.cacData.filter(e => e.month !== month) })),
+
+      upsertNotificationLocal: (n) =>
+        set(s => ({
+          notifications: s.notifications.some(x => x.id === n.id)
+            ? s.notifications.map(x => x.id === n.id ? n : x)
+            : [n, ...s.notifications].slice(0, 100),
+        })),
+
+      upsertMemberLocal: (m) =>
+        set(s => ({
+          members: s.members.some(x => x.id === m.id)
+            ? s.members.map(x => x.id === m.id ? m : x)
+            : [...s.members, m],
+        })),
+
       // ===== Undo (no-op por ahora) =====
       undo: () => {},
     }),
     {
-      name: 'obras-store-v6',
-      version: 6,
+      name: 'obraflow-auth-v1',
+      version: 1,
       partialize: (s) => ({
-        obras: s.obras,
-        tasks: s.tasks,
-        dependencies: s.dependencies,
-        materials: s.materials,
-        comments: s.comments,
-        chatMessages: s.chatMessages,
-        members: s.members,
+        // Solo persistimos UI state; los datos vienen de Supabase
         selectedObraId: s.selectedObraId,
         ganttScale: s.ganttScale,
-        cacData: s.cacData,
-        notifications: s.notifications,
+        activeView: s.activeView,
       }),
     }
   )

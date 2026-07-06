@@ -81,3 +81,79 @@ Stage Summary:
   - Mobile SECUENCIA: árbol de dependencias centrado en tarea, navegable
   - Notificaciones de desbloqueo: cuando una tarea llega a 100%, las sucesoras sin otros bloqueos generan notificación
   - CAC index: datos mensuales + funciones helper (la UI de edición está en settings)
+
+---
+Task ID: 3
+Agent: Super Z (main)
+Task: Implementar backend con Supabase + auth + sync realtime + permisos
+
+Work Log:
+- Instalé @supabase/supabase-js y @swc/helpers
+- Creé .env.local con NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY (provistos por el usuario)
+- Creé download/obraflow-schema.sql con:
+  - 13 tablas (profiles, obras, obra_members, user_permissions, tasks, task_assignees, dependencies, materials, task_photos, task_voice_notes, comments, chat_messages, cac_data, notifications)
+  - Trigger handle_new_user que crea profile automáticamente al registrarse (primer usuario = director, resto = capataz)
+  - RLS policies completas: acceso por obra_members, permisos granulares, etc.
+  - 2 buckets de Storage: task-photos (privado) y voice-notes (privado)
+  - Realtime habilitado para todas las tablas críticas
+  - Seed inicial de CAC_DATA (18 meses 2025-01 a 2026-06)
+- Creé src/lib/supabase.ts: client singleton + PERMISSIONS (9 permisos) + ROLE_DEFAULTS (5 roles) + ROLE_LABELS
+- Creé src/lib/auth-context.tsx: AuthProvider con useAuth() hook
+  - signUp, signIn, signOut
+  - Carga profile + permissions + obra_ids en paralelo
+  - Suscripción realtime a cambios del propio profile (permisos/rol/obras)
+  - useHasPermission() helper
+- Creé src/components/app/login-screen.tsx: UI de login/signup con tabs
+- Creé src/lib/sync.ts: capa de sincronización
+  - fetchAllData: carga todo al iniciar sesión
+  - dbInsert/Update/Delete para cada entidad
+  - dbInsertPhoto/dbInsertVoiceNote: suben a Storage + insertan metadatos
+  - Mapeos snake_case ↔ camelCase
+  - refreshPhotoUrl/refreshVoiceUrl para URLs firmadas
+- Creé src/components/app/realtime-sync.tsx: suscripción a 11 canales de Supabase Realtime
+  - Cada cambio remoto actualiza el store vía upsertXLocal/removeXLocal
+- Extendí src/lib/store.ts:
+  - Añadí synced flag, setSynced, setCurrentUserFromAuth, hydrateFromServer
+  - 18 upsertXLocal/removeXLocal para todos los entidades (usados por realtime)
+  - Todas las acciones existentes (addObra, addTask, etc.) ahora llaman sync.dbX() cuando synced=true
+  - setTaskProgressMobile inserta notificaciones en Supabase para los asignados de tareas desbloqueadas
+  - Cambié persist a obraflow-auth-v1 (solo UI state, datos vienen de Supabase)
+  - Datos iniciales vacíos (se cargan vía hydrateFromServer)
+- Creé src/components/app/app-layout.tsx: AuthProvider + gate de login + RealtimeSync montado solo cuando hay sesión
+- Actualicé src/app/page.tsx: envuelve todo en AppLayout, separa mobile/desktop
+- Actualicé src/views/mobile-today.tsx: onPhoto y onVoiceNote ahora suben a Storage vía sync.dbInsertPhoto/VoiceNote, con fallback a base64 si falla
+- Reescribí src/views/settings.tsx: agregada sección "Usuarios y permisos"
+  - Lista de usuarios activos desde Supabase
+  - Cambio de rol (aplica permisos por defecto del rol)
+  - Checkboxes granulares para cada uno de los 9 permisos
+  - Checkboxes para acceso a cada obra
+  - Invitación de nuevos usuarios vía link (signupUrl)
+  - Desactivar usuarios (no borrar, marcar is_active=false)
+  - Sección CAC con alta/baja de índices mensuales
+  - Botón "Cerrar sesión"
+- Verifiqué npx tsc --noEmit: 0 errores en src/
+- Verifiqué dev server: GET / 200
+
+Stage Summary:
+- Nuevos archivos:
+  - download/obraflow-schema.sql (script SQL a pegar en Supabase SQL Editor)
+  - .env.local
+  - src/lib/supabase.ts
+  - src/lib/auth-context.tsx
+  - src/lib/sync.ts
+  - src/components/app/login-screen.tsx
+  - src/components/app/realtime-sync.tsx
+  - src/components/app/app-layout.tsx
+- Modificados:
+  - src/lib/store.ts (sync integrado en todas las acciones + 18 upserts locales + hydrate)
+  - src/app/page.tsx (AppLayout + auth gate)
+  - src/views/settings.tsx (gestión usuarios + permisos + CAC)
+  - src/views/mobile-today.tsx (fotos/voz a Storage)
+- Funcionalidades nuevas:
+  - Login/signup con Supabase Auth (primer usuario = director automático)
+  - Sync bidireccional realtime (cambios locales → Supabase, cambios remotos → store)
+  - Permisos granulares con checkboxes (9 permisos × 5 roles)
+  - Acceso a obras por usuario (obra_members)
+  - Fotos y notas de voz en Supabase Storage (URLs firmadas 1h)
+  - Notificaciones de desbloqueo persistentes (insertadas en tabla notifications)
+  - CAC data compartida y editable
