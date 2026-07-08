@@ -44,6 +44,8 @@ export interface Dependency {
 
 export type ProgressMode = 'time' | 'manual';
 
+export type TaskType = 'tarea' | 'hito';
+
 export interface Task {
   id: ID;
   obraId: ID;
@@ -52,6 +54,7 @@ export interface Task {
   description?: string;
   startDate: string;
   endDate: string;
+  type?: TaskType; // 'tarea' (default) o 'hito' (milestone - se dibuja como diamante)
   progress: number;
   progressMode: ProgressMode;
   manualProgress?: number;
@@ -67,6 +70,7 @@ export interface Task {
   priority: 'baja' | 'media' | 'alta' | 'critica';
   status: 'no_iniciada' | 'en_curso' | 'pausada' | 'finalizada';
   createdAt: string;
+  sortOrder?: number; // para reordenar manualmente en el Gantt
   // --- Mobile field work ---
   photos?: TaskPhoto[];     // fotos de avance tomadas desde el celular
   voiceNotes?: VoiceNote[]; // notas de voz tomadas desde el celular

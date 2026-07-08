@@ -18,7 +18,7 @@ import { Slider } from '@/components/ui/slider';
 import {
   Calendar, TrendingUp, MessageSquare, Wallet, FileText, Package,
   Plus, Trash2, Link2, Paperclip, ImageIcon, FileCheck2, Send, Save,
-  AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy
+  AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy, Flag
 } from 'lucide-react';
 import { format, parseISO, differenceInCalendarDays, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -218,6 +218,30 @@ export function TaskEditModal() {
             {/* TAB: FECHAS Y DEPENDENCIAS */}
             {/* ================================================================ */}
             <TabsContent value="fechas" className="mt-0 space-y-4">
+              {/* Toggle Hito */}
+              <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center gap-2">
+                  <Flag className={cn('w-4 h-4', task.type === 'hito' ? 'text-primary' : 'text-muted-foreground')} />
+                  <div>
+                    <div className="text-sm font-medium text-foreground">Hito (milestone)</div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">
+                      Marca una fecha crítica (ej: llenado de losa). Se dibuja como diamante en el Gantt.
+                    </div>
+                  </div>
+                </div>
+                <Switch
+                  checked={task.type === 'hito'}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      // Un hito tiene duración 0: endDate = startDate
+                      updateTask(task.id, { type: 'hito', endDate: task.startDate });
+                    } else {
+                      updateTask(task.id, { type: 'tarea' });
+                    }
+                  }}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs">Fecha de inicio</Label>
@@ -226,9 +250,14 @@ export function TaskEditModal() {
                     value={task.startDate}
                     onChange={e => {
                       const newStart = e.target.value;
-                      const dur = differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate));
-                      const newEnd = format(addDays(parseISO(newStart), dur), 'yyyy-MM-dd');
-                      updateTask(task.id, { startDate: newStart, endDate: newEnd });
+                      if (task.type === 'hito') {
+                        // En hitos, endDate = startDate
+                        updateTask(task.id, { startDate: newStart, endDate: newStart });
+                      } else {
+                        const dur = differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate));
+                        const newEnd = format(addDays(parseISO(newStart), dur), 'yyyy-MM-dd');
+                        updateTask(task.id, { startDate: newStart, endDate: newEnd });
+                      }
                     }}
                     className="mt-1"
                   />
@@ -239,6 +268,7 @@ export function TaskEditModal() {
                     type="date"
                     value={task.endDate}
                     min={task.startDate}
+                    disabled={task.type === 'hito'}
                     onChange={e => updateTask(task.id, { endDate: e.target.value })}
                     className="mt-1"
                   />

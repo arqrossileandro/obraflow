@@ -12,7 +12,8 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers, ClipboardPaste
+  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers, ClipboardPaste,
+  Copy, ChevronsDownUp, ChevronsUpDown, Flag
 } from 'lucide-react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -49,7 +50,7 @@ export function GanttView() {
   const {
     obras, tasks, dependencies, selectedObraId, ganttScale, setGanttScale,
     openTaskModal, moveTask, resizeTask, addDependency, deleteDependency,
-    clipboard, pasteTask,
+    clipboard, pasteTask, copyTask, reorderTask,
   } = useAppStore();
 
   const obra = obras.find(o => o.id === selectedObraId);
@@ -182,6 +183,22 @@ export function GanttView() {
       }
       return next;
     });
+  }, []);
+
+  // Colapsar todas las tareas que tienen subtareas
+  const collapseAll = useCallback(() => {
+    const allWithSubtasks = new Set<string>();
+    tasks.forEach(t => {
+      if (tasks.some(child => child.parentId === t.id)) {
+        allWithSubtasks.add(t.id);
+      }
+    });
+    setCollapsedTasks(allWithSubtasks);
+  }, [tasks]);
+
+  // Expandir todo
+  const expandAll = useCallback(() => {
+    setCollapsedTasks(new Set());
   }, []);
 
   // Helper: ¿la tarea tiene subtareas?
@@ -393,16 +410,33 @@ export function GanttView() {
               onClick={() => {
                 const newId = pasteTask(null, obra.id, 0);
                 if (newId) {
-                  // Abrir el modal de la nueva tarea para editar nombre/fechas
                   openTaskModal(newId);
                 }
               }}
               title={`Pegar: ${clipboard.task.name} (${clipboard.subtasks.length + 1} tareas)`}
             >
               <ClipboardPaste className="w-3.5 h-3.5 mr-1" />
-              Pegar tarea
+              Pegar
             </Button>
           )}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            onClick={collapseAll}
+            title="Colapsar todo"
+          >
+            <ChevronsDownUp className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            onClick={expandAll}
+            title="Expandir todo"
+          >
+            <ChevronsUpDown className="w-3.5 h-3.5" />
+          </Button>
           <Button size="sm" variant="outline" className="h-8" onClick={() => setTemplateOpen(true)}>
             <Layers className="w-3.5 h-3.5 mr-1" /> Plantilla
           </Button>
@@ -438,7 +472,7 @@ export function GanttView() {
                 })}
               </div>
               {/* Sub-nivel 2: sublabels (días / quincenas) — solo si hay sublabel */}
-              <div className="flex" style={{ height: HEADER_HEIGHT / 2 }}>
+              <div className="flex relative" style={{ height: HEADER_HEIGHT / 2 }}>
                 {columns.map((col, i) => (
                   <div
                     key={i}
@@ -448,6 +482,17 @@ export function GanttView() {
                     {col.sublabel}
                   </div>
                 ))}
+                {/* Etiqueta "Hoy" flotante en el header */}
+                {isWithinInterval(new Date(), { start: rangeStart, end: rangeEnd }) && (
+                  <div
+                    className="absolute top-0 bottom-0 flex items-center pointer-events-none z-20"
+                    style={{ left: dateToX(new Date()) - 16 }}
+                  >
+                    <span className="text-[9px] font-bold text-red-600 bg-red-50 dark:bg-red-950/50 px-1 rounded shadow-sm border border-red-300 dark:border-red-800">
+                      HOY
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -464,9 +509,10 @@ export function GanttView() {
               const ghostStyle = getGhostStyle(task);
               const hasChildren = hasSubtasks(task.id);
               const isCollapsed = collapsedTasks.has(task.id);
+              const isMilestone = task.type === 'hito';
 
               return (
-                <div key={task.id} className="flex border-b border-border/40 hover:bg-muted/30 pointer-events-none" style={{ height: ROW_HEIGHT }}>
+                <div key={task.id} className="flex border-b border-border/40 hover:bg-muted/30 pointer-events-none group" style={{ height: ROW_HEIGHT }}>
                   {/* Panel izquierdo */}
                   <div
                     className="sticky left-0 z-10 bg-card border-r border-border flex items-center px-2 cursor-pointer hover:bg-muted/50 pointer-events-auto"
@@ -488,13 +534,17 @@ export function GanttView() {
                     ) : (
                       <span className="w-4 mr-1 shrink-0" />
                     )}
-                    {level > 0 && !hasChildren && <span className="text-muted-foreground/40 mr-1.5 text-xs">└</span>}
-                    <span
-                      className="w-1.5 h-5 rounded-full mr-2 shrink-0"
-                      style={{ background: barColor }}
-                    />
+                    {/* Ícono de hito (diamante) o barra de color */}
+                    {isMilestone ? (
+                      <Flag className="w-3.5 h-3.5 mr-1.5 shrink-0" style={{ color: barColor }} />
+                    ) : (
+                      <span
+                        className="w-1.5 h-5 rounded-full mr-2 shrink-0"
+                        style={{ background: barColor }}
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
-                      <div className={cn('text-xs truncate', isRoot ? 'font-medium text-foreground' : 'text-muted-foreground')}>
+                      <div className={cn('text-xs truncate', isRoot ? 'font-medium text-foreground' : 'text-muted-foreground', isMilestone && 'italic')}>
                         {task.name}
                         {hasChildren && isCollapsed && (
                           <span className="ml-1.5 text-[9px] text-muted-foreground/70">
@@ -502,6 +552,39 @@ export function GanttView() {
                           </span>
                         )}
                       </div>
+                    </div>
+                    {/* Botones: copiar + reordenar (visibles en hover) */}
+                    <div className="flex items-center gap-0.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyTask(task.id);
+                        }}
+                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-muted rounded"
+                        title="Copiar tarea (con subtareas)"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          reorderTask(task.id, 'up');
+                        }}
+                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded"
+                        title="Mover arriba"
+                      >
+                        <ChevronLeft className="w-3 h-3 -rotate-90" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          reorderTask(task.id, 'down');
+                        }}
+                        className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded"
+                        title="Mover abajo"
+                      >
+                        <ChevronLeft className="w-3 h-3 rotate-90" />
+                      </button>
                     </div>
                     <Badge className={cn('text-[9px] ml-1 px-1 py-0', STATUS_COLORS[task.status])}>
                       {task.progress}%
@@ -519,14 +602,17 @@ export function GanttView() {
                       />
                     ))}
 
-                    {/* Línea de hoy */}
+                    {/* Línea de hoy — semitransparente, elegante */}
                     {isWithinInterval(new Date(), { start: rangeStart, end: rangeEnd }) && (
                       <div
-                        className="absolute top-0 bottom-0 border-l-2 border-red-400 pointer-events-none z-10"
-                        style={{ left: dateToX(new Date()) }}
-                      >
-                        <div className="absolute -top-0 -left-1 text-[9px] text-red-500 font-semibold bg-card px-0.5">Hoy</div>
-                      </div>
+                        className="absolute top-0 bottom-0 pointer-events-none z-10"
+                        style={{
+                          left: dateToX(new Date()),
+                          width: 2,
+                          background: 'linear-gradient(to bottom, rgba(239,68,68,0.8), rgba(239,68,68,0.4))',
+                          boxShadow: '0 0 8px rgba(239,68,68,0.3)',
+                        }}
+                      />
                     )}
 
                     {/* Fantasma (preview) durante drag */}
@@ -550,7 +636,56 @@ export function GanttView() {
                       </div>
                     )}
 
-                    {/* Barra real de tarea */}
+                    {/* Barra real de tarea — hito (diamante) o tarea normal (barra) */}
+                    {isMilestone ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              className="absolute pointer-events-auto cursor-grab active:cursor-grabbing group transition-transform hover:scale-125"
+                              style={{
+                                left: startX - (ROW_HEIGHT - 12) / 2 + dayWidth / 2,
+                                top: 4,
+                                width: ROW_HEIGHT - 12,
+                                height: ROW_HEIGHT - 12,
+                                transform: 'rotate(45deg)',
+                                background: barColor,
+                                border: `2px solid ${barColor}`,
+                                boxShadow: ghostStyle ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
+                                opacity: ghostStyle ? 0.4 : 1,
+                              }}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                setDragState({
+                                  type: 'move',
+                                  taskId: task.id,
+                                  startX: e.clientX,
+                                  startY: e.clientY,
+                                  originalStart: task.startDate,
+                                  originalEnd: task.endDate,
+                                  currentDeltaDays: 0,
+                                  currentMouseX: 0,
+                                  currentMouseY: 0,
+                                });
+                              }}
+                              onClick={(e) => {
+                                if (Math.abs(e.clientX - (dragState?.startX || 0)) < 3 && !dragState) {
+                                  openTaskModal(task.id);
+                                }
+                              }}
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="text-xs">
+                            <div className="font-medium flex items-center gap-1">
+                              <Flag className="w-3 h-3" /> {task.name}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Hito · {format(parseISO(task.startDate), "dd MMM yyyy", { locale: es })}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -675,6 +810,7 @@ export function GanttView() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                    )}
                   </div>
                 </div>
               );

@@ -51,6 +51,7 @@ const taskToDB = (t: Partial<Task>) => ({
   description: t.description,
   start_date: t.startDate,
   end_date: t.endDate,
+  type: t.type || 'tarea',
   progress: t.progress,
   progress_mode: t.progressMode,
   manual_progress: t.manualProgress,
@@ -69,6 +70,7 @@ const taskToDB = (t: Partial<Task>) => ({
   cac_enabled: t.cacEnabled,
   cac_base_month: t.cacBaseMonth,
   repercussion_percent: t.repercussionPercent,
+  sort_order: t.sortOrder,
 });
 
 export const taskFromDB = (r: any): Task => ({
@@ -79,6 +81,7 @@ export const taskFromDB = (r: any): Task => ({
   description: r.description,
   startDate: r.start_date,
   endDate: r.end_date,
+  type: r.type || 'tarea',
   progress: Number(r.progress || 0),
   progressMode: r.progress_mode || 'time',
   manualProgress: r.manual_progress,
@@ -93,6 +96,7 @@ export const taskFromDB = (r: any): Task => ({
   priority: r.priority || 'media',
   status: r.status || 'no_iniciada',
   createdAt: r.created_at,
+  sortOrder: r.sort_order,
   paymentType: r.payment_type,
   pactadoAmount: r.pactado_amount ? Number(r.pactado_amount) : undefined,
   equipmentCost: Number(r.equipment_cost || 0),

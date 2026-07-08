@@ -645,6 +645,7 @@ interface AppState {
   deleteTask: (id: ID) => void;
   moveTask: (id: ID, newStartDate: string, durationDays?: number) => void;
   resizeTask: (id: ID, newStartDate: string, newEndDate: string) => void;
+  reorderTask: (taskId: ID, direction: 'up' | 'down') => void;
 
   // Dependencias
   addDependency: (dep: Omit<Dependency, 'id'>) => void;
@@ -842,6 +843,7 @@ export const useAppStore = create<AppState>()(
             description: task.description,
             startDate: task.startDate || iso(today),
             endDate: task.endDate || iso(addD(today, 30)),
+            type: task.type || 'tarea',
             progress: 0,
             progressMode: task.progressMode || 'time',
             manualProgress: task.manualProgress,
@@ -857,6 +859,7 @@ export const useAppStore = create<AppState>()(
             priority: task.priority || 'media',
             status: task.status || 'no_iniciada',
             createdAt: iso(today),
+            sortOrder: task.sortOrder ?? Date.now(),
           };
           if (s.synced) sync.dbInsertTask(newTask);
           return { tasks: recomputeProgress([...s.tasks, newTask]) };
@@ -991,6 +994,34 @@ export const useAppStore = create<AppState>()(
               t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
             )),
           };
+        }),
+
+      reorderTask: (taskId, direction) =>
+        set(s => {
+          const task = s.tasks.find(t => t.id === taskId);
+          if (!task) return s;
+          // Encontrar hermanas (misma obra + mismo parentId)
+          const siblings = s.tasks
+            .filter(t => t.obraId === task.obraId && t.parentId === task.parentId)
+            .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+          const idx = siblings.findIndex(t => t.id === taskId);
+          if (idx < 0) return s;
+          const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+          if (swapIdx < 0 || swapIdx >= siblings.length) return s;
+          const swapTask = siblings[swapIdx];
+          // Intercambiar sortOrder
+          const taskOrder = task.sortOrder ?? 0;
+          const swapOrder = swapTask.sortOrder ?? 0;
+          const newTasks = s.tasks.map(t => {
+            if (t.id === taskId) return { ...t, sortOrder: swapOrder };
+            if (t.id === swapTask.id) return { ...t, sortOrder: taskOrder };
+            return t;
+          });
+          if (s.synced) {
+            sync.dbUpdateTask(taskId, { sortOrder: swapOrder });
+            sync.dbUpdateTask(swapTask.id, { sortOrder: taskOrder });
+          }
+          return { tasks: newTasks };
         }),
 
       addDependency: (dep) =>
@@ -1513,10 +1544,10 @@ export const getTasksByObra = (tasks: Task[], obraId: ID | 'all'): Task[] =>
   obraId === 'all' ? tasks : tasks.filter(t => t.obraId === obraId);
 
 export const getRootTasks = (tasks: Task[], obraId: ID | 'all'): Task[] =>
-  getTasksByObra(tasks, obraId).filter(t => t.parentId === null);
+  getTasksByObra(tasks, obraId).filter(t => t.parentId === null).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
 export const getSubtasks = (tasks: Task[], parentId: ID): Task[] =>
-  tasks.filter(t => t.parentId === parentId);
+  tasks.filter(t => t.parentId === parentId).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
 export const getMaterialsByObra = (materials: Material[], obraId: ID | 'all'): Material[] =>
   obraId === 'all' ? materials : materials.filter(m => m.obraId === obraId);
