@@ -74,10 +74,18 @@ export function GanttView() {
     originalEnd: string;
     depFromTaskId?: string;
     currentDeltaDays: number;
-    currentMouseX: number; // posición X real del mouse en coords del timeline (para create-dep)
-    currentMouseY: number; // posición Y real del mouse en coords del timeline
-    wasDragged: boolean; // true si el mouse se movió más de 3px (para distinguir click de drag)
+    currentMouseX: number;
+    currentMouseY: number;
+    wasDragged: boolean;
   } | null>(null);
+
+  // Ref para acceder al dragState actual dentro de los handlers globales
+  // (evita re-registrar listeners en cada cambio de dragState)
+  const dragStateRef = useRef(dragState);
+  useEffect(() => { dragStateRef.current = dragState; }, [dragState]);
+
+  // Refs para rows y dayWidth se declaran después de que esos valores existen
+  // (ver más abajo)
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -173,6 +181,12 @@ export function GanttView() {
     return result;
   }, [tasks, obra, collapsedTasks]);
 
+  // Refs para rows y dayWidth (para que los handlers globales los lean sin re-registrarse)
+  const rowsRef = useRef(rows);
+  useEffect(() => { rowsRef.current = rows; }, [rows]);
+  const dayWidthRef = useRef(dayWidth);
+  useEffect(() => { dayWidthRef.current = dayWidth; }, [dayWidth]);
+
   // Toggle colapso
   const toggleCollapse = useCallback((taskId: string) => {
     setCollapsedTasks(prev => {
@@ -216,18 +230,26 @@ export function GanttView() {
     return addDays(rangeStart, days);
   }, [rangeStart, dayWidth]);
 
-  // Pointer move global durante drag (Pointer Events: unifica mouse + touch + pen)
+  // Helper para iniciar drag: setea state + ref al mismo tiempo
+  const startDrag = useCallback((ds: NonNullable<typeof dragState>) => {
+    dragStateRef.current = ds;
+    setDragState(ds);
+  }, []);
+
+  // Handlers estables que leen del ref (no se re-crean en cada render)
   const handlePointerMove = useCallback((e: PointerEvent) => {
-    if (!dragState) return;
-    const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
+    const ds = dragStateRef.current;
+    if (!ds) return;
+    const dw = dayWidthRef.current;
+    const deltaDays = Math.round((e.clientX - ds.startX) / dw);
 
     // Detectar si el mouse se movió más de 3px (para distinguir click de drag)
-    const moveDistance = Math.abs(e.clientX - dragState.startX) + Math.abs(e.clientY - dragState.startY);
-    if (!dragState.wasDragged && moveDistance > 3) {
+    const moveDistance = Math.abs(e.clientX - ds.startX) + Math.abs(e.clientY - ds.startY);
+    if (!ds.wasDragged && moveDistance > 3) {
       setDragState(s => s ? { ...s, wasDragged: true } : s);
     }
 
-    // Calcular posición del pointer en coords del timeline (sin LEFT_PANEL_WIDTH ni HEADER_HEIGHT)
+    // Calcular posición del pointer en coords del timeline
     let mouseX = 0, mouseY = 0;
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
@@ -235,7 +257,7 @@ export function GanttView() {
       mouseY = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
     }
 
-    if (deltaDays !== dragState.currentDeltaDays || dragState.type === 'create-dep') {
+    if (deltaDays !== ds.currentDeltaDays || ds.type === 'create-dep') {
       setDragState(s => s ? {
         ...s,
         currentDeltaDays: deltaDays,
@@ -243,63 +265,64 @@ export function GanttView() {
         currentMouseY: mouseY,
       } : s);
     }
-  }, [dragState, dayWidth, LEFT_PANEL_WIDTH, HEADER_HEIGHT]);
+  }, [LEFT_PANEL_WIDTH, HEADER_HEIGHT]);
 
   const handlePointerUp = useCallback((e: PointerEvent) => {
-    if (!dragState) return;
+    const ds = dragStateRef.current;
+    if (!ds) return;
 
-    if (dragState.type === 'create-dep' && dragState.depFromTaskId && containerRef.current) {
+    if (ds.type === 'create-dep' && ds.depFromTaskId && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const y = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
       const targetIdx = Math.floor(y / ROW_HEIGHT);
-      const targetRow = rows[targetIdx];
-      if (targetRow && targetRow.task.id !== dragState.depFromTaskId) {
+      const targetRow = rowsRef.current[targetIdx];
+      if (targetRow && targetRow.task.id !== ds.depFromTaskId) {
         addDependency({
-          fromTaskId: dragState.depFromTaskId,
+          fromTaskId: ds.depFromTaskId,
           toTaskId: targetRow.task.id,
           type: 'FS',
           lagDays: 0,
         });
       }
-    } else if (dragState.wasDragged) {
-      // Solo aplicar el cambio si realmente hubo drag (no fue un click)
-      const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
-      if (dragState.type === 'move') {
-        const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
-        const dur = differenceInCalendarDays(parseISO(dragState.originalEnd), parseISO(dragState.originalStart));
-        moveTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), dur);
-      } else if (dragState.type === 'resize-left') {
-        const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
-        const originalEnd = parseISO(dragState.originalEnd);
+    } else if (ds.wasDragged) {
+      const dw = dayWidthRef.current;
+      const deltaDays = Math.round((e.clientX - ds.startX) / dw);
+      if (ds.type === 'move') {
+        const newStart = addDays(parseISO(ds.originalStart), deltaDays);
+        const dur = differenceInCalendarDays(parseISO(ds.originalEnd), parseISO(ds.originalStart));
+        moveTask(ds.taskId, format(newStart, 'yyyy-MM-dd'), dur);
+      } else if (ds.type === 'resize-left') {
+        const newStart = addDays(parseISO(ds.originalStart), deltaDays);
+        const originalEnd = parseISO(ds.originalEnd);
         if (differenceInCalendarDays(originalEnd, newStart) >= 1) {
-          resizeTask(dragState.taskId, format(newStart, 'yyyy-MM-dd'), format(originalEnd, 'yyyy-MM-dd'));
+          resizeTask(ds.taskId, format(newStart, 'yyyy-MM-dd'), format(originalEnd, 'yyyy-MM-dd'));
         }
-      } else if (dragState.type === 'resize-right') {
-        const newEnd = addDays(parseISO(dragState.originalEnd), deltaDays);
-        const originalStart = parseISO(dragState.originalStart);
+      } else if (ds.type === 'resize-right') {
+        const newEnd = addDays(parseISO(ds.originalEnd), deltaDays);
+        const originalStart = parseISO(ds.originalStart);
         if (differenceInCalendarDays(newEnd, originalStart) >= 1) {
-          resizeTask(dragState.taskId, format(originalStart, 'yyyy-MM-dd'), format(newEnd, 'yyyy-MM-dd'));
+          resizeTask(ds.taskId, format(originalStart, 'yyyy-MM-dd'), format(newEnd, 'yyyy-MM-dd'));
         }
       }
-    } else if (!dragState.wasDragged && dragState.type !== 'create-dep') {
+    } else if (!ds.wasDragged && ds.type !== 'create-dep') {
       // Fue un click (sin drag) → abrir el modal
-      openTaskModal(dragState.taskId);
+      openTaskModal(ds.taskId);
     }
     setDragState(null);
-  }, [dragState, moveTask, resizeTask, addDependency, rows, openTaskModal, HEADER_HEIGHT, ROW_HEIGHT]);
+    dragStateRef.current = null;
+  }, [addDependency, moveTask, resizeTask, openTaskModal, HEADER_HEIGHT, ROW_HEIGHT]);
 
+  // Registrar listeners UNA sola vez al montar el componente
   useEffect(() => {
-    if (dragState) {
-      window.addEventListener('pointermove', handlePointerMove);
-      window.addEventListener('pointerup', handlePointerUp);
-      window.addEventListener('pointercancel', handlePointerUp);
-      return () => {
-        window.removeEventListener('pointermove', handlePointerMove);
-        window.removeEventListener('pointerup', handlePointerUp);
-        window.removeEventListener('pointercancel', handlePointerUp);
-      };
-    }
-  }, [dragState, handlePointerMove, handlePointerUp]);
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [handlePointerMove, handlePointerUp]);
 
   // Trackear scroll y tamaño del viewport del contenedor
   useEffect(() => {
@@ -670,7 +693,7 @@ export function GanttView() {
                               onPointerDown={(e) => {
                                 e.preventDefault();
                                 (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                                setDragState({
+                                startDrag({
                                   type: 'move',
                                   taskId: task.id,
                                   startX: e.clientX,
@@ -716,7 +739,7 @@ export function GanttView() {
                             onPointerDown={(e) => {
                               e.preventDefault();
                               (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                              setDragState({
+                              startDrag({
                                 type: 'move',
                                 taskId: task.id,
                                 startX: e.clientX,
@@ -747,7 +770,7 @@ export function GanttView() {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                                setDragState({
+                                startDrag({
                                   type: 'resize-left',
                                   taskId: task.id,
                                   startX: e.clientX,
@@ -769,7 +792,7 @@ export function GanttView() {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                                setDragState({
+                                startDrag({
                                   type: 'resize-right',
                                   taskId: task.id,
                                   startX: e.clientX,
@@ -791,7 +814,7 @@ export function GanttView() {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                                setDragState({
+                                startDrag({
                                   type: 'create-dep',
                                   taskId: task.id,
                                   startX: e.clientX,
