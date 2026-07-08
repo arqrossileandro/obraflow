@@ -48,13 +48,13 @@ const DEP_COLORS: Record<DependencyType, string> = {
 export function GanttView() {
   const {
     obras, tasks, dependencies, selectedObraId, ganttScale, setGanttScale,
+    ganttZoom, setGanttZoom,
     openTaskModal, moveTask, resizeTask, addDependency, deleteDependency,
     clipboard, pasteTask, copyTask, reorderTask,
   } = useAppStore();
 
   const obra = obras.find(o => o.id === selectedObraId);
   const [refDate, setRefDate] = useState(new Date());
-  const [zoom, setZoom] = useState(1);
   const [addTaskOpen, setAddTaskOpen] = useState(false);
   const [templateOpen, setTemplateOpen] = useState(false);
   const [hoveredDepId, setHoveredDepId] = useState<string | null>(null);
@@ -158,8 +158,8 @@ export function GanttView() {
 
   const dayWidth = useMemo(() => {
     const base = ganttScale === 'semana' ? 28 : ganttScale === 'quincena' ? 14 : 7;
-    return base * zoom;
-  }, [ganttScale, zoom]);
+    return base * ganttZoom;
+  }, [ganttScale, ganttZoom]);
 
   const timelineWidth = totalDays * dayWidth;
 
@@ -444,11 +444,11 @@ export function GanttView() {
         <div className="h-5 w-px bg-border" />
 
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setZoom(z => Math.max(0.5, z - 0.25))}>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setGanttZoom(Math.max(0.25, ganttZoom - 0.25))}>
             <ZoomOut className="w-4 h-4" />
           </Button>
-          <span className="text-xs text-muted-foreground w-10 text-center">{Math.round(zoom * 100)}%</span>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setZoom(z => Math.min(3, z + 0.25))}>
+          <span className="text-xs text-muted-foreground w-10 text-center">{Math.round(ganttZoom * 100)}%</span>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setGanttZoom(Math.min(3, ganttZoom + 0.25))}>
             <ZoomIn className="w-4 h-4" />
           </Button>
         </div>

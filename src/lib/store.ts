@@ -616,6 +616,7 @@ interface AppState {
   selectedObraId: ID | 'all'; // 'all' = vista general
   activeView: ViewKey;
   ganttScale: GanttScale;
+  ganttZoom: number; // zoom del Gantt (0.25 a 3)
   editingTaskId: ID | null;
   isTaskModalOpen: boolean;
   currentUser: Member;
@@ -630,6 +631,7 @@ interface AppState {
   setSelectedObra: (id: ID | 'all') => void;
   setActiveView: (v: ViewKey) => void;
   setGanttScale: (s: GanttScale) => void;
+  setGanttZoom: (z: number) => void;
   openTaskModal: (taskId: ID) => void;
   closeTaskModal: () => void;
 
@@ -802,7 +804,8 @@ export const useAppStore = create<AppState>()(
       // UI
       selectedObraId: 'all',
       activeView: 'dashboard',
-      ganttScale: 'semana',
+      ganttScale: 'mes',
+      ganttZoom: 0.5,
       editingTaskId: null,
       isTaskModalOpen: false,
       currentUser: {
@@ -824,6 +827,7 @@ export const useAppStore = create<AppState>()(
       setSelectedObra: (id) => set({ selectedObraId: id }),
       setActiveView: (v) => set({ activeView: v }),
       setGanttScale: (s) => set({ ganttScale: s }),
+      setGanttZoom: (z) => set({ ganttZoom: Math.max(0.25, Math.min(3, z)) }),
       openTaskModal: (taskId) => set({ editingTaskId: taskId, isTaskModalOpen: true }),
       closeTaskModal: () => set({ editingTaskId: null, isTaskModalOpen: false }),
 
@@ -1772,6 +1776,7 @@ export const useAppStore = create<AppState>()(
         // Solo persistimos UI state; los datos vienen de Supabase
         selectedObraId: s.selectedObraId,
         ganttScale: s.ganttScale,
+        ganttZoom: s.ganttZoom,
         activeView: s.activeView,
       }),
     }

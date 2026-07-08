@@ -113,12 +113,13 @@ export function CalendarView() {
                   'min-h-[120px] border-r border-b border-border/50 p-1.5 relative',
                   !inMonth && 'bg-muted/30/50',
                   isWeekend && inMonth && 'bg-muted/30/30',
-                  (i + 1) % 7 === 0 && 'border-r-0'
+                  (i + 1) % 7 === 0 && 'border-r-0',
+                  isTodayDay && 'ring-2 ring-inset ring-orange-500 bg-orange-50 dark:bg-orange-950/20 z-10'
                 )}
               >
                 <div className={cn(
                   'text-xs font-medium mb-1 w-6 h-6 flex items-center justify-center rounded-full',
-                  isTodayDay ? 'bg-primary text-white' : inMonth ? 'text-foreground' : 'text-muted-foreground/70'
+                  isTodayDay ? 'bg-orange-500 text-white font-bold shadow-sm' : inMonth ? 'text-foreground' : 'text-muted-foreground/70'
                 )}>
                   {format(day, 'd')}
                 </div>

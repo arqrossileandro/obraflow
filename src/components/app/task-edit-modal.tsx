@@ -18,7 +18,8 @@ import { Slider } from '@/components/ui/slider';
 import {
   Calendar, TrendingUp, MessageSquare, Wallet, FileText, Package,
   Plus, Trash2, Link2, Paperclip, ImageIcon, FileCheck2, Send, Save,
-  AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy, Flag
+  AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy, Flag,
+  ChevronLeft, Eye, ExternalLink, Loader2
 } from 'lucide-react';
 import { format, parseISO, differenceInCalendarDays, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -82,7 +83,7 @@ export function TaskEditModal() {
 
   return (
     <Dialog open={isTaskModalOpen} onOpenChange={(o) => !o && closeTaskModal()}>
-      <DialogContent className="!max-w-[1100px] !w-[90vw] p-0 gap-0 max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="!max-w-[1100px] !w-[90vw] p-0 gap-0 h-[85vh] overflow-hidden flex flex-col">
         {/* Header */}
         <DialogHeader className="px-6 pt-5 pb-3 border-b border-border shrink-0">
           <div className="flex items-start justify-between">
@@ -754,27 +755,112 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
   const { updateTask, currentUser, tasks } = useAppStore();
   const task = tasks.find(t => t.id === taskId)!;
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [newDocName, setNewDocName] = useState('');
   const [newDocType, setNewDocType] = useState<Document['type']>('informe');
+  const [uploading, setUploading] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleAddDoc = () => {
-    if (!newDocName.trim()) return;
-    const newDoc: Document = {
-      id: `d${Date.now()}`,
-      name: newDocName,
-      type: newDocType,
-      url: '#',
-      size: Math.floor(Math.random() * 5000000) + 100000,
-      uploadedAt: new Date().toISOString(),
-      uploadedById: currentUser.id,
-    };
-    updateTask(taskId, { documents: [...task.documents, newDoc] });
-    setNewDocName('');
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      // Subir a Supabase Storage
+      const { supabase } = await import('@/lib/supabase');
+      const fileExt = file.name.split('.').pop() || 'bin';
+      const fileName = `${taskId}/${crypto.randomUUID()}.${fileExt}`;
+      const { error: upErr } = await supabase.storage
+        .from('task-photos') // reusamos el bucket de fotos para docs también
+        .upload(fileName, file, { contentType: file.type, upsert: false });
+      if (upErr) throw upErr;
+
+      // Obtener URL firmada
+      const { data: urlData } = await supabase.storage
+        .from('task-photos')
+        .createSignedUrl(fileName, 86400); // 24 horas
+
+      const newDoc: Document = {
+        id: crypto.randomUUID(),
+        name: file.name,
+        type: newDocType,
+        url: urlData?.signedUrl || fileName,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        uploadedById: currentUser.id,
+      };
+      updateTask(taskId, { documents: [...task.documents, newDoc] });
+    } catch (err) {
+      console.error('Error subiendo documento:', err);
+      alert('Error al subir el archivo: ' + (err as Error).message);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handlePreview = async (doc: Document) => {
+    setPreviewDoc(doc);
+    setPreviewUrl(null);
+    // Si la URL es un path de storage (no http), generar URL firmada
+    if (doc.url && !doc.url.startsWith('http')) {
+      try {
+        const { supabase } = await import('@/lib/supabase');
+        const { data } = await supabase.storage
+          .from('task-photos')
+          .createSignedUrl(doc.url, 86400);
+        if (data?.signedUrl) setPreviewUrl(data.signedUrl);
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      setPreviewUrl(doc.url);
+    }
   };
 
   const ICONS: Record<Document['type'], any> = {
     plano: FileText, foto: ImageIcon, contrato: FileCheck2, informe: FileText, otro: Paperclip,
   };
+
+  const isPreviewable = (doc: Document) => {
+    const name = doc.name.toLowerCase();
+    return name.endsWith('.pdf') || name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.gif') || name.endsWith('.webp') || name.endsWith('.txt') || name.endsWith('.csv');
+  };
+
+  if (previewDoc) {
+    return (
+      <div className="space-y-3 h-full flex flex-col">
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="ghost" size="sm" className="h-8" onClick={() => { setPreviewDoc(null); setPreviewUrl(null); }}>
+            <ChevronLeft className="w-4 h-4 mr-1" /> Volver
+          </Button>
+          <span className="text-xs font-medium truncate flex-1">{previewDoc.name}</span>
+          {previewUrl && (
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> Abrir externo
+            </a>
+          )}
+        </div>
+        <div className="flex-1 min-h-0 border border-border rounded-md overflow-hidden bg-muted/20">
+          {previewUrl ? (
+            previewDoc.name.toLowerCase().endsWith('.pdf') ? (
+              <iframe src={previewUrl} className="w-full h-full border-0" title={previewDoc.name} />
+            ) : previewDoc.name.match(/\.(png|jpg|jpeg|gif|webp)$/i) ? (
+              <div className="w-full h-full flex items-center justify-center p-4 overflow-auto">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={previewUrl} alt={previewDoc.name} className="max-w-full max-h-full object-contain" />
+              </div>
+            ) : (
+              <iframe src={previewUrl} className="w-full h-full border-0" title={previewDoc.name} />
+            )
+          ) : (
+            <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
+              Cargando...
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
@@ -789,23 +875,32 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
             <SelectItem value="otro">Otro</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          placeholder="Nombre del documento (ej: Plano estructura.pdf)"
-          value={newDocName}
-          onChange={e => setNewDocName(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleAddDoc()}
-          className="flex-1 h-8 text-xs"
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileSelect}
+          accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.docx,.xlsx"
         />
-        <Button size="sm" className="h-8" onClick={handleAddDoc} disabled={!newDocName.trim()}>
-          <Upload className="w-3.5 h-3.5 mr-1" /> Agregar
+        <Button
+          size="sm"
+          className="h-8 flex-1"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? (
+            <><Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> Subiendo...</>
+          ) : (
+            <><Upload className="w-3.5 h-3.5 mr-1" /> Subir archivo</>
+          )}
         </Button>
       </div>
-
-      <input ref={fileInputRef} type="file" className="hidden" />
 
       {documents.length === 0 ? (
         <div className="text-center text-xs text-muted-foreground/70 py-8">
           No hay documentación cargada para esta tarea.
+          <br />
+          <span className="text-[10px]">Subí planos, contratos, informes o fotos. Se pueden visualizar dentro de la app.</span>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -818,11 +913,37 @@ function DocumentationTab({ taskId, documents }: { taskId: string; documents: Do
                   <Icon className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-foreground truncate">{doc.name}</div>
+                  <button
+                    onClick={() => isPreviewable(doc) ? handlePreview(doc) : null}
+                    className={cn('text-xs font-medium text-foreground truncate block w-full text-left', isPreviewable(doc) && 'hover:text-primary hover:underline cursor-pointer')}
+                    title={isPreviewable(doc) ? 'Click para visualizar' : doc.name}
+                  >
+                    {doc.name}
+                  </button>
                   <div className="text-[10px] text-muted-foreground mt-0.5">
                     {doc.type} · {(doc.size / 1024 / 1024).toFixed(1)} MB · {format(parseISO(doc.uploadedAt), "dd MMM yyyy", { locale: es })}
                   </div>
                 </div>
+                {isPreviewable(doc) && (
+                  <button
+                    onClick={() => handlePreview(doc)}
+                    className="text-primary hover:bg-primary/10 p-1 rounded"
+                    title="Visualizar"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
+                )}
+                {doc.url && doc.url.startsWith('http') && !isPreviewable(doc) && (
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:bg-primary/10 p-1 rounded"
+                    title="Abrir externo"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
                 <button
                   onClick={() => updateTask(taskId, { documents: task.documents.filter(d => d.id !== doc.id) })}
                   className="text-red-500 hover:text-destructive p-1"
