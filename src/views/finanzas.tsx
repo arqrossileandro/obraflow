@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppStore, formatCurrency } from '@/lib/store';
+import { useAppStore, formatCurrency, getTaskCosts } from '@/lib/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -123,31 +123,44 @@ export function FinanzasView() {
 
   if (!obra) return null;
 
-  // Calcular totales
-  const totalPlannedLabor = obraTasks.reduce((s, t) => s + (t.laborCost || 0), 0);
-  const totalPlannedMaterials = obraTasks.reduce((s, t) => s + (t.materialsCost || 0), 0);
+  // Calcular totales — solo sumar tareas raíz (que incluyen sus hijos via getTaskCosts)
+  const rootTasks = obraTasks.filter(t => t.parentId === null);
+  const totalPlannedLabor = rootTasks.reduce((s, t) => {
+    const costs = getTaskCosts(t, obraTasks);
+    return s + costs.laborCost;
+  }, 0);
+  const totalPlannedMaterials = rootTasks.reduce((s, t) => {
+    const costs = getTaskCosts(t, obraTasks);
+    return s + costs.materialsCost;
+  }, 0);
   const totalPlanned = totalPlannedLabor + totalPlannedMaterials;
 
-  const totalRealLabor = obraTasks.reduce((s, t) => s + (t.realLaborCost || 0), 0);
-  const totalRealMaterials = obraTasks.reduce((s, t) => s + (t.realMaterialsCost || 0), 0);
+  const totalRealLabor = rootTasks.reduce((s, t) => {
+    const costs = getTaskCosts(t, obraTasks);
+    return s + costs.realLaborCost;
+  }, 0);
+  const totalRealMaterials = rootTasks.reduce((s, t) => {
+    const costs = getTaskCosts(t, obraTasks);
+    return s + costs.realMaterialsCost;
+  }, 0);
   const totalReal = totalRealLabor + totalRealMaterials;
 
   const budgetPct = obra.budget > 0 ? (totalReal / obra.budget) * 100 : 0;
   const plannedPct = totalPlanned > 0 ? (totalReal / totalPlanned) * 100 : 0;
 
-  // Desviaciones por tarea
-  const taskDeviations = obraTasks
-    .filter(t => t.parentId === null)
+  // Desviaciones por tarea — usar getTaskCosts para padres
+  const taskDeviations = rootTasks
     .map(t => {
-      const planned = t.laborCost + t.materialsCost;
-      const real = (t.realLaborCost || 0) + (t.realMaterialsCost || 0);
+      const costs = getTaskCosts(t, obraTasks);
+      const planned = costs.laborCost + costs.materialsCost;
+      const real = costs.realLaborCost + costs.realMaterialsCost;
       return {
         ...t,
         planned, real,
         deviation: real - planned,
         deviationPct: planned > 0 ? ((real - planned) / planned) * 100 : 0,
-        laborDev: (t.realLaborCost || 0) - t.laborCost,
-        materialsDev: (t.realMaterialsCost || 0) - t.materialsCost,
+        laborDev: costs.realLaborCost - costs.laborCost,
+        materialsDev: costs.realMaterialsCost - costs.materialsCost,
       };
     })
     .filter(t => t.real > 0)
@@ -487,6 +500,8 @@ export function FinanzasView() {
               const now = new Date();
               let pv = 0, ev = 0, ac = 0;
               obraTasks.forEach(t => {
+                // Solo contar tareas hoja (sin hijos) para no duplicar
+                if (obraTasks.some(c => c.parentId === t.id)) return;
                 const start = parseISO(t.startDate);
                 const end = parseISO(t.endDate);
                 const taskDur = Math.max(1, differenceInCalendarDays(end, start));
@@ -584,8 +599,9 @@ export function FinanzasView() {
               obraTasks.filter(t => t.parentId === null && t.guild).forEach(t => {
                 const g = t.guild!;
                 if (!guildStats[g]) guildStats[g] = { planned: 0, real: 0, count: 0 };
-                guildStats[g].planned += t.laborCost + t.materialsCost;
-                guildStats[g].real += (t.realLaborCost || 0) + (t.realMaterialsCost || 0);
+                const costs = getTaskCosts(t, obraTasks);
+                guildStats[g].planned += costs.laborCost + costs.materialsCost;
+                guildStats[g].real += costs.realLaborCost + costs.realMaterialsCost;
                 guildStats[g].count++;
               });
               const sorted = Object.entries(guildStats).sort((a, b) => b[1].planned - a[1].planned);

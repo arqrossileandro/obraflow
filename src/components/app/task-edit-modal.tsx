@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppStore, formatCurrency, getTaskBarColor, TASK_PALETTE } from '@/lib/store';
+import { useAppStore, formatCurrency, getTaskBarColor, TASK_PALETTE, getTaskCosts } from '@/lib/store';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription
 } from '@/components/ui/dialog';
@@ -19,7 +19,7 @@ import {
   Calendar, TrendingUp, MessageSquare, Wallet, FileText, Package,
   Plus, Trash2, Link2, Paperclip, ImageIcon, FileCheck2, Send, Save,
   AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy, Flag,
-  ChevronLeft, Eye, ExternalLink, Loader2
+  ChevronLeft, ChevronDown, Eye, ExternalLink, Loader2
 } from 'lucide-react';
 import { format, parseISO, differenceInCalendarDays, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -550,65 +550,157 @@ export function TaskEditModal() {
             {/* TAB: FINANCIERA */}
             {/* ================================================================ */}
             <TabsContent value="financiera" className="mt-0 space-y-4">
+              {(() => {
+                const costs = getTaskCosts(task, tasks);
+                const isCalculated = costs.hasChildren;
+                return (
+                <>
               <div className="grid grid-cols-2 gap-4">
                 {/* Presupuestado */}
                 <Card className="p-4">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3">Presupuestado</div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3 flex items-center justify-between">
+                    <span>Presupuestado</span>
+                    {isCalculated && (
+                      <span className="text-[9px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded normal-case font-medium">
+                        Sumatoria de subtareas
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     <div>
                       <Label className="text-xs">Mano de obra</Label>
                       <Input
                         type="number"
-                        value={task.laborCost || ''}
-                        onChange={e => updateTask(task.id, { laborCost: Number(e.target.value) || 0 })}
-                        className="mt-1"
+                        value={isCalculated ? costs.laborCost : (task.laborCost || '')}
+                        onChange={e => !isCalculated && updateTask(task.id, { laborCost: Number(e.target.value) || 0 })}
+                        disabled={isCalculated}
+                        className={cn('mt-1', isCalculated && 'bg-muted/50 text-muted-foreground cursor-not-allowed')}
                       />
                     </div>
                     <div>
                       <Label className="text-xs">Materiales</Label>
                       <Input
                         type="number"
-                        value={task.materialsCost || ''}
-                        onChange={e => updateTask(task.id, { materialsCost: Number(e.target.value) || 0 })}
-                        className="mt-1"
+                        value={isCalculated ? costs.materialsCost : (task.materialsCost || '')}
+                        onChange={e => !isCalculated && updateTask(task.id, { materialsCost: Number(e.target.value) || 0 })}
+                        disabled={isCalculated}
+                        className={cn('mt-1', isCalculated && 'bg-muted/50 text-muted-foreground cursor-not-allowed')}
                       />
                     </div>
                     <div className="pt-2 border-t border-border flex justify-between text-sm font-semibold">
                       <span>Total</span>
-                      <span>{formatCurrency(task.laborCost + task.materialsCost)}</span>
+                      <span>{formatCurrency(costs.laborCost + costs.materialsCost)}</span>
                     </div>
                   </div>
                 </Card>
 
                 {/* Real */}
                 <Card className="p-4">
-                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3">Costo real</div>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3 flex items-center justify-between">
+                    <span>Costo real</span>
+                    {isCalculated && (
+                      <span className="text-[9px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded normal-case font-medium">
+                        Sumatoria de subtareas
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-2">
                     <div>
                       <Label className="text-xs">Mano de obra</Label>
                       <Input
                         type="number"
-                        value={task.realLaborCost || ''}
-                        onChange={e => updateTask(task.id, { realLaborCost: Number(e.target.value) || 0 })}
-                        className="mt-1"
+                        value={isCalculated ? costs.realLaborCost : (task.realLaborCost || '')}
+                        onChange={e => !isCalculated && updateTask(task.id, { realLaborCost: Number(e.target.value) || 0 })}
+                        disabled={isCalculated}
+                        className={cn('mt-1', isCalculated && 'bg-muted/50 text-muted-foreground cursor-not-allowed')}
                       />
                     </div>
                     <div>
                       <Label className="text-xs">Materiales</Label>
                       <Input
                         type="number"
-                        value={task.realMaterialsCost || ''}
-                        onChange={e => updateTask(task.id, { realMaterialsCost: Number(e.target.value) || 0 })}
-                        className="mt-1"
+                        value={isCalculated ? costs.realMaterialsCost : (task.realMaterialsCost || '')}
+                        onChange={e => !isCalculated && updateTask(task.id, { realMaterialsCost: Number(e.target.value) || 0 })}
+                        disabled={isCalculated}
+                        className={cn('mt-1', isCalculated && 'bg-muted/50 text-muted-foreground cursor-not-allowed')}
                       />
                     </div>
                     <div className="pt-2 border-t border-border flex justify-between text-sm font-semibold">
                       <span>Total</span>
-                      <span>{formatCurrency((task.realLaborCost || 0) + (task.realMaterialsCost || 0))}</span>
+                      <span>{formatCurrency(costs.realLaborCost + costs.realMaterialsCost)}</span>
                     </div>
                   </div>
                 </Card>
               </div>
+
+              {/* Detalle de subtareas — solo si la tarea tiene hijos */}
+              {isCalculated && costs.childrenDetail.length > 0 && (
+                <Card className="p-4">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase mb-3 flex items-center gap-1.5">
+                    <ChevronDown className="w-3.5 h-3.5" />
+                    Detalle de subtareas ({costs.childrenDetail.length})
+                  </div>
+                  <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+                    {costs.childrenDetail.map(({ task: child, laborCost, materialsCost, realLaborCost, realMaterialsCost, total }) => {
+                      const realTotal = realLaborCost + realMaterialsCost;
+                      const dev = realTotal - total;
+                      const hasOwnChildren = tasks.some(t => t.parentId === child.id);
+                      return (
+                        <div key={child.id} className="flex items-center gap-3 p-2 rounded-md border border-border bg-muted/20 hover:bg-muted/40 transition">
+                          {/* Color bar */}
+                          <div className="w-1 h-8 rounded-full shrink-0" style={{ background: child.color || '#64748b' }} />
+                          {/* Name + guild */}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-medium text-foreground truncate flex items-center gap-1">
+                              {child.name}
+                              {hasOwnChildren && (
+                                <span className="text-[9px] text-muted-foreground bg-muted px-1 rounded">agrupadora</span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              {child.guild || 'Sin gremio'}
+                              {child.repercussionPercent !== undefined && ` · ${child.repercussionPercent}% cert.`}
+                            </div>
+                          </div>
+                          {/* Costos */}
+                          <div className="text-right shrink-0">
+                            <div className="text-xs font-semibold text-foreground">{formatCurrency(total)}</div>
+                            <div className="text-[9px] text-muted-foreground mt-0.5">
+                              MO: {formatCurrency(laborCost)} · Mat: {formatCurrency(materialsCost)}
+                            </div>
+                          </div>
+                          {/* Desviación real vs presupuestado */}
+                          {realTotal > 0 && (
+                            <div className="text-right shrink-0 w-20">
+                              <div className="text-[10px] text-muted-foreground">Real</div>
+                              <div className={cn('text-xs font-semibold', dev > 0 ? 'text-destructive' : dev < 0 ? 'text-emerald-600' : 'text-foreground')}>
+                                {formatCurrency(realTotal)}
+                              </div>
+                              {dev !== 0 && (
+                                <div className={cn('text-[9px]', dev > 0 ? 'text-destructive' : 'text-emerald-600')}>
+                                  {dev > 0 ? '+' : ''}{formatCurrency(dev)}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* Total general */}
+                  <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
+                    <span className="text-xs font-semibold text-foreground">Total sumatoria</span>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-foreground">
+                        {formatCurrency(costs.laborCost + costs.materialsCost)}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        MO: {formatCurrency(costs.laborCost)} · Mat: {formatCurrency(costs.materialsCost)}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              )}
 
               {/* Desviación */}
               <Card className="p-4">
@@ -616,17 +708,17 @@ export function TaskEditModal() {
                 <div className="grid grid-cols-4 gap-3 text-center">
                   <div>
                     <div className="text-[10px] text-muted-foreground">Presupuestado</div>
-                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency(task.laborCost + task.materialsCost)}</div>
+                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency(costs.laborCost + costs.materialsCost)}</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-muted-foreground">Real</div>
-                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency((task.realLaborCost || 0) + (task.realMaterialsCost || 0))}</div>
+                    <div className="text-sm font-semibold text-foreground mt-1">{formatCurrency(costs.realLaborCost + costs.realMaterialsCost)}</div>
                   </div>
                   <div>
                     <div className="text-[10px] text-muted-foreground">Desviación $</div>
                     {(() => {
-                      const planned = task.laborCost + task.materialsCost;
-                      const real = (task.realLaborCost || 0) + (task.realMaterialsCost || 0);
+                      const planned = costs.laborCost + costs.materialsCost;
+                      const real = costs.realLaborCost + costs.realMaterialsCost;
                       const dev = real - planned;
                       return (
                         <div className={cn('text-sm font-semibold mt-1', dev > 0 ? 'text-destructive' : dev < 0 ? 'text-emerald-600' : 'text-foreground')}>
@@ -638,8 +730,8 @@ export function TaskEditModal() {
                   <div>
                     <div className="text-[10px] text-muted-foreground">Desviación %</div>
                     {(() => {
-                      const planned = task.laborCost + task.materialsCost;
-                      const real = (task.realLaborCost || 0) + (task.realMaterialsCost || 0);
+                      const planned = costs.laborCost + costs.materialsCost;
+                      const real = costs.realLaborCost + costs.realMaterialsCost;
                       const pct = planned > 0 ? ((real - planned) / planned) * 100 : 0;
                       return (
                         <div className={cn('text-sm font-semibold mt-1', pct > 0 ? 'text-destructive' : pct < 0 ? 'text-emerald-600' : 'text-foreground')}>
@@ -650,8 +742,8 @@ export function TaskEditModal() {
                   </div>
                 </div>
                 {(() => {
-                  const planned = task.laborCost + task.materialsCost;
-                  const real = (task.realLaborCost || 0) + (task.realMaterialsCost || 0);
+                  const planned = costs.laborCost + costs.materialsCost;
+                  const real = costs.realLaborCost + costs.realMaterialsCost;
                   const dev = real - planned;
                   if (Math.abs(dev) < 1) return null;
                   return (
@@ -667,6 +759,9 @@ export function TaskEditModal() {
                   );
                 })()}
               </Card>
+                </>
+                );
+              })()}
             </TabsContent>
 
             {/* ================================================================ */}

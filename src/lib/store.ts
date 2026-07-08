@@ -1796,6 +1796,61 @@ export const getRootTasks = (tasks: Task[], obraId: ID | 'all'): Task[] =>
 export const getSubtasks = (tasks: Task[], parentId: ID): Task[] =>
   tasks.filter(t => t.parentId === parentId).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
+/**
+ * Calcula los costos de una tarea considerando sus hijos recursivamente.
+ * Si la tarea tiene hijos, sus costos = sumatoria de los hijos.
+ * Si no tiene hijos, usa sus propios costos.
+ */
+export const getTaskCosts = (task: Task, allTasks: Task[]): {
+  laborCost: number;
+  materialsCost: number;
+  realLaborCost: number;
+  realMaterialsCost: number;
+  hasChildren: boolean;
+  childrenDetail: { task: Task; laborCost: number; materialsCost: number; realLaborCost: number; realMaterialsCost: number; total: number }[];
+} => {
+  const children = getSubtasks(allTasks, task.id);
+  const hasChildren = children.length > 0;
+
+  if (!hasChildren) {
+    return {
+      laborCost: task.laborCost || 0,
+      materialsCost: task.materialsCost || 0,
+      realLaborCost: task.realLaborCost || 0,
+      realMaterialsCost: task.realMaterialsCost || 0,
+      hasChildren: false,
+      childrenDetail: [],
+    };
+  }
+
+  // Sumar hijos recursivamente
+  let laborCost = 0, materialsCost = 0, realLaborCost = 0, realMaterialsCost = 0;
+  const childrenDetail = children.map(child => {
+    const childCosts = getTaskCosts(child, allTasks);
+    laborCost += childCosts.laborCost;
+    materialsCost += childCosts.materialsCost;
+    realLaborCost += childCosts.realLaborCost;
+    realMaterialsCost += childCosts.realMaterialsCost;
+    return {
+      task: child,
+      laborCost: childCosts.laborCost,
+      materialsCost: childCosts.materialsCost,
+      realLaborCost: childCosts.realLaborCost,
+      realMaterialsCost: childCosts.realMaterialsCost,
+      total: childCosts.laborCost + childCosts.materialsCost,
+    };
+  });
+
+  return {
+    laborCost,
+    materialsCost,
+    realLaborCost,
+    realMaterialsCost,
+    hasChildren: true,
+    childrenDetail,
+  };
+};
+
 export const getMaterialsByObra = (materials: Material[], obraId: ID | 'all'): Material[] =>
   obraId === 'all' ? materials : materials.filter(m => m.obraId === obraId);
 
