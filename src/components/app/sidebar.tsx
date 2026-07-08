@@ -126,30 +126,7 @@ export function Sidebar() {
               <SelectItem key={o.id} value={o.id}>
                 <div className="flex items-center gap-2 w-full">
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: o.color }} />
-                  <span className="truncate max-w-[140px] flex-1">{o.name}</span>
-                  <span className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <button
-                      onClick={(e) => handleEdit(o.id, e)}
-                      className="p-0.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
-                      title="Editar obra"
-                    >
-                      <Pencil className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={(e) => handleDuplicate(o.id, e)}
-                      className="p-0.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
-                      title="Duplicar obra"
-                    >
-                      <Copy className="w-3 h-3" />
-                    </button>
-                    <button
-                      onClick={(e) => handleDelete(o.id, e)}
-                      className="p-0.5 hover:bg-destructive/10 rounded text-destructive"
-                      title="Eliminar obra"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </span>
+                  <span className="truncate max-w-[180px] flex-1">{o.name}</span>
                 </div>
               </SelectItem>
             ))}

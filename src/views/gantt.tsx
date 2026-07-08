@@ -546,7 +546,7 @@ export function GanttView() {
               const isMilestone = task.type === 'hito';
 
               return (
-                <div key={task.id} className="flex border-b border-border/40 hover:bg-muted/30 pointer-events-none" style={{ height: ROW_HEIGHT }}>
+                <div key={task.id} className="flex border-b border-border/40 hover:bg-muted/30 pointer-events-none group" style={{ height: ROW_HEIGHT }}>
                   {/* Panel izquierdo */}
                   <div
                     className="sticky left-0 z-10 bg-card border-r border-border flex items-center px-2 cursor-pointer hover:bg-muted/50 pointer-events-auto"
@@ -707,7 +707,7 @@ export function GanttView() {
                     ) : (
                       <div
                         className={cn(
-                          'absolute top-1.5 rounded-md border cursor-grab active:cursor-grabbing group transition-shadow hover:shadow-md pointer-events-auto'
+                          'absolute top-1.5 rounded-md border cursor-grab active:cursor-grabbing group/bar transition-shadow hover:shadow-md pointer-events-auto'
                         )}
                         style={{
                           left: startX,
@@ -747,7 +747,7 @@ export function GanttView() {
                             </div>
                             {/* Handle izquierdo (resize) */}
                             <div
-                              className="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-l-md opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-l-md opacity-0 group-hover/bar:opacity-100 transition-opacity"
                               style={{ touchAction: 'none' }}
                               onPointerDown={(e) => {
                                 e.preventDefault();
@@ -769,7 +769,7 @@ export function GanttView() {
                             />
                             {/* Handle derecho (resize) */}
                             <div
-                              className="absolute right-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-r-md opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute right-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-r-md opacity-0 group-hover/bar:opacity-100 transition-opacity"
                               style={{ touchAction: 'none' }}
                               onPointerDown={(e) => {
                                 e.preventDefault();
@@ -791,7 +791,7 @@ export function GanttView() {
                             />
                             {/* Punto derecho: crear dependencia FROM (esta es la predecesora) */}
                             <div
-                              className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                              className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 pointer-events-none group-hover/bar:opacity-100 group-hover/bar:pointer-events-auto"
                               style={{ borderColor: barColor, background: barColor, marginRight: '-6px', touchAction: 'none' }}
                               onPointerDown={(e) => {
                                 e.preventDefault();
@@ -815,7 +815,7 @@ export function GanttView() {
                             />
                             {/* Punto izquierdo: destino de dependencia (visual) */}
                             <div
-                              className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                              className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 pointer-events-none group-hover/bar:opacity-100 group-hover/bar:pointer-events-auto"
                               style={{ borderColor: barColor, background: 'var(--card)' }}
                               title="Inicio de tarea"
                             />
