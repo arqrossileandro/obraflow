@@ -987,7 +987,39 @@ export const useAppStore = create<AppState>()(
             materials: s.materials.map(m => ({ ...m })),
           };
           if (s.synced) sync.dbUpdateTask(id, patch);
-          const baseTasks = recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t));
+
+          // Si se están cambiando fechas y la tarea tiene hijos, mover los hijos también
+          let tasksAfterDateMove = s.tasks.map(t => t.id === id ? { ...t, ...patch } : t);
+          if ((patch.startDate || patch.endDate) && patch.type !== 'hito') {
+            const hasChildren = s.tasks.some(t => t.parentId === id);
+            if (hasChildren) {
+              const oldTask = s.tasks.find(t => t.id === id)!;
+              const newStartDate = patch.startDate || oldTask.startDate;
+              const oldStartDate = oldTask.startDate;
+              const delta = differenceInCalendarDays(parseISO(newStartDate), parseISO(oldStartDate));
+              if (delta !== 0) {
+                const moveChildrenRecursive = (parentId: ID, d: number) => {
+                  s.tasks.filter(t => t.parentId === parentId).forEach(child => {
+                    tasksAfterDateMove = tasksAfterDateMove.map(t =>
+                      t.id === child.id ? {
+                        ...t,
+                        startDate: iso(addD(parseISO(t.startDate), d)),
+                        endDate: iso(addD(parseISO(t.endDate), d)),
+                      } : t
+                    );
+                    if (s.synced) {
+                      const updated = tasksAfterDateMove.find(t => t.id === child.id)!;
+                      sync.dbUpdateTask(child.id, { startDate: updated.startDate, endDate: updated.endDate });
+                    }
+                    moveChildrenRecursive(child.id, d);
+                  });
+                };
+                moveChildrenRecursive(id, delta);
+              }
+            }
+          }
+
+          const baseTasks = recomputeProgress(tasksAfterDateMove);
           // Recalcular fechas de padres recursivamente
           const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
           if (s.synced) {
@@ -1033,8 +1065,27 @@ export const useAppStore = create<AppState>()(
           const start = parseISO(newStartDate);
           const dur = durationDays ?? differenceInCalendarDays(parseISO(task.endDate), parseISO(task.startDate));
           const newEnd = iso(addD(start, Math.max(1, dur)));
+
+          // Calcular el desplazamiento (delta en días) respecto a la posición original
+          const deltaDays = differenceInCalendarDays(start, parseISO(task.startDate));
           let updatedTasks = s.tasks.map(t => t.id === id ? { ...t, startDate: newStartDate, endDate: newEnd } : t);
           const updatedTaskIds = [id];
+
+          // Si la tarea movida tiene hijos, moverlos también por el mismo delta
+          const moveChildren = (parentId: ID, delta: number) => {
+            const children = s.tasks.filter(t => t.parentId === parentId);
+            for (const child of children) {
+              const childStart = addD(parseISO(child.startDate), delta);
+              const childEnd = addD(parseISO(child.endDate), delta);
+              updatedTasks = updatedTasks.map(t =>
+                t.id === child.id ? { ...t, startDate: iso(childStart), endDate: iso(childEnd) } : t
+              );
+              updatedTaskIds.push(child.id);
+              // Recursivo: mover nietos también
+              moveChildren(child.id, delta);
+            }
+          };
+          moveChildren(id, deltaDays);
 
           // Propagar dependencias FS: si muevo una tarea predecesora, las sucesoras FS se mueven también
           const propagate = (taskId: ID, newEndISO: string) => {
@@ -1082,6 +1133,51 @@ export const useAppStore = create<AppState>()(
             dependencies: s.dependencies.map(d => ({ ...d })),
             materials: s.materials.map(m => ({ ...m })),
           };
+          // Si la tarea tiene hijos, no se puede redimensionar manualmente
+          // (su duración la determinan los hijos)
+          const hasChildren = s.tasks.some(t => t.parentId === id);
+          if (hasChildren) {
+            // Redimensionar el PRIMER o ÚLTIMO hijo en su lugar
+            const children = s.tasks.filter(t => t.parentId === id);
+            if (children.length === 0) return s;
+            // Actualizar las fechas del hijo que corresponde
+            // (el usuario está arrastrando un borde del padre, que en realidad es un borde de un hijo)
+            // Por simplicidad, actualizar el hijo que tiene la fecha más cercana al borde arrastrado
+            const oldStart = s.tasks.find(t => t.id === id)!.startDate;
+            const startChanged = newStartDate !== oldStart;
+            if (startChanged) {
+              // Mover el inicio del hijo más temprano
+              const earliestChild = children.reduce((min, c) => c.startDate < min.startDate ? c : min, children[0]);
+              if (s.synced) sync.dbUpdateTask(earliestChild.id, { startDate: newStartDate });
+              const baseTasks = s.tasks.map(t =>
+                t.id === earliestChild.id ? { ...t, startDate: newStartDate } : t
+              );
+              const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+              if (s.synced) {
+                changedIds.forEach(pid => {
+                  const t = recalcedTasks.find(x => x.id === pid);
+                  if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+                });
+              }
+              return { tasks: recomputeProgress(recalcedTasks), undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
+            } else {
+              // Mover el fin del hijo más tardío
+              const latestChild = children.reduce((max, c) => c.endDate > max.endDate ? c : max, children[0]);
+              if (s.synced) sync.dbUpdateTask(latestChild.id, { endDate: newEndDate });
+              const baseTasks = s.tasks.map(t =>
+                t.id === latestChild.id ? { ...t, endDate: newEndDate } : t
+              );
+              const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+              if (s.synced) {
+                changedIds.forEach(pid => {
+                  const t = recalcedTasks.find(x => x.id === pid);
+                  if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+                });
+              }
+              return { tasks: recomputeProgress(recalcedTasks), undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
+            }
+          }
+          // Tarea sin hijos: redimensionar normalmente
           if (s.synced) sync.dbUpdateTask(id, { startDate: newStartDate, endDate: newEndDate });
           const baseTasks = s.tasks.map(t =>
             t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
