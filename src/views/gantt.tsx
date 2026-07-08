@@ -355,7 +355,28 @@ export function GanttView() {
     }
   };
 
-  const goToday = () => setRefDate(new Date());
+  const goToday = () => {
+    const today = new Date();
+    setRefDate(today);
+    // Calcular el nuevo rangeStart según la escala actual
+    let newRangeStart: Date;
+    if (ganttScale === 'semana') {
+      newRangeStart = startOfWeek(subWeeks(today, 8), { weekStartsOn: 1 });
+    } else if (ganttScale === 'quincena') {
+      newRangeStart = startOfMonth(subMonths(today, 6));
+    } else {
+      newRangeStart = startOfMonth(subMonths(today, 6));
+    }
+    // Scrollear a la posición de "hoy" después de que se recalcule el rango
+    setTimeout(() => {
+      if (containerRef.current) {
+        const todayX = differenceInCalendarDays(today, newRangeStart) * dayWidth;
+        const viewportWidth = containerRef.current.clientWidth - LEFT_PANEL_WIDTH;
+        // Centrar "hoy" en el viewport
+        containerRef.current.scrollLeft = Math.max(0, todayX - viewportWidth / 2);
+      }
+    }, 100);
+  };
 
   // Posición del fantasma durante drag
   const getGhostStyle = (task: Task) => {

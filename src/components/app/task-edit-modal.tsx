@@ -82,7 +82,7 @@ export function TaskEditModal() {
 
   return (
     <Dialog open={isTaskModalOpen} onOpenChange={(o) => !o && closeTaskModal()}>
-      <DialogContent className="!max-w-[95vw] !w-[95vw] p-0 gap-0 max-h-[95vh] overflow-hidden flex flex-col sm:!max-w-[95vw]">
+      <DialogContent className="!max-w-[1100px] !w-[90vw] p-0 gap-0 max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <DialogHeader className="px-6 pt-5 pb-3 border-b border-border shrink-0">
           <div className="flex items-start justify-between">
@@ -133,7 +133,7 @@ export function TaskEditModal() {
         {/* Cuerpo: chat lateral izquierdo + contenido principal */}
         <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Chat lateral izquierdo - siempre visible */}
-          <aside className="w-64 border-r border-border bg-muted/30 flex flex-col shrink-0 min-h-0">
+          <aside className="w-72 border-r border-border bg-muted/30 flex flex-col shrink-0 min-h-0">
             <div className="px-3 py-2 border-b border-border flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-xs font-semibold text-foreground">Comentarios</span>
