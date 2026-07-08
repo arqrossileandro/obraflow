@@ -24,8 +24,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect } from 'react';
 
 function HomeInner() {
-  const { activeView, selectedObraId, setActiveView } = useAppStore();
+  const { activeView, selectedObraId, setActiveView, setSelectedObra, obras, synced } = useAppStore();
   const isMobile = useIsMobile();
+
+  // Si synced=true pero selectedObraId='all' y hay obras, seleccionar la primera
+  useEffect(() => {
+    if (synced && selectedObraId === 'all' && obras.length > 0) {
+      setSelectedObra(obras[0].id);
+    }
+  }, [synced, selectedObraId, obras, setSelectedObra]);
 
   useEffect(() => {
     if (isMobile && selectedObraId !== 'all') {

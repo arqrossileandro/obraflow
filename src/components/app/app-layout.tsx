@@ -53,9 +53,24 @@ function AppInner({ children }: { children: React.ReactNode }) {
     return <LoginScreen />;
   }
 
+  // Mostrar "Sincronizando datos..." hasta que el primer fetch termine
+  if (!synced) {
+    return (
+      <>
+        <RealtimeSync />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-muted-foreground mt-3">Sincronizando datos desde la nube...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {synced && <RealtimeSync />}
+      <RealtimeSync />
       {children}
     </>
   );
