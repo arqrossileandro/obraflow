@@ -12,7 +12,7 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers
+  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers, ClipboardPaste
 } from 'lucide-react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -49,6 +49,7 @@ export function GanttView() {
   const {
     obras, tasks, dependencies, selectedObraId, ganttScale, setGanttScale,
     openTaskModal, moveTask, resizeTask, addDependency, deleteDependency,
+    clipboard, pasteTask,
   } = useAppStore();
 
   const obra = obras.find(o => o.id === selectedObraId);
@@ -384,6 +385,24 @@ export function GanttView() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          {clipboard && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 border-primary/50 text-primary"
+              onClick={() => {
+                const newId = pasteTask(null, obra.id, 0);
+                if (newId) {
+                  // Abrir el modal de la nueva tarea para editar nombre/fechas
+                  openTaskModal(newId);
+                }
+              }}
+              title={`Pegar: ${clipboard.task.name} (${clipboard.subtasks.length + 1} tareas)`}
+            >
+              <ClipboardPaste className="w-3.5 h-3.5 mr-1" />
+              Pegar tarea
+            </Button>
+          )}
           <Button size="sm" variant="outline" className="h-8" onClick={() => setTemplateOpen(true)}>
             <Layers className="w-3.5 h-3.5 mr-1" /> Plantilla
           </Button>

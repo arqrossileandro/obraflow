@@ -686,6 +686,11 @@ interface AppState {
   markAllNotificationsRead: () => void;
   pushNotification: (n: Omit<AppNotification, 'id' | 'createdAt' | 'read'>) => void;
 
+  // Copy/paste de tareas
+  clipboard: { task: Task; subtasks: Task[] } | null;
+  copyTask: (taskId: ID) => void;
+  pasteTask: (newParentId: ID | null, obraId: ID, offsetDays?: number) => ID | null;
+
   // Sync con Supabase
   synced: boolean; // true cuando los datos están cargados desde Supabase
   setSynced: (v: boolean) => void;
@@ -1398,6 +1403,91 @@ export const useAppStore = create<AppState>()(
             ? s.members.map(x => x.id === m.id ? m : x)
             : [...s.members, m],
         })),
+
+      // ===== Copy/paste de tareas =====
+      clipboard: null,
+      copyTask: (taskId) =>
+        set(s => {
+          const task = s.tasks.find(t => t.id === taskId);
+          if (!task) return s;
+          // Recopilar todas las subtareas recursivamente
+          const collectSubtasks = (parentId: ID): Task[] => {
+            const children = s.tasks.filter(t => t.parentId === parentId);
+            let result: Task[] = [];
+            for (const child of children) {
+              result.push(child);
+              result = result.concat(collectSubtasks(child.id));
+            }
+            return result;
+          };
+          const subtasks = collectSubtasks(taskId);
+          return { clipboard: { task, subtasks } };
+        }),
+      pasteTask: (newParentId, obraId, offsetDays = 0) => {
+        const state = get();
+        if (!state.clipboard) return null;
+        const { task: origTask, subtasks: origSubtasks } = state.clipboard;
+
+        // Generar nuevos IDs manteniendo la relación padre-hijo
+        const idMap = new Map<ID, ID>();
+        const newRootId = crypto.randomUUID();
+        idMap.set(origTask.id, newRootId);
+
+        // Mapear IDs de subtareas
+        for (const st of origSubtasks) {
+          idMap.set(st.id, crypto.randomUUID());
+        }
+
+        // Función helper para offset de fechas
+        const offsetDate = (isoDate: string) => {
+          if (offsetDays === 0) return isoDate;
+          const d = parseISO(isoDate);
+          return formatISO(addD(d, offsetDays), { representation: 'complete' }).slice(0, 10);
+        };
+
+        // Crear tarea raíz copiada
+        const newRootTask: Task = {
+          ...origTask,
+          id: newRootId,
+          obraId,
+          parentId: newParentId,
+          startDate: offsetDate(origTask.startDate),
+          endDate: offsetDate(origTask.endDate),
+          progress: 0,
+          progressMode: 'time',
+          manualProgress: undefined,
+          status: 'no_iniciada',
+          photos: [],
+          voiceNotes: [],
+          createdAt: iso(today),
+          name: `${origTask.name} (copia)`,
+        };
+
+        // Crear subtareas copiadas
+        const newSubtasks: Task[] = origSubtasks.map(st => ({
+          ...st,
+          id: idMap.get(st.id)!,
+          obraId,
+          parentId: st.parentId ? idMap.get(st.parentId)! : null,
+          startDate: offsetDate(st.startDate),
+          endDate: offsetDate(st.endDate),
+          progress: 0,
+          progressMode: 'time',
+          manualProgress: undefined,
+          status: 'no_iniciada',
+          photos: [],
+          voiceNotes: [],
+          createdAt: iso(today),
+        }));
+
+        // Insertar en store + sync
+        const allNew = [newRootTask, ...newSubtasks];
+        if (state.synced) {
+          allNew.forEach(t => sync.dbInsertTask(t));
+        }
+        set(s => ({ tasks: recomputeProgress([...s.tasks, ...allNew]) }));
+        return newRootId;
+      },
 
       // ===== Undo (no-op por ahora) =====
       undo: () => {},

@@ -18,7 +18,7 @@ import { Slider } from '@/components/ui/slider';
 import {
   Calendar, TrendingUp, MessageSquare, Wallet, FileText, Package,
   Plus, Trash2, Link2, Paperclip, ImageIcon, FileCheck2, Send, Save,
-  AlertCircle, Download, Upload, Mail, MessageCircle, Bell
+  AlertCircle, Download, Upload, Mail, MessageCircle, Bell, Copy
 } from 'lucide-react';
 import { format, parseISO, differenceInCalendarDays, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -58,7 +58,7 @@ export function TaskEditModal() {
     isTaskModalOpen, editingTaskId, closeTaskModal, tasks, members, dependencies,
     updateTask, deleteTask, addDependency, deleteDependency, comments, addComment,
     materials, addMaterial, updateMaterial, deleteMaterial, sendMaterialToKanban,
-    obras, currentUser,
+    obras, currentUser, copyTask,
   } = useAppStore();
 
   const task = tasks.find(t => t.id === editingTaskId);
@@ -104,6 +104,23 @@ export function TaskEditModal() {
             </div>
             <div className="flex items-center gap-2 ml-3 shrink-0">
               <Badge className="bg-primary/15 text-primary text-[10px]">{task.progress}%</Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-muted-foreground"
+                onClick={() => {
+                  copyTask(task.id);
+                  // Feedback visual
+                  const btn = document.activeElement as HTMLElement;
+                  if (btn) {
+                    btn.setAttribute('data-copied', 'true');
+                    setTimeout(() => btn.removeAttribute('data-copied'), 1500);
+                  }
+                }}
+                title="Copiar tarea (con subtareas) para pegar después"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </Button>
               <Button variant="ghost" size="sm" className="text-destructive h-8" onClick={() => {
                 if (confirm('¿Eliminar tarea?')) { deleteTask(task.id); closeTaskModal(); }
               }}>
