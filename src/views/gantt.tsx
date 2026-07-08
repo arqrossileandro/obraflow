@@ -59,6 +59,8 @@ export function GanttView() {
   const [hoveredDepId, setHoveredDepId] = useState<string | null>(null);
   const [scrollState, setScrollState] = useState({ left: 0, top: 0 });
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  // Estado de colapso de tareas (taskId → true si está colapsada)
+  const [collapsedTasks, setCollapsedTasks] = useState<Set<string>>(new Set());
 
   // Estado de drag con preview (fantasma)
   const [dragState, setDragState] = useState<{
@@ -76,18 +78,21 @@ export function GanttView() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Calcular rango de fechas
+  // Calcular rango de fechas — extendido hacia pasado (6 meses) y futuro (12-24 meses)
   const { startDate: rangeStart, endDate: rangeEnd, totalDays, columns } = useMemo(() => {
     let s: Date, e: Date;
     if (ganttScale === 'semana') {
-      s = startOfWeek(refDate, { weekStartsOn: 1 });
-      e = endOfWeek(addWeeks(refDate, 11), { weekStartsOn: 1 });
+      // 8 semanas atrás, 24 adelante (más futuro porque las tareas largas se ven cortadas)
+      s = startOfWeek(subWeeks(refDate, 8), { weekStartsOn: 1 });
+      e = endOfWeek(addWeeks(refDate, 24), { weekStartsOn: 1 });
     } else if (ganttScale === 'quincena') {
-      s = startOfWeek(refDate, { weekStartsOn: 1 });
-      e = endOfWeek(addWeeks(refDate, 23), { weekStartsOn: 1 });
+      // 6 meses atrás, 18 adelante
+      s = startOfMonth(subMonths(refDate, 6));
+      e = endOfMonth(addMonths(refDate, 18));
     } else {
-      s = startOfMonth(refDate);
-      e = endOfMonth(addMonths(refDate, 5));
+      // 6 meses atrás, 12 adelante
+      s = startOfMonth(subMonths(refDate, 6));
+      e = endOfMonth(addMonths(refDate, 12));
     }
     const total = differenceInCalendarDays(e, s) + 1;
     let cols: { label: string; sublabel: string; days: number; start: Date }[] = [];
@@ -148,7 +153,7 @@ export function GanttView() {
 
   const timelineWidth = totalDays * dayWidth;
 
-  // Construir filas del gantt
+  // Construir filas del gantt — respeta colapso
   const rows = useMemo(() => {
     if (!obra) return [];
     const result: { task: Task; level: number; index: number }[] = [];
@@ -156,11 +161,32 @@ export function GanttView() {
     let idx = 0;
     const walk = (task: Task, level: number) => {
       result.push({ task, level, index: idx++ });
-      getSubtasks(tasks, task.id).forEach(st => walk(st, level + 1));
+      // Solo recorrer subtareas si la tarea NO está colapsada
+      if (!collapsedTasks.has(task.id)) {
+        getSubtasks(tasks, task.id).forEach(st => walk(st, level + 1));
+      }
     };
     rootTasks.forEach(t => walk(t, 0));
     return result;
-  }, [tasks, obra]);
+  }, [tasks, obra, collapsedTasks]);
+
+  // Toggle colapso
+  const toggleCollapse = useCallback((taskId: string) => {
+    setCollapsedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(taskId)) {
+        next.delete(taskId);
+      } else {
+        next.add(taskId);
+      }
+      return next;
+    });
+  }, []);
+
+  // Helper: ¿la tarea tiene subtareas?
+  const hasSubtasks = useCallback((taskId: string) => {
+    return tasks.some(t => t.parentId === taskId);
+  }, [tasks]);
 
   const dateToX = useCallback((date: Date) => {
     return differenceInCalendarDays(date, rangeStart) * dayWidth;
@@ -269,11 +295,14 @@ export function GanttView() {
 
   const navigate = (direction: 'prev' | 'next') => {
     if (ganttScale === 'semana') {
-      setRefDate(d => direction === 'prev' ? subWeeks(d, 4) : addWeeks(d, 4));
+      // Salto grande: 8 semanas (2 meses) por click
+      setRefDate(d => direction === 'prev' ? subWeeks(d, 8) : addWeeks(d, 8));
     } else if (ganttScale === 'quincena') {
-      setRefDate(d => direction === 'prev' ? subMonths(d, 2) : addMonths(d, 2));
+      // 4 meses por salto
+      setRefDate(d => direction === 'prev' ? subMonths(d, 4) : addMonths(d, 4));
     } else {
-      setRefDate(d => direction === 'prev' ? subMonths(d, 3) : addMonths(d, 3));
+      // 6 meses por salto en vista mensual
+      setRefDate(d => direction === 'prev' ? subMonths(d, 6) : addMonths(d, 6));
     }
   };
 
@@ -367,14 +396,15 @@ export function GanttView() {
       {/* Gantt - contenedor scrolleable */}
       <div className="flex-1 overflow-auto bg-card relative" ref={containerRef}>
         <div style={{ width: LEFT_PANEL_WIDTH + timelineWidth, minWidth: '100%' }}>
-          {/* Header nivel 1 */}
-          <div className="sticky top-0 z-20 flex bg-card border-b border-border">
-            <div className="sticky left-0 z-30 bg-card border-r border-border" style={{ width: LEFT_PANEL_WIDTH, height: HEADER_HEIGHT }}>
-              <div className="px-3 py-2 text-[10px] font-semibold text-muted-foreground uppercase">Tareas</div>
+          {/* Header unificado (nivel 1 + nivel 2 en una sola fila sticky) */}
+          <div className="sticky top-0 z-20 flex bg-card border-b border-border" style={{ height: HEADER_HEIGHT }}>
+            <div className="sticky left-0 z-30 bg-card border-r border-border flex flex-col justify-center" style={{ width: LEFT_PANEL_WIDTH }}>
+              <div className="px-3 py-1 text-[10px] font-semibold text-muted-foreground uppercase">Tareas</div>
               <div className="px-3 text-[10px] text-muted-foreground/70">{rows.length} tareas · {obra.name}</div>
             </div>
-            <div className="flex" style={{ width: timelineWidth }}>
-              <div className="flex border-b border-border/50" style={{ height: HEADER_HEIGHT / 2, width: '100%' }}>
+            <div className="flex flex-col" style={{ width: timelineWidth }}>
+              {/* Sub-nivel 1: meses / semanas */}
+              <div className="flex border-b border-border/50" style={{ height: HEADER_HEIGHT / 2 }}>
                 {columns.map((col, i) => {
                   const showLabel = i === 0 || columns[i - 1].label !== col.label;
                   return (
@@ -388,22 +418,18 @@ export function GanttView() {
                   );
                 })}
               </div>
-            </div>
-          </div>
-
-          {/* Header nivel 2 */}
-          <div className="sticky top-[56px] z-20 flex bg-card border-b border-border">
-            <div className="sticky left-0 z-30 bg-card border-r border-border" style={{ width: LEFT_PANEL_WIDTH, height: HEADER_HEIGHT / 2 }} />
-            <div className="flex" style={{ width: timelineWidth, height: HEADER_HEIGHT / 2 }}>
-              {columns.map((col, i) => (
-                <div
-                  key={i}
-                  className="text-center text-[10px] text-muted-foreground border-r border-border/50 flex items-center justify-center"
-                  style={{ width: col.days * dayWidth }}
-                >
-                  {col.sublabel}
-                </div>
-              ))}
+              {/* Sub-nivel 2: sublabels (días / quincenas) — solo si hay sublabel */}
+              <div className="flex" style={{ height: HEADER_HEIGHT / 2 }}>
+                {columns.map((col, i) => (
+                  <div
+                    key={i}
+                    className="text-center text-[10px] text-muted-foreground border-r border-border/50 flex items-center justify-center"
+                    style={{ width: col.days * dayWidth }}
+                  >
+                    {col.sublabel}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -417,6 +443,8 @@ export function GanttView() {
               const isRoot = task.parentId === null;
               const barColor = getTaskBarColor(task, tasks, obra.color);
               const ghostStyle = getGhostStyle(task);
+              const hasChildren = hasSubtasks(task.id);
+              const isCollapsed = collapsedTasks.has(task.id);
 
               return (
                 <div key={task.id} className="flex border-b border-border/40 hover:bg-muted/30 pointer-events-none" style={{ height: ROW_HEIGHT }}>
@@ -426,7 +454,22 @@ export function GanttView() {
                     style={{ width: LEFT_PANEL_WIDTH, paddingLeft: 12 + level * 20 }}
                     onClick={() => openTaskModal(task.id)}
                   >
-                    {level > 0 && <span className="text-muted-foreground/40 mr-1.5 text-xs">└</span>}
+                    {/* Ícono de colapsar/expandir */}
+                    {hasChildren ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCollapse(task.id);
+                        }}
+                        className="w-4 h-4 flex items-center justify-center mr-1 text-muted-foreground hover:text-foreground hover:bg-muted rounded shrink-0"
+                        title={isCollapsed ? 'Expandir' : 'Colapsar'}
+                      >
+                        <ChevronRight className={cn('w-3 h-3 transition-transform', !isCollapsed && 'rotate-90')} />
+                      </button>
+                    ) : (
+                      <span className="w-4 mr-1 shrink-0" />
+                    )}
+                    {level > 0 && !hasChildren && <span className="text-muted-foreground/40 mr-1.5 text-xs">└</span>}
                     <span
                       className="w-1.5 h-5 rounded-full mr-2 shrink-0"
                       style={{ background: barColor }}
@@ -434,6 +477,11 @@ export function GanttView() {
                     <div className="flex-1 min-w-0">
                       <div className={cn('text-xs truncate', isRoot ? 'font-medium text-foreground' : 'text-muted-foreground')}>
                         {task.name}
+                        {hasChildren && isCollapsed && (
+                          <span className="ml-1.5 text-[9px] text-muted-foreground/70">
+                            ({getSubtasks(tasks, task.id).length} ocultas)
+                          </span>
+                        )}
                       </div>
                     </div>
                     <Badge className={cn('text-[9px] ml-1 px-1 py-0', STATUS_COLORS[task.status])}>
