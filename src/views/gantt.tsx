@@ -76,6 +76,7 @@ export function GanttView() {
     currentDeltaDays: number;
     currentMouseX: number; // posición X real del mouse en coords del timeline (para create-dep)
     currentMouseY: number; // posición Y real del mouse en coords del timeline
+    wasDragged: boolean; // true si el mouse se movió más de 3px (para distinguir click de drag)
   } | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -215,19 +216,22 @@ export function GanttView() {
     return addDays(rangeStart, days);
   }, [rangeStart, dayWidth]);
 
-  // Mouse move global durante drag
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  // Pointer move global durante drag (Pointer Events: unifica mouse + touch + pen)
+  const handlePointerMove = useCallback((e: PointerEvent) => {
     if (!dragState) return;
     const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
 
-    // Calcular posición del mouse en coords del timeline (sin LEFT_PANEL_WIDTH ni HEADER_HEIGHT)
-    // Estas coords se usan para el depPreview y se les suman los offsets ahí
+    // Detectar si el mouse se movió más de 3px (para distinguir click de drag)
+    const moveDistance = Math.abs(e.clientX - dragState.startX) + Math.abs(e.clientY - dragState.startY);
+    if (!dragState.wasDragged && moveDistance > 3) {
+      setDragState(s => s ? { ...s, wasDragged: true } : s);
+    }
+
+    // Calcular posición del pointer en coords del timeline (sin LEFT_PANEL_WIDTH ni HEADER_HEIGHT)
     let mouseX = 0, mouseY = 0;
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      // mouseX = posición X relativa al inicio del timeline (después del panel izquierdo)
       mouseX = e.clientX - rect.left - LEFT_PANEL_WIDTH + containerRef.current.scrollLeft;
-      // mouseY = posición Y relativa al inicio de las filas (después del header)
       mouseY = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
     }
 
@@ -239,13 +243,12 @@ export function GanttView() {
         currentMouseY: mouseY,
       } : s);
     }
-  }, [dragState, dayWidth]);
+  }, [dragState, dayWidth, LEFT_PANEL_WIDTH, HEADER_HEIGHT]);
 
-  const handleMouseUp = useCallback((e: MouseEvent) => {
+  const handlePointerUp = useCallback((e: PointerEvent) => {
     if (!dragState) return;
 
     if (dragState.type === 'create-dep' && dragState.depFromTaskId && containerRef.current) {
-      // Detectar sobre qué tarea se soltó usando la posición real del mouse
       const rect = containerRef.current.getBoundingClientRect();
       const y = e.clientY - rect.top - HEADER_HEIGHT + containerRef.current.scrollTop;
       const targetIdx = Math.floor(y / ROW_HEIGHT);
@@ -258,7 +261,8 @@ export function GanttView() {
           lagDays: 0,
         });
       }
-    } else {
+    } else if (dragState.wasDragged) {
+      // Solo aplicar el cambio si realmente hubo drag (no fue un click)
       const deltaDays = Math.round((e.clientX - dragState.startX) / dayWidth);
       if (dragState.type === 'move') {
         const newStart = addDays(parseISO(dragState.originalStart), deltaDays);
@@ -277,20 +281,25 @@ export function GanttView() {
           resizeTask(dragState.taskId, format(originalStart, 'yyyy-MM-dd'), format(newEnd, 'yyyy-MM-dd'));
         }
       }
+    } else if (!dragState.wasDragged && dragState.type !== 'create-dep') {
+      // Fue un click (sin drag) → abrir el modal
+      openTaskModal(dragState.taskId);
     }
     setDragState(null);
-  }, [dragState, moveTask, resizeTask, addDependency, rows]);
+  }, [dragState, moveTask, resizeTask, addDependency, rows, openTaskModal, HEADER_HEIGHT, ROW_HEIGHT]);
 
   useEffect(() => {
     if (dragState) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
+      window.addEventListener('pointercancel', handlePointerUp);
       return () => {
-        window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('mouseup', handleMouseUp);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerup', handlePointerUp);
+        window.removeEventListener('pointercancel', handlePointerUp);
       };
     }
-  }, [dragState, handleMouseMove, handleMouseUp]);
+  }, [dragState, handlePointerMove, handlePointerUp]);
 
   // Trackear scroll y tamaño del viewport del contenedor
   useEffect(() => {
@@ -656,9 +665,11 @@ export function GanttView() {
                                 border: `2px solid ${barColor}`,
                                 boxShadow: ghostStyle ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
                                 opacity: ghostStyle ? 0.4 : 1,
+                                touchAction: 'none',
                               }}
-                              onMouseDown={(e) => {
+                              onPointerDown={(e) => {
                                 e.preventDefault();
+                                (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
                                 setDragState({
                                   type: 'move',
                                   taskId: task.id,
@@ -669,12 +680,8 @@ export function GanttView() {
                                   currentDeltaDays: 0,
                                   currentMouseX: 0,
                                   currentMouseY: 0,
+                                  wasDragged: false,
                                 });
-                              }}
-                              onClick={(e) => {
-                                if (Math.abs(e.clientX - (dragState?.startX || 0)) < 3 && !dragState) {
-                                  openTaskModal(task.id);
-                                }
                               }}
                             />
                           </TooltipTrigger>
@@ -704,9 +711,11 @@ export function GanttView() {
                               background: barColor,
                               borderColor: barColor,
                               opacity: ghostStyle ? 0.4 : 1,
+                              touchAction: 'none',
                             }}
-                            onMouseDown={(e) => {
+                            onPointerDown={(e) => {
                               e.preventDefault();
+                              (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
                               setDragState({
                                 type: 'move',
                                 taskId: task.id,
@@ -717,12 +726,8 @@ export function GanttView() {
                                 currentDeltaDays: 0,
                                 currentMouseX: 0,
                                 currentMouseY: 0,
+                                wasDragged: false,
                               });
-                            }}
-                            onClick={(e) => {
-                              if (Math.abs(e.clientX - (dragState?.startX || 0)) < 3 && !dragState) {
-                                openTaskModal(task.id);
-                              }
                             }}
                           >
                             {/* Barra de progreso */}
@@ -737,9 +742,11 @@ export function GanttView() {
                             {/* Handle izquierdo (resize) */}
                             <div
                               className="absolute left-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-l-md"
-                              onMouseDown={(e) => {
+                              style={{ touchAction: 'none' }}
+                              onPointerDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
                                 setDragState({
                                   type: 'resize-left',
                                   taskId: task.id,
@@ -750,15 +757,18 @@ export function GanttView() {
                                   currentDeltaDays: 0,
                                   currentMouseX: 0,
                                   currentMouseY: 0,
+                                  wasDragged: false,
                                 });
                               }}
                             />
                             {/* Handle derecho (resize) */}
                             <div
                               className="absolute right-0 top-0 bottom-0 w-1.5 cursor-ew-resize hover:bg-black/30 rounded-r-md"
-                              onMouseDown={(e) => {
+                              style={{ touchAction: 'none' }}
+                              onPointerDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
                                 setDragState({
                                   type: 'resize-right',
                                   taskId: task.id,
@@ -769,16 +779,18 @@ export function GanttView() {
                                   currentDeltaDays: 0,
                                   currentMouseX: 0,
                                   currentMouseY: 0,
+                                  wasDragged: false,
                                 });
                               }}
                             />
                             {/* Punto derecho: crear dependencia FROM (esta es la predecesora) */}
                             <div
                               className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-crosshair transition-all hover:scale-150 z-40 shadow-sm opacity-0 group-hover:opacity-100"
-                              style={{ borderColor: barColor, background: barColor, marginRight: '-6px' }}
-                              onMouseDown={(e) => {
+                              style={{ borderColor: barColor, background: barColor, marginRight: '-6px', touchAction: 'none' }}
+                              onPointerDown={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
                                 setDragState({
                                   type: 'create-dep',
                                   taskId: task.id,
@@ -790,6 +802,7 @@ export function GanttView() {
                                   currentDeltaDays: 0,
                                   currentMouseX: 0,
                                   currentMouseY: 0,
+                                  wasDragged: false,
                                 });
                               }}
                               title="Arrastrar para crear dependencia"

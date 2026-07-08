@@ -692,6 +692,12 @@ interface AppState {
   copyTask: (taskId: ID) => void;
   pasteTask: (newParentId: ID | null, obraId: ID, offsetDays?: number) => ID | null;
 
+  // Undo (Ctrl+Z)
+  undoStack: { tasks: Task[]; dependencies: Dependency[]; materials: Material[] }[];
+  pushUndoState: () => void;
+  undo: () => void;
+  canUndo: () => boolean;
+
   // Sync con Supabase
   synced: boolean; // true cuando los datos están cargados desde Supabase
   setSynced: (v: boolean) => void;
@@ -716,9 +722,6 @@ interface AppState {
   removeCacLocal: (month: string) => void;
   upsertNotificationLocal: (n: AppNotification) => void;
   upsertMemberLocal: (m: Member) => void;
-
-  // Undo
-  undo: () => void;
 }
 
 const calcProgress = (task: Task, allTasks: Task[]): number => {
@@ -977,6 +980,12 @@ export const useAppStore = create<AppState>()(
         }),
       updateTask: (id, patch) =>
         set(s => {
+          // Guardar estado previo para undo
+          const undoSnapshot = {
+            tasks: s.tasks.map(t => ({ ...t })),
+            dependencies: s.dependencies.map(d => ({ ...d })),
+            materials: s.materials.map(m => ({ ...m })),
+          };
           if (s.synced) sync.dbUpdateTask(id, patch);
           const baseTasks = recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t));
           // Recalcular fechas de padres recursivamente
@@ -987,7 +996,7 @@ export const useAppStore = create<AppState>()(
               if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
             });
           }
-          return { tasks: recalcedTasks };
+          return { tasks: recalcedTasks, undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
         }),
       deleteTask: (id) =>
         set(s => {
@@ -1014,6 +1023,11 @@ export const useAppStore = create<AppState>()(
 
       moveTask: (id, newStartDate, durationDays) =>
         set(s => {
+          const undoSnapshot = {
+            tasks: s.tasks.map(t => ({ ...t })),
+            dependencies: s.dependencies.map(d => ({ ...d })),
+            materials: s.materials.map(m => ({ ...m })),
+          };
           const task = s.tasks.find(t => t.id === id);
           if (!task) return s;
           const start = parseISO(newStartDate);
@@ -1058,11 +1072,16 @@ export const useAppStore = create<AppState>()(
               }
             });
           }
-          return { tasks: recomputeProgress(recalcedTasks) };
+          return { tasks: recomputeProgress(recalcedTasks), undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
         }),
 
       resizeTask: (id, newStartDate, newEndDate) =>
         set(s => {
+          const undoSnapshot = {
+            tasks: s.tasks.map(t => ({ ...t })),
+            dependencies: s.dependencies.map(d => ({ ...d })),
+            materials: s.materials.map(m => ({ ...m })),
+          };
           if (s.synced) sync.dbUpdateTask(id, { startDate: newStartDate, endDate: newEndDate });
           const baseTasks = s.tasks.map(t =>
             t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
@@ -1076,11 +1095,16 @@ export const useAppStore = create<AppState>()(
               }
             });
           }
-          return { tasks: recomputeProgress(recalcedTasks) };
+          return { tasks: recomputeProgress(recalcedTasks), undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
         }),
 
       reorderTask: (taskId, direction) =>
         set(s => {
+          const undoSnapshot = {
+            tasks: s.tasks.map(t => ({ ...t })),
+            dependencies: s.dependencies.map(d => ({ ...d })),
+            materials: s.materials.map(m => ({ ...m })),
+          };
           const task = s.tasks.find(t => t.id === taskId);
           if (!task) return s;
           // Encontrar hermanas (misma obra + mismo parentId)
@@ -1104,7 +1128,7 @@ export const useAppStore = create<AppState>()(
             sync.dbUpdateTask(taskId, { sortOrder: swapOrder });
             sync.dbUpdateTask(swapTask.id, { sortOrder: taskOrder });
           }
-          return { tasks: newTasks };
+          return { tasks: newTasks, undoStack: [...s.undoStack, undoSnapshot].slice(-50) };
         }),
 
       addDependency: (dep) =>
@@ -1603,8 +1627,47 @@ export const useAppStore = create<AppState>()(
         return newRootId;
       },
 
-      // ===== Undo (no-op por ahora) =====
-      undo: () => {},
+      // ===== Undo (Ctrl+Z) =====
+      undoStack: [],
+      pushUndoState: () =>
+        set(s => ({
+          undoStack: [
+            ...s.undoStack,
+            {
+              tasks: s.tasks.map(t => ({ ...t })),
+              dependencies: s.dependencies.map(d => ({ ...d })),
+              materials: s.materials.map(m => ({ ...m })),
+            },
+          ].slice(-50), // Máximo 50 estados
+        })),
+      undo: () =>
+        set(s => {
+          if (s.undoStack.length === 0) return s;
+          const prev = s.undoStack[s.undoStack.length - 1];
+          // Restaurar estado anterior
+          if (s.synced) {
+            // Para undo en modo synced, restaurar cada tarea en la DB
+            // Estrategia simple: escribir todas las tareas del snapshot previo
+            prev.tasks.forEach(t => {
+              sync.dbUpdateTask(t.id, {
+                startDate: t.startDate,
+                endDate: t.endDate,
+                progress: t.progress,
+                status: t.status,
+                name: t.name,
+                parentId: t.parentId,
+                sortOrder: t.sortOrder,
+              });
+            });
+          }
+          return {
+            tasks: prev.tasks,
+            dependencies: prev.dependencies,
+            materials: prev.materials,
+            undoStack: s.undoStack.slice(0, -1),
+          };
+        }),
+      canUndo: () => get().undoStack.length > 0,
     }),
     {
       name: 'obraflow-auth-v1',

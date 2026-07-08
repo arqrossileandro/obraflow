@@ -24,8 +24,22 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect } from 'react';
 
 function HomeInner() {
-  const { activeView, selectedObraId, setActiveView, setSelectedObra, obras, synced } = useAppStore();
+  const { activeView, selectedObraId, setActiveView, setSelectedObra, obras, synced, undo, canUndo } = useAppStore();
   const isMobile = useIsMobile();
+
+  // Listener global de Ctrl+Z (undo)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo()) {
+          undo();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, canUndo]);
 
   // Si synced=true pero selectedObraId='all' y hay obras, seleccionar la primera
   useEffect(() => {
