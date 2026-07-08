@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { AddTaskDialog } from '@/components/app/add-task-dialog';
 import { TemplateDialog } from '@/components/app/template-dialog';
 
@@ -673,86 +672,71 @@ export function GanttView() {
 
                     {/* Barra real de tarea — hito (diamante) o tarea normal (barra) */}
                     {isMilestone ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div
-                              className="absolute pointer-events-auto cursor-grab active:cursor-grabbing group transition-transform hover:scale-125"
-                              style={{
-                                left: startX - (ROW_HEIGHT - 12) / 2 + dayWidth / 2,
-                                top: 4,
-                                width: ROW_HEIGHT - 12,
-                                height: ROW_HEIGHT - 12,
-                                transform: 'rotate(45deg)',
-                                background: barColor,
-                                border: `2px solid ${barColor}`,
-                                boxShadow: ghostStyle ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
-                                opacity: ghostStyle ? 0.4 : 1,
-                                touchAction: 'none',
-                              }}
-                              onPointerDown={(e) => {
-                                e.preventDefault();
-                                (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                                startDrag({
-                                  type: 'move',
-                                  taskId: task.id,
-                                  startX: e.clientX,
-                                  startY: e.clientY,
-                                  originalStart: task.startDate,
-                                  originalEnd: task.endDate,
-                                  currentDeltaDays: 0,
-                                  currentMouseX: 0,
-                                  currentMouseY: 0,
-                                  wasDragged: false,
-                                });
-                              }}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent side="top" className="text-xs">
-                            <div className="font-medium flex items-center gap-1">
-                              <Flag className="w-3 h-3" /> {task.name}
-                            </div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Hito · {format(parseISO(task.startDate), "dd MMM yyyy", { locale: es })}
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div
+                        className="absolute pointer-events-auto cursor-grab active:cursor-grabbing group transition-transform hover:scale-125"
+                        style={{
+                          left: startX - (ROW_HEIGHT - 12) / 2 + dayWidth / 2,
+                          top: 4,
+                          width: ROW_HEIGHT - 12,
+                          height: ROW_HEIGHT - 12,
+                          transform: 'rotate(45deg)',
+                          background: barColor,
+                          border: `2px solid ${barColor}`,
+                          boxShadow: ghostStyle ? 'none' : '0 2px 4px rgba(0,0,0,0.2)',
+                          opacity: ghostStyle ? 0.4 : 1,
+                          touchAction: 'none',
+                        }}
+                        title={`Hito: ${task.name} — ${format(parseISO(task.startDate), "dd MMM yyyy", { locale: es })}`}
+                        onPointerDown={(e) => {
+                          e.preventDefault();
+                          (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+                          startDrag({
+                            type: 'move',
+                            taskId: task.id,
+                            startX: e.clientX,
+                            startY: e.clientY,
+                            originalStart: task.startDate,
+                            originalEnd: task.endDate,
+                            currentDeltaDays: 0,
+                            currentMouseX: 0,
+                            currentMouseY: 0,
+                            wasDragged: false,
+                          });
+                        }}
+                      />
                     ) : (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className={cn(
-                              'absolute top-1.5 rounded-md border cursor-grab active:cursor-grabbing group transition-shadow hover:shadow-md pointer-events-auto',
-                              isRoot && 'ring-1 ring-offset-1 ring-border'
-                            )}
-                            style={{
-                              left: startX,
-                              width: barWidth,
-                              height: ROW_HEIGHT - 12,
-                              background: barColor,
-                              borderColor: barColor,
-                              opacity: ghostStyle ? 0.4 : 1,
-                              touchAction: 'none',
-                            }}
-                            onPointerDown={(e) => {
-                              e.preventDefault();
-                              (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-                              startDrag({
-                                type: 'move',
-                                taskId: task.id,
-                                startX: e.clientX,
-                                startY: e.clientY,
-                                originalStart: task.startDate,
-                                originalEnd: task.endDate,
-                                currentDeltaDays: 0,
-                                currentMouseX: 0,
-                                currentMouseY: 0,
-                                wasDragged: false,
-                              });
-                            }}
-                          >
+                      <div
+                        className={cn(
+                          'absolute top-1.5 rounded-md border cursor-grab active:cursor-grabbing group transition-shadow hover:shadow-md pointer-events-auto',
+                          isRoot && 'ring-1 ring-offset-1 ring-border'
+                        )}
+                        style={{
+                          left: startX,
+                          width: barWidth,
+                          height: ROW_HEIGHT - 12,
+                          background: barColor,
+                          borderColor: barColor,
+                          opacity: ghostStyle ? 0.4 : 1,
+                          touchAction: 'none',
+                        }}
+                        title={`${task.name} — ${format(parseISO(task.startDate), "dd MMM", { locale: es })} al ${format(parseISO(task.endDate), "dd MMM", { locale: es })} — ${task.progress}% — click para editar, arrastrar para mover`}
+                        onPointerDown={(e) => {
+                          e.preventDefault();
+                          (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+                          startDrag({
+                            type: 'move',
+                            taskId: task.id,
+                            startX: e.clientX,
+                            startY: e.clientY,
+                            originalStart: task.startDate,
+                            originalEnd: task.endDate,
+                            currentDeltaDays: 0,
+                            currentMouseX: 0,
+                            currentMouseY: 0,
+                            wasDragged: false,
+                          });
+                        }}
+                      >
                             {/* Barra de progreso */}
                             <div
                               className="absolute top-0 left-0 bottom-0 rounded-l-md bg-black/25"
@@ -837,18 +821,6 @@ export function GanttView() {
                               title="Inicio de tarea"
                             />
                           </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs">
-                          <div className="font-medium">{task.name}</div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5">
-                            {format(parseISO(task.startDate), "dd MMM", { locale: es })} - {format(parseISO(task.endDate), "dd MMM", { locale: es })}
-                          </div>
-                          <div className="text-[10px] text-muted-foreground">
-                            Avance: {task.progress}% · {task.guild || 'Sin gremio'}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
                     )}
                   </div>
                 </div>
