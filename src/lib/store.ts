@@ -744,6 +744,46 @@ const recomputeProgress = (tasks: Task[]): Task[] => {
   }));
 };
 
+// ============================================================================
+// Recalcular fechas de tareas padre según sus hijos (recursivo)
+// Una tarea padre dura desde el min(startDate) de sus hijos hasta el max(endDate)
+// ============================================================================
+const recalculateParentDates = (tasks: Task[]): { tasks: Task[]; changedIds: Set<string> } => {
+  const changedIds = new Set<string>();
+  let result = [...tasks];
+
+  // Procesar de abajo hacia arriba: primero los padres más profundos
+  // Para cada tarea que tenga hijos, ajustar sus fechas
+  let iterations = 0;
+  let didChange = true;
+  while (didChange && iterations < 10) {
+    didChange = false;
+    iterations++;
+
+    result = result.map(t => {
+      // Los hitos no se recalculan (son de 1 día por definición)
+      if (t.type === 'hito') return t;
+
+      const children = result.filter(c => c.parentId === t.id);
+      if (children.length === 0) return t;
+
+      // Solo recalcular si NO es una tarea con fecha manualmente forzada
+      // (por ahora, todas las padres se recalculan)
+      const minStart = children.reduce((min, c) => c.startDate < min ? c.startDate : min, children[0].startDate);
+      const maxEnd = children.reduce((max, c) => c.endDate > max ? c.endDate : max, children[0].endDate);
+
+      if (t.startDate !== minStart || t.endDate !== maxEnd) {
+        changedIds.add(t.id);
+        didChange = true;
+        return { ...t, startDate: minStart, endDate: maxEnd };
+      }
+      return t;
+    });
+  }
+
+  return { tasks: result, changedIds };
+};
+
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
@@ -862,7 +902,15 @@ export const useAppStore = create<AppState>()(
             sortOrder: task.sortOrder ?? Date.now(),
           };
           if (s.synced) sync.dbInsertTask(newTask);
-          return { tasks: recomputeProgress([...s.tasks, newTask]) };
+          const baseTasks = [...s.tasks, newTask];
+          const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+          if (s.synced) {
+            changedIds.forEach(pid => {
+              const t = recalcedTasks.find(x => x.id === pid);
+              if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+            });
+          }
+          return { tasks: recomputeProgress(recalcedTasks) };
         }),
       addTaskFromTemplate: (templateId, obraId, startDate) =>
         set(s => {
@@ -930,15 +978,34 @@ export const useAppStore = create<AppState>()(
       updateTask: (id, patch) =>
         set(s => {
           if (s.synced) sync.dbUpdateTask(id, patch);
-          return {
-            tasks: recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t)),
-          };
+          const baseTasks = recomputeProgress(s.tasks.map(t => t.id === id ? { ...t, ...patch } : t));
+          // Recalcular fechas de padres recursivamente
+          const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+          if (s.synced) {
+            changedIds.forEach(pid => {
+              const t = recalcedTasks.find(x => x.id === pid);
+              if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+            });
+          }
+          return { tasks: recalcedTasks };
         }),
       deleteTask: (id) =>
         set(s => {
           if (s.synced) sync.dbDeleteTask(id);
+          // Encontrar el padre de la tarea eliminada para recalcular sus fechas después
+          const deletedTask = s.tasks.find(t => t.id === id);
+          const parentId = deletedTask?.parentId;
+          const baseTasks = s.tasks.filter(t => t.id !== id && t.parentId !== id);
+          // Recalcular padres
+          const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+          if (s.synced && parentId) {
+            changedIds.forEach(pid => {
+              const t = recalcedTasks.find(x => x.id === pid);
+              if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+            });
+          }
           return {
-            tasks: s.tasks.filter(t => t.id !== id && t.parentId !== id),
+            tasks: recalcedTasks,
             dependencies: s.dependencies.filter(d => d.fromTaskId !== id && d.toTaskId !== id),
             materials: s.materials.filter(m => m.taskId !== id),
             comments: s.comments.filter(c => c.taskId !== id),
@@ -977,23 +1044,39 @@ export const useAppStore = create<AppState>()(
             }
           };
           propagate(id, newEnd);
+          // Recalcular fechas de padres recursivamente
+          const { tasks: recalcedTasks, changedIds } = recalculateParentDates(updatedTasks);
           if (s.synced) {
             updatedTaskIds.forEach(tid => {
-              const t = updatedTasks.find(x => x.id === tid);
+              const t = recalcedTasks.find(x => x.id === tid);
               if (t) sync.dbUpdateTask(tid, { startDate: t.startDate, endDate: t.endDate });
             });
+            changedIds.forEach(pid => {
+              if (!updatedTaskIds.includes(pid)) {
+                const t = recalcedTasks.find(x => x.id === pid);
+                if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+              }
+            });
           }
-          return { tasks: recomputeProgress(updatedTasks) };
+          return { tasks: recomputeProgress(recalcedTasks) };
         }),
 
       resizeTask: (id, newStartDate, newEndDate) =>
         set(s => {
           if (s.synced) sync.dbUpdateTask(id, { startDate: newStartDate, endDate: newEndDate });
-          return {
-            tasks: recomputeProgress(s.tasks.map(t =>
-              t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
-            )),
-          };
+          const baseTasks = s.tasks.map(t =>
+            t.id === id ? { ...t, startDate: newStartDate, endDate: newEndDate } : t
+          );
+          const { tasks: recalcedTasks, changedIds } = recalculateParentDates(baseTasks);
+          if (s.synced) {
+            changedIds.forEach(pid => {
+              if (pid !== id) {
+                const t = recalcedTasks.find(x => x.id === pid);
+                if (t) sync.dbUpdateTask(pid, { startDate: t.startDate, endDate: t.endDate });
+              }
+            });
+          }
+          return { tasks: recomputeProgress(recalcedTasks) };
         }),
 
       reorderTask: (taskId, direction) =>

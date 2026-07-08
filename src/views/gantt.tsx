@@ -12,7 +12,7 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Plus, Link2, X, Layers, ClipboardPaste,
+  ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ZoomIn, ZoomOut, Plus, Link2, X, Layers, ClipboardPaste,
   Copy, ChevronsDownUp, ChevronsUpDown, Flag
 } from 'lucide-react';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
@@ -419,24 +419,6 @@ export function GanttView() {
               Pegar
             </Button>
           )}
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 p-0"
-            onClick={collapseAll}
-            title="Colapsar todo"
-          >
-            <ChevronsDownUp className="w-3.5 h-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 p-0"
-            onClick={expandAll}
-            title="Expandir todo"
-          >
-            <ChevronsUpDown className="w-3.5 h-3.5" />
-          </Button>
           <Button size="sm" variant="outline" className="h-8" onClick={() => setTemplateOpen(true)}>
             <Layers className="w-3.5 h-3.5 mr-1" /> Plantilla
           </Button>
@@ -452,8 +434,29 @@ export function GanttView() {
           {/* Header unificado (nivel 1 + nivel 2 en una sola fila sticky) */}
           <div className="sticky top-0 z-20 flex bg-card border-b border-border" style={{ height: HEADER_HEIGHT }}>
             <div className="sticky left-0 z-30 bg-card border-r border-border flex flex-col justify-center" style={{ width: LEFT_PANEL_WIDTH }}>
-              <div className="px-3 py-1 text-[10px] font-semibold text-muted-foreground uppercase">Tareas</div>
-              <div className="px-3 text-[10px] text-muted-foreground/70">{rows.length} tareas · {obra.name}</div>
+              <div className="px-3 py-1 text-[10px] font-semibold text-muted-foreground uppercase flex items-center gap-2">
+                <span>Tareas</span>
+                <span className="text-muted-foreground/50">·</span>
+                <span className="font-normal normal-case text-muted-foreground/70">{rows.length}</span>
+                {/* Botones colapsar/expandir todo */}
+                <div className="flex items-center gap-0.5 ml-auto">
+                  <button
+                    onClick={collapseAll}
+                    className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded transition"
+                    title="Colapsar todo"
+                  >
+                    <ChevronsDownUp className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={expandAll}
+                    className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded transition"
+                    title="Expandir todo"
+                  >
+                    <ChevronsUpDown className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div className="px-3 text-[10px] text-muted-foreground/70 truncate">{obra.name}</div>
             </div>
             <div className="flex flex-col" style={{ width: timelineWidth }}>
               {/* Sub-nivel 1: meses / semanas */}
@@ -573,7 +576,7 @@ export function GanttView() {
                         className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded"
                         title="Mover arriba"
                       >
-                        <ChevronLeft className="w-3 h-3 -rotate-90" />
+                        <ChevronUp className="w-3 h-3" />
                       </button>
                       <button
                         onClick={(e) => {
@@ -583,7 +586,7 @@ export function GanttView() {
                         className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted rounded"
                         title="Mover abajo"
                       >
-                        <ChevronLeft className="w-3 h-3 rotate-90" />
+                        <ChevronDown className="w-3 h-3" />
                       </button>
                     </div>
                     <Badge className={cn('text-[9px] ml-1 px-1 py-0', STATUS_COLORS[task.status])}>
